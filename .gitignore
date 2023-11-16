@@ -1,5 +1,6 @@
 /target/
 .idea/
 .cargo/
+.vscode/
 Cargo.lock
 Cargo.toml
