@@ -2,3 +2,4 @@
 .idea/
 .cargo/
 Cargo.lock
+Cargo.toml
