@@ -1,6 +1,6 @@
+Cargo.lock
 /target/
 .idea/
 .cargo/
 .vscode/
-Cargo.lock
-Cargo.toml
+/bin/target/

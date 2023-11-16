@@ -1,5 +1,5 @@
 [package]
-name = "lib_oxidizing_agents"
+name = "bin"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 robotics_lib = {path = "E:/Coding/Rust/Robotic-Lib"}
-rand = "0.8.5"
+lib_oxidizing_agents = {path = "../"}
