@@ -22,9 +22,7 @@ impl WorldGenerator {
         let mut rng = rand::thread_rng();
         let seed = match seed {
             Some(seed) => seed,
-            None => {
-                rng.gen();
-            }
+            None => rng.gen_range(0..100),
         };
         let world_gen_options = WorldGenerationOptions {
             sea_level: 0.0..0.0,

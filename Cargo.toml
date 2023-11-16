@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 robotics_lib = {path = "E:/Coding/Rust/Robotic-Lib"}
 rand = "0.8.5"
+noise = "0.8.2"

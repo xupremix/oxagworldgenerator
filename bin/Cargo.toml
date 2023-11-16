@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 robotics_lib = {path = "E:/Coding/Rust/Robotic-Lib"}
 lib_oxidizing_agents = {path = "../"}
+noise = "0.8.2"
