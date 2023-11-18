@@ -1,4 +1,5 @@
-pub mod worldgenerator;
-pub mod tools;
-pub(crate) mod utils;
+mod examples;
 mod test;
+pub mod tools;
+pub mod utils;
+pub mod worldgenerator;

@@ -1,11 +1,9 @@
-pub struct OxTool {
-    x: i32
+pub struct OxAgTool {
+    x: i32,
 }
 
-impl OxTool {
+impl OxAgTool {
     pub fn new() -> Self {
-        Self {
-            x: 30
-        }
+        Self { x: 30 }
     }
 }

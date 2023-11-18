@@ -1,44 +1,58 @@
+pub mod world_gen_options;
+
+use crate::utils::{OxAgError, DEFAULT_WORLD_SIZE};
+use crate::worldgenerator::world_gen_options::OxAgWorldGenerationOptions;
 use rand::Rng;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::Tile;
 use robotics_lib::world::worldgenerator::Generator;
-use std::ops::Range;
 
-pub struct WorldGenerationOptions {
-    sea_level: Range<f32>,
-    sand_level: Range<f32>,
-    grass_level: Range<f32>,
-    street_level: Range<f32>,
-}
-
-pub struct WorldGenerator {
+pub struct OxAgWorldGenerator {
     size: usize,
-    seed: usize,
-    world_gen_options: WorldGenerationOptions,
+    seed: u32,
+    world_gen_options: OxAgWorldGenerationOptions,
 }
 
-impl WorldGenerator {
-    pub fn init(size: usize, seed: Option<usize>) -> Self {
-        let mut rng = rand::thread_rng();
-        let seed = match seed {
-            Some(seed) => seed,
-            None => rng.gen_range(0..100),
-        };
-        let world_gen_options = WorldGenerationOptions {
-            sea_level: 0.0..0.0,
-            sand_level: 0.0..0.0,
-            grass_level: 0.0..0.0,
-            street_level: 0.0..0.0,
-        };
-        Self {
-            size,
+impl OxAgWorldGenerator {
+    pub fn new(seed: u32) -> OxAgWorldGenerator {
+        OxAgWorldGenerator {
+            size: DEFAULT_WORLD_SIZE,
             seed,
-            world_gen_options,
+            world_gen_options: Default::default(),
+        }
+    }
+    pub fn set_seed(mut self, seed: u32) -> OxAgWorldGenerator {
+        self.seed = seed;
+        self
+    }
+    pub fn set_size(mut self, size: usize) -> OxAgWorldGenerator {
+        self.size = size;
+        self
+    }
+    pub fn set_world_gen_options(
+        mut self,
+        world_gen_options: OxAgWorldGenerationOptions,
+    ) -> Result<OxAgWorldGenerator, OxAgError> {
+        if world_gen_options.is_valid() {
+            self.world_gen_options = world_gen_options;
+            Ok(self)
+        } else {
+            Err(OxAgError::InvalidWorldGenerationOption)
         }
     }
 }
 
-impl Generator for WorldGenerator {
+impl Default for OxAgWorldGenerator {
+    fn default() -> OxAgWorldGenerator {
+        OxAgWorldGenerator {
+            size: DEFAULT_WORLD_SIZE,
+            seed: rand::thread_rng().gen::<u32>(),
+            world_gen_options: Default::default(),
+        }
+    }
+}
+
+impl Generator for OxAgWorldGenerator {
     fn new(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions) {
         todo!()
     }
