@@ -1,3 +1,5 @@
+use crate::utils::{contains, MAP_RANGE};
+use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
 use robotics_lib::world::tile::TileType;
@@ -17,9 +19,9 @@ pub struct OxAgWorldGenerationOptions {
 
 impl OxAgWorldGenerationOptions {
     pub fn new(seed: u32) -> Self {
-        let mut rng = rand::prelude::StdRng::seed_from_u64(seed as u64);
+        let mut rng = StdRng::seed_from_u64(seed as u64);
 
-        let dw_end = rng.gen_range(-1.0..=1.0);
+        let dw_end = rng.gen_range(MAP_RANGE);
         let sw_end = rng.gen_range(dw_end..=1.0);
         let sd_end = rng.gen_range(sw_end..=1.0);
         let gr_end = rng.gen_range(sd_end..=1.0);
@@ -49,9 +51,13 @@ impl OxAgWorldGenerationOptions {
             && self.grass_level.end() <= self.hill_level.start()
             && self.hill_level.end() <= self.mountain_level.start()
             && self.mountain_level.end() <= self.snow_level.start()
-    }
-    pub fn validate(world_generation_options: &OxAgWorldGenerationOptions) -> bool {
-        world_generation_options.is_valid()
+            && contains(&MAP_RANGE, &self.deep_water_level)
+            && contains(&MAP_RANGE, &self.shallow_water_level)
+            && contains(&MAP_RANGE, &self.sand_level)
+            && contains(&MAP_RANGE, &self.grass_level)
+            && contains(&MAP_RANGE, &self.hill_level)
+            && contains(&MAP_RANGE, &self.mountain_level)
+            && contains(&MAP_RANGE, &self.snow_level)
     }
     pub fn from_preset(preset: OxAgWorldGenerationPresets) -> Self {
         match preset {

@@ -9,3 +9,4 @@ edition = "2021"
 robotics_lib = {path = "../Robotic-Lib"}
 rand = "0.8.5"
 noise = {version = "0.8.2", features = ["images"] }
+strum = "0.25.0"

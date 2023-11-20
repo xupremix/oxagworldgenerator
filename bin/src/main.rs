@@ -1,4 +1,5 @@
 use lib_oxidizing_agents;
+use lib_oxidizing_agents::worldgenerator::content_gen_options::OxAgContentGenerationPresets;
 use lib_oxidizing_agents::worldgenerator::world_gen_options::{
     OxAgWorldGenerationOptions, OxAgWorldGenerationPresets,
 };
@@ -11,7 +12,7 @@ fn main() {
     let generator = OxAgWorldGenerator::init()
         .set_seed(seed)
         .set_size(size)
-        .gen_options_from_preset(OxAgWorldGenerationPresets::DEFAULT);
+        .gen_world_options_from_preset(OxAgWorldGenerationPresets::DEFAULT);
 
     let other_gen = OxAgWorldGenerator::new(seed)
         .set_size(size)
@@ -24,7 +25,10 @@ fn main() {
             mountain_level: 0.6..=0.8,
             snow_level: 0.8..=1.0,
         })
-        .unwrap();
+        .unwrap()
+        .gen_content_options_from_preset(OxAgContentGenerationPresets::DEFAULT);
+
+    println!("{:?}", other_gen.get_content_gen_options());
 
     // cool generation implementation using a functional approach
 }

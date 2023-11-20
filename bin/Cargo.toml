@@ -9,3 +9,4 @@ edition = "2021"
 robotics_lib = {path = "../../Robotic-Lib"}
 lib_oxidizing_agents = {path = "../"}
 noise = "0.8.2"
+strum = "0.25.0"
