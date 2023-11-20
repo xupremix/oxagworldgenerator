@@ -18,7 +18,7 @@ pub struct OxAgWorldGenerationOptions {
 }
 
 impl OxAgWorldGenerationOptions {
-    pub fn new(seed: u32) -> Self {
+    pub fn new(seed: u64) -> Self {
         let mut rng = StdRng::seed_from_u64(seed as u64);
 
         let dw_end = rng.gen_range(MAP_RANGE);
@@ -69,48 +69,74 @@ impl OxAgWorldGenerationOptions {
 }
 
 /// # Presets
-/// List of presets available
+/// List of available presets
+///
+/// <pre style="color: orange;">
+/// ┌──────────────────────┬───────────────────────┐
+/// │     Parameter        │     Description       │
+/// ├──────────────────────┼───────────────────────┤
+/// │ deep_water_level     │ Deep water            │
+/// │ shallow_water_level  │ Shallow water         │
+/// │ sand_level           │ Sandy areas           │
+/// │ grass_level          │ Grassy terrain        │
+/// │ hill_level           │ Hilly landscapes      │
+/// │ mountain_level       │ Mountainous regions   │
+/// │ snow_level           │ Snowy landscapes      │
+/// └──────────────────────┴───────────────────────┘
+/// </pre>
+///
 /// # Entries
 /// - [DEFAULT](enum.OxAgWorldGenerationPresets.html#variant.DEFAULT)
 /// - [WATER_WORLD](enum.OxAgWorldGenerationPresets.html#variant.WATER_WORLD)
 /// - [LOW_WATER_WORLD](enum.OxAgWorldGenerationPresets.html#variant.LOW_WATER_WORLD)
 ///
 pub enum OxAgWorldGenerationPresets {
-    ///
-    /// # Default world generation options
-    ///
-    ///     deep_water_level: -1.0..=-0.75,
-    ///     shallow_water_level: -0.75..=-0.5,
-    ///     sand_level: -0.5..=-0.25,
-    ///     grass_level: -0.25..=0.25,
-    ///     hill_level: 0.25..=0.5,
-    ///     mountain_level: 0.5..=0.75,
-    ///     snow_level: 0.75..=1.0,
-    ///
+    /// # Default world generation option
+    /// <pre style="color: orange;">
+    /// ┌──────────────────────┬─────────────────┐
+    /// │     Parameter        │   Value Range   │
+    /// ├──────────────────────┼─────────────────┤
+    /// │ deep_water_level     │ -1.0  ..= -0.75 │
+    /// │ shallow_water_level  │ -0.75 ..= -0.5  │
+    /// │ sand_level           │ -0.5  ..= -0.25 │
+    /// │ grass_level          │ -0.25 ..=  0.25 │
+    /// │ hill_level           │  0.25 ..=  0.5  │
+    /// │ mountain_level       │  0.5  ..=  0.75 │
+    /// │ snow_level           │  0.75 ..=  1.0  │
+    /// └──────────────────────┴─────────────────┘
+    /// </pre>
     DEFAULT,
     ///
-    /// # Water world generation options
-    ///
-    ///     deep_water_level: -1.0..=-0.5,
-    ///     shallow_water_level: -0.5..=0.0,
-    ///     sand_level: 0.0..=0.2,
-    ///     grass_level: 0.2..=0.4,
-    ///     hill_level: 0.4..=0.6,
-    ///     mountain_level: 0.6..=0.8,
-    ///     snow_level: 0.8..=1.0,
-    ///
+    /// # Water world generation option
+    /// <pre style="color: orange;">
+    /// ┌──────────────────────┬─────────────────┐
+    /// │     Parameter        │   Value Range   │
+    /// ├──────────────────────┼─────────────────┤
+    /// │ deep_water_level     │ -1.0  ..= -0.5  │
+    /// │ shallow_water_level  │ -0.5  ..=  0.0  │
+    /// │ sand_level           │  0.0  ..=  0.2  │
+    /// │ grass_level          │  0.2  ..=  0.4  │
+    /// │ hill_level           │  0.4  ..=  0.6  │
+    /// │ mountain_level       │  0.6  ..=  0.8  │
+    /// │ snow_level           │  0.8  ..=  1.0  │
+    /// └──────────────────────┴─────────────────┘
+    /// </pre>
     WATER_WORLD,
     ///
-    /// # Low water world generation options
-    ///
-    ///     deep_water_level: -1.0..=-0.8,
-    ///     shallow_water_level: -0.8..=-0.6,
-    ///     sand_level: -0.6..=-0.3,
-    ///     grass_level: -0.3..=0.1,
-    ///     hill_level: 0.1..=0.4,
-    ///     mountain_level: 0.4..=0.7,
-    ///     snow_level: 0.7..=1.0,
-    ///
+    /// # Low water world generation option
+    /// <pre style="color: orange;">
+    /// ┌──────────────────────┬─────────────────┐
+    /// │     Parameter        │   Value Range   │
+    /// ├──────────────────────┼─────────────────┤
+    /// │ deep_water_level     │ -1.0  ..= -0.8  │
+    /// │ shallow_water_level  │ -0.8  ..= -0.6  │
+    /// │ sand_level           │ -0.6  ..= -0.3  │
+    /// │ grass_level          │ -0.3  ..=  0.1  │
+    /// │ hill_level           │  0.1  ..=  0.4  │
+    /// │ mountain_level       │  0.4  ..=  0.7  │
+    /// │ snow_level           │  0.7  ..=  1.0  │
+    /// └──────────────────────┴─────────────────┘
+    /// </pre>
     LOW_WATER_WORLD,
 }
 

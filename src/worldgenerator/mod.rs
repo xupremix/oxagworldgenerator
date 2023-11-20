@@ -18,14 +18,14 @@ use strum::IntoEnumIterator;
 #[derive(Debug)]
 pub struct OxAgWorldGenerator {
     size: usize,
-    seed: u32,
+    seed: u64,
     world_gen_options: OxAgWorldGenerationOptions,
     content_gen_options: HashMap<Content, OxAgContentOption>,
 }
 
 impl OxAgWorldGenerator {
     pub fn init() -> Self {
-        let seed = rand::thread_rng().gen::<u32>();
+        let seed = rand::thread_rng().gen::<u64>();
         Self {
             size: DEFAULT_WORLD_SIZE,
             seed,
@@ -33,7 +33,7 @@ impl OxAgWorldGenerator {
             content_gen_options: OxAgContentOption::new(seed),
         }
     }
-    pub fn new(seed: u32) -> Self {
+    pub fn new(seed: u64) -> Self {
         Self {
             size: DEFAULT_WORLD_SIZE,
             seed,
@@ -41,7 +41,7 @@ impl OxAgWorldGenerator {
             content_gen_options: OxAgContentOption::new(seed),
         }
     }
-    pub fn set_seed(mut self, seed: u32) -> Self {
+    pub fn set_seed(mut self, seed: u64) -> Self {
         self.seed = seed;
         self.world_gen_options = OxAgWorldGenerationOptions::new(seed);
         self.content_gen_options = OxAgContentOption::new(seed);
@@ -90,7 +90,7 @@ impl OxAgWorldGenerator {
     pub fn get_size(&self) -> usize {
         self.size
     }
-    pub fn get_seed(&self) -> u32 {
+    pub fn get_seed(&self) -> u64 {
         self.seed
     }
     pub fn get_world_gen_options(&self) -> &OxAgWorldGenerationOptions {

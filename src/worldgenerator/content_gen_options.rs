@@ -22,7 +22,7 @@ impl OxAgContentOption {
     pub fn is_valid(&self) -> bool {
         MAP_RANGE.contains(&self.spawn_level)
     }
-    pub fn new(seed: u32) -> HashMap<Content, Self> {
+    pub fn new(seed: u64) -> HashMap<Content, Self> {
         let mut rng = StdRng::seed_from_u64(seed as u64);
 
         Content::iter()
