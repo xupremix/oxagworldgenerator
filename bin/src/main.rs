@@ -28,7 +28,5 @@ fn main() {
         .unwrap()
         .gen_content_options_from_preset(OxAgContentGenerationPresets::DEFAULT);
 
-    println!("{:?}", other_gen.get_content_gen_options());
-
     // cool generation implementation using a functional approach
 }

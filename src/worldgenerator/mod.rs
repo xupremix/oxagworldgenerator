@@ -1,7 +1,7 @@
 pub mod content_gen_options;
 pub mod world_gen_options;
 
-use crate::utils::OxAgError::InvalidContentGenerationOption;
+use crate::utils::OxAgError::{ContentOptionNotSet, InvalidContentGenerationOption};
 use crate::utils::{OxAgError, DEFAULT_WORLD_SIZE};
 use crate::worldgenerator::content_gen_options::{OxAgContentGenerationPresets, OxAgContentOption};
 use crate::worldgenerator::world_gen_options::{
@@ -73,7 +73,7 @@ impl OxAgWorldGenerator {
                         return Err(InvalidContentGenerationOption(content));
                     }
                 }
-                None => return Err(InvalidContentGenerationOption(content)),
+                None => return Err(ContentOptionNotSet(content)),
             }
         }
         self.content_gen_options = content_gen_options;

@@ -22,14 +22,14 @@ impl OxAgContentOption {
     pub fn is_valid(&self) -> bool {
         MAP_RANGE.contains(&self.spawn_level)
     }
-    pub fn new(seed: u32) -> HashMap<Content, OxAgContentOption> {
+    pub fn new(seed: u32) -> HashMap<Content, Self> {
         let mut rng = StdRng::seed_from_u64(seed as u64);
 
         Content::iter()
             .map(|content: Content| {
                 (
                     content,
-                    OxAgContentOption {
+                    Self {
                         in_batches: rng.gen_bool(IN_BATCH_PROBABILITY),
                         present: rng.gen_bool(PRESENT_PROBABILITY),
                         min_spawn_number: DEFAULT_MIN_SPAWN_NUMBER,
@@ -37,11 +37,9 @@ impl OxAgContentOption {
                     },
                 )
             })
-            .collect::<HashMap<Content, OxAgContentOption>>()
+            .collect::<HashMap<Content, Self>>()
     }
-    pub fn from_preset(
-        preset: OxAgContentGenerationPresets,
-    ) -> HashMap<Content, OxAgContentOption> {
+    pub fn from_preset(preset: OxAgContentGenerationPresets) -> HashMap<Content, Self> {
         match preset {
             OxAgContentGenerationPresets::DEFAULT => presets::DEFAULT(),
         }
