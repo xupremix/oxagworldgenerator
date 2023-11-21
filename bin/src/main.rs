@@ -7,6 +7,8 @@ use lib_oxidizing_agents::worldgenerator::world_gen_options::{
 };
 use lib_oxidizing_agents::worldgenerator::OxAgWorldGenerator;
 use robotics_lib;
+use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
+use robotics_lib::world::environmental_conditions::WeatherType::Sunny;
 use robotics_lib::world::tile::Content;
 
 fn main() {
@@ -25,5 +27,4 @@ fn main() {
             },
         )
         .unwrap();
-    println!("{:?}", generator.get_content_gen_options());
 }

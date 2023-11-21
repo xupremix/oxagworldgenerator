@@ -7,12 +7,18 @@ use crate::worldgenerator::content_gen_options::{OxAgContentGenerationPresets, O
 use crate::worldgenerator::world_gen_options::{
     OxAgWorldGenerationOptions, OxAgWorldGenerationPresets,
 };
+use rand::prelude::StdRng;
 use rand::Rng;
+use rand::SeedableRng;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
+use robotics_lib::world::environmental_conditions::WeatherType::{
+    Foggy, Rainy, Sunny, TrentinoWinter, TropicalMonsoon,
+};
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
 use std::collections::HashMap;
 use std::hash::Hash;
+use std::ops::Range;
 use strum::IntoEnumIterator;
 
 #[derive(Debug, Clone)]
@@ -21,17 +27,12 @@ pub struct OxAgWorldGenerator {
     seed: u64,
     world_gen_options: OxAgWorldGenerationOptions,
     content_gen_options: HashMap<Content, OxAgContentOption>,
+    weather_gen_options: EnvironmentalConditions,
 }
 
 impl OxAgWorldGenerator {
     pub fn init() -> Self {
-        let seed = rand::thread_rng().gen::<u64>();
-        Self {
-            size: DEFAULT_WORLD_SIZE,
-            seed,
-            world_gen_options: OxAgWorldGenerationOptions::new(seed),
-            content_gen_options: OxAgContentOption::new(seed),
-        }
+        Self::new(rand::thread_rng().gen::<u64>())
     }
     pub fn new(seed: u64) -> Self {
         Self {
@@ -39,12 +40,14 @@ impl OxAgWorldGenerator {
             seed,
             world_gen_options: OxAgWorldGenerationOptions::new(seed),
             content_gen_options: OxAgContentOption::new(seed),
+            weather_gen_options: OxAgWorldGenerator::gen_environmental_conditions(seed),
         }
     }
     pub fn set_seed(mut self, seed: u64) -> Self {
         self.seed = seed;
         self.world_gen_options = OxAgWorldGenerationOptions::new(seed);
         self.content_gen_options = OxAgContentOption::new(seed);
+        self.weather_gen_options = OxAgWorldGenerator::gen_environmental_conditions(seed);
         self
     }
     pub fn set_size(mut self, size: usize) -> Self {
@@ -116,6 +119,34 @@ impl OxAgWorldGenerator {
                 .insert(default_from(content), content_gen_option);
             Some(self)
         }
+    }
+    pub fn set_environmental_conditions(
+        mut self,
+        weather_gen_options: EnvironmentalConditions,
+    ) -> Self {
+        self.weather_gen_options = weather_gen_options;
+        self
+    }
+    fn gen_environmental_conditions(seed: u64) -> EnvironmentalConditions {
+        let mut rng = StdRng::seed_from_u64(seed);
+        let number = rng.gen::<u8>();
+        let mut vec = vec![];
+        for _ in 0..=number {
+            vec.push(match rng.gen_range::<u8, Range<u8>>(0..4) {
+                0 => Sunny,
+                1 => Rainy,
+                2 => Foggy,
+                3 => TropicalMonsoon,
+                4 => TrentinoWinter,
+                _ => Sunny,
+            });
+        }
+        // TODO implement EnumIter in WeatherType
+
+        EnvironmentalConditions::new(&vec, rng.gen::<u8>(), rng.gen::<u8>())
+    }
+    pub fn get_weather_gen_options(&self) -> &EnvironmentalConditions {
+        &self.weather_gen_options
     }
 }
 
