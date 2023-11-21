@@ -2,7 +2,7 @@ pub mod content_gen_options;
 pub mod world_gen_options;
 
 use crate::utils::OxAgError::{ContentOptionNotSet, InvalidContentGenerationOption};
-use crate::utils::{OxAgError, DEFAULT_WORLD_SIZE};
+use crate::utils::{default_from, OxAgError, DEFAULT_WORLD_SIZE};
 use crate::worldgenerator::content_gen_options::{OxAgContentGenerationPresets, OxAgContentOption};
 use crate::worldgenerator::world_gen_options::{
     OxAgWorldGenerationOptions, OxAgWorldGenerationPresets,
@@ -15,7 +15,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use strum::IntoEnumIterator;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct OxAgWorldGenerator {
     size: usize,
     seed: u64,
@@ -64,16 +64,21 @@ impl OxAgWorldGenerator {
     }
     pub fn set_content_gen_options(
         mut self,
-        content_gen_options: HashMap<Content, OxAgContentOption>,
+        mut content_gen_options: HashMap<Content, OxAgContentOption>,
     ) -> Result<Self, OxAgError> {
         for content in Content::iter() {
-            match content_gen_options.get(&content) {
-                Some(content_option) => {
-                    if !content_option.is_valid() {
-                        return Err(InvalidContentGenerationOption(content));
-                    }
+            match &content {
+                Content::None => {
+                    let _ = content_gen_options.remove(&content);
                 }
-                None => return Err(ContentOptionNotSet(content)),
+                other => match content_gen_options.get(&content) {
+                    Some(content_option) => {
+                        if !content_option.is_valid() {
+                            return Err(InvalidContentGenerationOption(content));
+                        }
+                    }
+                    None => return Err(ContentOptionNotSet(content)),
+                },
             }
         }
         self.content_gen_options = content_gen_options;
@@ -98,6 +103,19 @@ impl OxAgWorldGenerator {
     }
     pub fn get_content_gen_options(&self) -> &HashMap<Content, OxAgContentOption> {
         &self.content_gen_options
+    }
+    pub fn alter_content_gen_options(
+        mut self,
+        content: Content,
+        content_gen_option: OxAgContentOption,
+    ) -> Option<Self> {
+        if !content_gen_option.is_valid() || content == Content::None {
+            None
+        } else {
+            self.content_gen_options
+                .insert(default_from(content), content_gen_option);
+            Some(self)
+        }
     }
 }
 

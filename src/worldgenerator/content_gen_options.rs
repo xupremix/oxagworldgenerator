@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::ops::RangeInclusive;
 use strum::IntoEnumIterator;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct OxAgContentOption {
     pub in_batches: bool,
     pub present: bool,
@@ -23,21 +23,22 @@ impl OxAgContentOption {
         MAP_RANGE.contains(&self.spawn_level)
     }
     pub fn new(seed: u64) -> HashMap<Content, Self> {
-        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let mut rng = StdRng::seed_from_u64(seed);
 
         Content::iter()
-            .map(|content: Content| {
-                (
-                    content,
+            .filter_map(|content: Content| match content {
+                Content::None => None,
+                other => Some((
+                    other,
                     Self {
                         in_batches: rng.gen_bool(IN_BATCH_PROBABILITY),
                         present: rng.gen_bool(PRESENT_PROBABILITY),
                         min_spawn_number: DEFAULT_MIN_SPAWN_NUMBER,
                         spawn_level: rng.gen_range(MAP_RANGE),
                     },
-                )
+                )),
             })
-            .collect::<HashMap<Content, Self>>()
+            .collect()
     }
     pub fn from_preset(preset: OxAgContentGenerationPresets) -> HashMap<Content, Self> {
         match preset {
@@ -57,8 +58,89 @@ pub(crate) mod presets {
     use std::collections::HashMap;
 
     pub const DEFAULT: fn() -> HashMap<Content, OxAgContentOption> = || {
-        // implementation
-        HashMap::new()
+        HashMap::from([
+            (
+                Content::Rock(0),
+                OxAgContentOption {
+                    in_batches: true,
+                    present: true,
+                    min_spawn_number: 2,
+                    spawn_level: 0.5,
+                },
+            ),
+            (
+                Content::Tree(0),
+                OxAgContentOption {
+                    in_batches: false,
+                    present: true,
+                    min_spawn_number: 3,
+                    spawn_level: 0.8,
+                },
+            ),
+            (
+                Content::Garbage(0),
+                OxAgContentOption {
+                    in_batches: true,
+                    present: true,
+                    min_spawn_number: 2,
+                    spawn_level: 0.3,
+                },
+            ),
+            (
+                Content::Fire,
+                OxAgContentOption {
+                    in_batches: true,
+                    present: true,
+                    min_spawn_number: 1,
+                    spawn_level: 0.9,
+                },
+            ),
+            (
+                Content::Coin(0),
+                OxAgContentOption {
+                    in_batches: false,
+                    present: true,
+                    min_spawn_number: 2,
+                    spawn_level: 0.6,
+                },
+            ),
+            (
+                Content::Bin(0..0),
+                OxAgContentOption {
+                    in_batches: false,
+                    present: true,
+                    min_spawn_number: 1,
+                    spawn_level: 0.99,
+                },
+            ),
+            (
+                Content::Crate(0..0),
+                OxAgContentOption {
+                    in_batches: false,
+                    present: true,
+                    min_spawn_number: 1,
+                    spawn_level: 0.99,
+                },
+            ),
+            (
+                Content::Bank(0..0),
+                OxAgContentOption {
+                    in_batches: false,
+                    present: true,
+                    min_spawn_number: 1,
+                    spawn_level: 0.99,
+                },
+            ),
+            (
+                Content::Water(0),
+                OxAgContentOption {
+                    in_batches: true,
+                    present: true,
+                    min_spawn_number: 4,
+                    spawn_level: 0.5,
+                },
+            ),
+        ])
     };
 }
 

@@ -5,7 +5,7 @@ use rand::SeedableRng;
 use robotics_lib::world::tile::TileType;
 use std::ops::RangeInclusive;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct OxAgWorldGenerationOptions {
     pub deep_water_level: RangeInclusive<f64>,
     pub shallow_water_level: RangeInclusive<f64>,
@@ -19,7 +19,7 @@ pub struct OxAgWorldGenerationOptions {
 
 impl OxAgWorldGenerationOptions {
     pub fn new(seed: u64) -> Self {
-        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let mut rng = StdRng::seed_from_u64(seed);
 
         let dw_end = rng.gen_range(MAP_RANGE);
         let sw_end = rng.gen_range(dw_end..=1.0);
@@ -62,8 +62,8 @@ impl OxAgWorldGenerationOptions {
     pub fn from_preset(preset: OxAgWorldGenerationPresets) -> Self {
         match preset {
             OxAgWorldGenerationPresets::DEFAULT => presets::DEFAULT,
-            OxAgWorldGenerationPresets::WATER_WORLD => presets::WATER_WORLD,
-            OxAgWorldGenerationPresets::LOW_WATER_WORLD => presets::LOW_WATER_WORLD,
+            OxAgWorldGenerationPresets::WATERWORLD => presets::WATER_WORLD,
+            OxAgWorldGenerationPresets::LOWWATERWORLD => presets::LOW_WATER_WORLD,
         }
     }
 }
@@ -87,9 +87,10 @@ impl OxAgWorldGenerationOptions {
 ///
 /// # Entries
 /// - [DEFAULT](enum.OxAgWorldGenerationPresets.html#variant.DEFAULT)
-/// - [WATER_WORLD](enum.OxAgWorldGenerationPresets.html#variant.WATER_WORLD)
-/// - [LOW_WATER_WORLD](enum.OxAgWorldGenerationPresets.html#variant.LOW_WATER_WORLD)
+/// - [WATERWORLD](enum.OxAgWorldGenerationPresets.html#variant.WATERWORLD)
+/// - [LOWWATERWORLD](enum.OxAgWorldGenerationPresets.html#variant.LOWWATERWORLD)
 ///
+#[derive(Copy, Clone, Debug)]
 pub enum OxAgWorldGenerationPresets {
     /// # Default world generation option
     /// <pre style="color: orange;">
@@ -105,6 +106,7 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.75 ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
+    /// [`PRESETS`](OxAgWorldGenerationPresets)
     DEFAULT,
     ///
     /// # Water world generation option
@@ -121,7 +123,8 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.8  ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
-    WATER_WORLD,
+    /// [`PRESETS`](OxAgWorldGenerationPresets)
+    WATERWORLD,
     ///
     /// # Low water world generation option
     /// <pre style="color: orange;">
@@ -137,7 +140,8 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.7  ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
-    LOW_WATER_WORLD,
+    /// [`PRESETS`](OxAgWorldGenerationPresets)
+    LOWWATERWORLD,
 }
 
 pub(crate) mod presets {
