@@ -2,11 +2,16 @@ pub mod content_gen_options;
 pub mod world_gen_options;
 
 use crate::utils::OxAgError::{ContentOptionNotSet, InvalidContentGenerationOption};
-use crate::utils::{default_from, OxAgError, DEFAULT_WORLD_SIZE};
+use crate::utils::{
+    default_from, OxAgError, DEFAULT_NOISE_FREQUENCY, DEFAULT_NOISE_LACUNARITY,
+    DEFAULT_NOISE_OCTAVES, DEFAULT_NOISE_PERSISTANCE, DEFAULT_WORLD_SIZE,
+};
 use crate::worldgenerator::content_gen_options::{OxAgContentGenerationPresets, OxAgContentOption};
 use crate::worldgenerator::world_gen_options::{
     OxAgWorldGenerationOptions, OxAgWorldGenerationPresets,
 };
+use noise::utils::PlaneMapBuilder;
+use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
@@ -14,7 +19,7 @@ use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::environmental_conditions::WeatherType::{
     Foggy, Rainy, Sunny, TrentinoWinter, TropicalMonsoon,
 };
-use robotics_lib::world::tile::{Content, Tile};
+use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::worldgenerator::Generator;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -148,10 +153,67 @@ impl OxAgWorldGenerator {
     pub fn get_weather_gen_options(&self) -> &EnvironmentalConditions {
         &self.weather_gen_options
     }
+    pub fn call_build(&self) -> Vec<Vec<f64>> {
+        self.build()
+    }
+    pub(crate) fn build(&self) -> Vec<Vec<f64>> {
+        // map init
+        let mut map = vec![vec![0.0; self.size]; self.size];
+
+        // perlin init
+        let fbm_perlin = Fbm::<Perlin>::new(self.seed as u32)
+            .set_octaves(DEFAULT_NOISE_OCTAVES)
+            .set_frequency(DEFAULT_NOISE_FREQUENCY)
+            .set_lacunarity(DEFAULT_NOISE_LACUNARITY)
+            .set_persistence(DEFAULT_NOISE_PERSISTANCE);
+
+        for y in 0..self.size {
+            for x in 0..self.size {
+                // initialization
+                let (mut nx, mut ny) = (
+                    x as f64 / self.size as f64 - 0.5,
+                    y as f64 / self.size as f64 - 0.5,
+                );
+
+                // nx and ny frequency
+                // let (nx_freq, ny_freq) = (2.5, 2.5);
+                // nx *= nx_freq;
+                // ny *= ny_freq;
+
+                // map[y][x] = 1.0 * fbm_perlin.get([1.0 * nx, 1.0 * ny])
+                //     + 0.5 * fbm_perlin.get([2.0 * nx, 2.0 * ny])
+                //     + 0.25 * fbm_perlin.get([4.0 * nx, 4.0 * ny])
+                //     + 0.125 * fbm_perlin.get([8.0 * nx, 8.0 * ny]);
+
+                map[y][x] = fbm_perlin.get([nx, ny]);
+            }
+        }
+        map
+        /*fn main() {
+            let value: f64 = 5.5;
+
+            match value {
+                x if (0.0..=1.0).contains(&x) => {
+                    println!("Value is between 0.0 and 1.0");
+                }
+                x if (1.0..=5.0).contains(&x) => {
+                    println!("Value is between 1.0 and 5.0");
+                }
+                x if (5.0..=10.0).contains(&x) => {
+                    println!("Value is between 5.0 and 10.0");
+                }
+                _ => {
+                    println!("Value is not in any specified range");
+                }
+            }
+        }
+        */
+    }
 }
 
 impl Generator for OxAgWorldGenerator {
     fn new(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions) {
+        let f64map = self.build();
         todo!()
     }
 }

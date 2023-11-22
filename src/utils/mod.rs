@@ -16,6 +16,7 @@ pub const DEFAULT_NOISE_Y: usize = 256;
 pub const DEFAULT_NOISE_SEAMLESS: bool = true;
 pub const DEFAULT_NOISE_XY_BOUND1: f64 = -1.0;
 pub const DEFAULT_NOISE_XY_BOUND2: f64 = 1.0;
+
 pub const DEFAULT_NOISE_FREQUENCY: f64 = 2.5;
 pub const DEFAULT_NOISE_LACUNARITY: f64 = 2.0;
 pub const DEFAULT_NOISE_PERSISTANCE: f64 = 0.6;
