@@ -8,6 +8,16 @@ use lib_oxidizing_agents;
 use lib_oxidizing_agents::utils::{gen_seed, OxAgError};
 use lib_oxidizing_agents::worldgenerator::OxAgWorldGeneratorBuilder;
 
+use fltk;
+use fltk::enums::ColorDepth;
+use fltk::group::PackType;
+use fltk::image::RgbImage;
+use fltk::prelude::GroupExt;
+use fltk::prelude::ImageExt;
+use fltk::prelude::WidgetBase;
+use fltk::prelude::WidgetExt;
+use fltk::{app, enums::Color, frame::Frame, group::Pack, window::Window};
+
 fn main() {
     let size = 256;
     let seed = gen_seed();
@@ -15,33 +25,36 @@ fn main() {
 
     let tmp = generator.gen_map();
 
-    let mut file = File::create("src/executables/data.py").unwrap();
-
-    println!("Finished building the map, now writing to file ... ");
-
-    file.write("table = [\n".as_bytes());
-    tmp.iter().enumerate().for_each(|(i, row)| {
-        file.write("[".as_bytes());
-        row.iter().enumerate().for_each(|(j, elem)| {
-            file.write(format!("{:.5}, ", elem).as_bytes());
-        });
-        file.write("], \n".as_bytes());
+    let app = app::App::default();
+    let mut wind = Window::default().with_size(size as i32, size as i32);
+    let mut frame = Frame::default_fill();
+    wind.make_resizable(true);
+    wind.end();
+    wind.show();
+    frame.draw(move |f| {
+        let mut fb: Vec<u8> = vec![0u8; (f.w() * f.h() * 4) as usize];
+        for (iter, pixel) in fb.chunks_exact_mut(4).enumerate() {
+            let x = iter % f.w() as usize;
+            let y = iter / f.w() as usize;
+            let color = match tmp[x][y] {
+                (-2.0..=-0.6) => Color::from_hex_str("#042B90"),
+                (-0.6..=-0.4) => Color::from_hex_str("#08A5F3"),
+                (-0.4..=-0.2) => Color::from_hex_str("#F3CE08"),
+                (-0.2..=0.4) => Color::from_hex_str("#57FF43"),
+                (0.4..=0.7) => Color::from_hex_str("#DC970D"),
+                (0.7..=1.2) => Color::from_hex_str("#6F482A"),
+                (1.2..=2.0) => Color::from_hex_str("#FFFFFF"),
+                _ => Color::from_hex_str("#000000"),
+            };
+            let color = color.unwrap().to_rgb();
+            pixel.copy_from_slice(&[color.0, color.1, color.2, 255]);
+        }
+        let mut image = RgbImage::new(&fb, f.w(), f.h(), ColorDepth::Rgba8)
+            .unwrap()
+            .to_srgb_image()
+            .unwrap();
+        image.draw(f.x(), f.y(), f.width(), f.height());
     });
-    file.write("]\n".as_bytes());
 
-    println!("Finished writing to file, now running the python script ... ");
-    let python_script = "src/executables/displayer.py";
-    let output = Command::new("python")
-        .arg(python_script)
-        .output()
-        .expect("Failed to execute command");
-    if output.status.success() {
-        // Get the output as a string
-        let output_str = String::from_utf8_lossy(&output.stdout);
-        println!("Python script output:\n{}", output_str);
-    } else {
-        // Print any error message if the command failed
-        let error_str = String::from_utf8_lossy(&output.stderr);
-        eprintln!("Error executing Python script:\n{}", error_str);
-    }
+    app.run().unwrap();
 }
