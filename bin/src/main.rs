@@ -19,7 +19,7 @@ use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, group::Pack, window::Window};
 
 fn main() {
-    let size = 256;
+    let size = 512;
     let seed = gen_seed();
     let generator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
 
@@ -40,8 +40,8 @@ fn main() {
                 (-2.0..=-0.6) => Color::from_hex_str("#042B90"),
                 (-0.6..=-0.4) => Color::from_hex_str("#08A5F3"),
                 (-0.4..=-0.2) => Color::from_hex_str("#F3CE08"),
-                (-0.2..=0.4) => Color::from_hex_str("#57FF43"),
-                (0.4..=0.7) => Color::from_hex_str("#DC970D"),
+                (-0.2..=0.25) => Color::from_hex_str("#57FF43"),
+                (0.25..=0.7) => Color::from_hex_str("#DC970D"),
                 (0.7..=1.2) => Color::from_hex_str("#6F482A"),
                 (1.2..=2.0) => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
