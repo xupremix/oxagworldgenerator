@@ -1,6 +1,3 @@
-use noise::utils::{NoiseMapBuilder, PlaneMapBuilder};
-use noise::{Add, Fbm, Perlin};
-
 // pub(crate) fn single_perlin_example() {
 //     let fbm = Fbm::<Perlin>::new(SEED)
 //         .set_frequency(FREQUENCY)

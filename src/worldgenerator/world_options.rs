@@ -1,9 +1,11 @@
-use crate::utils::{contains, MAP_RANGE};
+use std::ops::RangeInclusive;
+
 use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
-use robotics_lib::world::tile::TileType;
-use std::ops::RangeInclusive;
+
+use crate::utils::OxAgError::{RangesAreOutOfBounds, WrongLowerBound, WrongUpperBound};
+use crate::utils::{contains, OxAgError, MAP_RANGE};
 
 #[derive(Debug, Clone)]
 pub struct OxAgWorldGenerationOptions {
@@ -38,26 +40,29 @@ impl OxAgWorldGenerationOptions {
             snow_level: mt_end..=1.0,
         }
     }
-    pub fn is_valid(&self) -> bool {
-        self.deep_water_level.start() <= self.deep_water_level.end()
-            && self.shallow_water_level.start() <= self.shallow_water_level.end()
-            && self.sand_level.start() <= self.sand_level.end()
-            && self.grass_level.start() <= self.grass_level.end()
-            && self.hill_level.start() <= self.hill_level.end()
-            && self.mountain_level.start() <= self.mountain_level.end()
-            && self.snow_level.start() <= self.snow_level.end()
-            && self.deep_water_level.end() <= self.shallow_water_level.start()
-            && self.shallow_water_level.end() <= self.sand_level.start()
-            && self.grass_level.end() <= self.hill_level.start()
-            && self.hill_level.end() <= self.mountain_level.start()
-            && self.mountain_level.end() <= self.snow_level.start()
-            && contains(&MAP_RANGE, &self.deep_water_level)
-            && contains(&MAP_RANGE, &self.shallow_water_level)
-            && contains(&MAP_RANGE, &self.sand_level)
-            && contains(&MAP_RANGE, &self.grass_level)
-            && contains(&MAP_RANGE, &self.hill_level)
-            && contains(&MAP_RANGE, &self.mountain_level)
-            && contains(&MAP_RANGE, &self.snow_level)
+    pub fn validate(&self) -> Result<(), OxAgError> {
+        let levels = [
+            &self.deep_water_level,
+            &self.shallow_water_level,
+            &self.sand_level,
+            &self.grass_level,
+            &self.hill_level,
+            &self.mountain_level,
+            &self.snow_level,
+        ];
+        // at least one with start = -1.0
+        if !levels.iter().any(|l| *l.start() == -1.0) {
+            Err(WrongLowerBound)?
+        }
+        // at least one with end = 1.0
+        if !levels.iter().any(|l| *l.end() == 1.0) {
+            Err(WrongUpperBound)?
+        }
+        // all must be between -1.0 and 1.0        }
+        if levels.iter().any(|l| !contains(&MAP_RANGE, l)) {
+            Err(RangesAreOutOfBounds)?
+        }
+        Ok(())
     }
     pub fn from_preset(preset: OxAgWorldGenerationPresets) -> Self {
         match preset {
@@ -145,7 +150,7 @@ pub enum OxAgWorldGenerationPresets {
 }
 
 pub(crate) mod presets {
-    use crate::worldgenerator::world_gen_options::OxAgWorldGenerationOptions;
+    use crate::worldgenerator::world_options::OxAgWorldGenerationOptions;
 
     pub const DEFAULT: OxAgWorldGenerationOptions = OxAgWorldGenerationOptions {
         deep_water_level: -1.0..=-0.75,

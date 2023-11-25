@@ -1,8 +1,10 @@
 # import cv2
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, BoundaryNorm, ListedColormap
 import numpy as np
+from matplotlib.colors import BoundaryNorm, ListedColormap
+
 from data import table
+
 # Assuming you have a matrix of float values within the range [-1.0, 1.0]
 # For demonstration, creating a 5x5 matrix with random float values
 float_matrix = np.array(table, dtype=np.float64)

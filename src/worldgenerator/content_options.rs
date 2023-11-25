@@ -1,14 +1,16 @@
-use crate::utils::{
-    DEFAULT_MIN_SPAWN_NUMBER, IN_BATCH_PROBABILITY, MAP_RANGE, PRESENT_PROBABILITY,
-};
-use crate::worldgenerator::world_gen_options::OxAgWorldGenerationPresets;
+use std::collections::HashMap;
+
 use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
+use robotics_lib::utils::LibError::WrongContentUsed;
 use robotics_lib::world::tile::Content;
-use std::collections::HashMap;
-use std::ops::RangeInclusive;
 use strum::IntoEnumIterator;
+
+use crate::utils::OxAgError::InvalidSpawnLevel;
+use crate::utils::{
+    OxAgError, DEFAULT_MIN_SPAWN_NUMBER, IN_BATCH_PROBABILITY, MAP_RANGE, PRESENT_PROBABILITY,
+};
 
 #[derive(Debug, Copy, Clone)]
 pub struct OxAgContentOption {
@@ -18,9 +20,24 @@ pub struct OxAgContentOption {
     pub spawn_level: f64,
 }
 
+impl Default for OxAgContentOption {
+    fn default() -> Self {
+        Self {
+            in_batches: false,
+            present: false,
+            min_spawn_number: 0,
+            spawn_level: 0.0,
+        }
+    }
+}
+
 impl OxAgContentOption {
-    pub fn is_valid(&self) -> bool {
-        MAP_RANGE.contains(&self.spawn_level)
+    pub fn validate(&self, content: &Content) -> Result<(), OxAgError> {
+        MAP_RANGE
+            .contains(&self.spawn_level)
+            .then_some(())
+            .ok_or(InvalidSpawnLevel(content.clone()))?;
+        Ok(())
     }
     pub fn new(seed: u64) -> HashMap<Content, Self> {
         let mut rng = StdRng::seed_from_u64(seed);
@@ -53,9 +70,11 @@ pub enum OxAgContentGenerationPresets {
 }
 
 pub(crate) mod presets {
-    use crate::worldgenerator::content_gen_options::OxAgContentOption;
-    use robotics_lib::world::tile::Content;
     use std::collections::HashMap;
+
+    use robotics_lib::world::tile::Content;
+
+    use crate::worldgenerator::content_options::OxAgContentOption;
 
     pub const DEFAULT: fn() -> HashMap<Content, OxAgContentOption> = || {
         HashMap::from([

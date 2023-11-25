@@ -1,39 +1,19 @@
-use lib_oxidizing_agents;
-use lib_oxidizing_agents::worldgenerator::content_gen_options::{
-    OxAgContentGenerationPresets, OxAgContentOption,
-};
-use lib_oxidizing_agents::worldgenerator::world_gen_options::{
-    OxAgWorldGenerationOptions, OxAgWorldGenerationPresets,
-};
-use lib_oxidizing_agents::worldgenerator::OxAgWorldGenerator;
-use robotics_lib;
-use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
-use robotics_lib::world::environmental_conditions::WeatherType::Sunny;
-use robotics_lib::world::tile::Content;
-use std::error::Error;
-use std::fmt::format;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;
 
-fn main() {
-    let size = 512;
-    let seed = 46;
-    let generator = OxAgWorldGenerator::new(seed)
-        .set_size(size)
-        .gen_world_options_from_preset(OxAgWorldGenerationPresets::DEFAULT)
-        .alter_content_gen_options(
-            Content::Tree(0),
-            OxAgContentOption {
-                in_batches: false,
-                present: false,
-                min_spawn_number: 0,
-                spawn_level: 0.0,
-            },
-        )
-        .unwrap();
+use robotics_lib;
 
-    let tmp = generator.call_build();
+use lib_oxidizing_agents;
+use lib_oxidizing_agents::utils::{gen_seed, OxAgError};
+use lib_oxidizing_agents::worldgenerator::OxAgWorldGeneratorBuilder;
+
+fn main() {
+    let size = 256;
+    let seed = gen_seed();
+    let generator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
+
+    let tmp = generator.gen_map();
 
     let mut file = File::create("src/executables/data.py").unwrap();
 
