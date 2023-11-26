@@ -6,7 +6,7 @@ use robotics_lib;
 
 use lib_oxidizing_agents;
 use lib_oxidizing_agents::utils::{gen_seed, OxAgError};
-use lib_oxidizing_agents::worldgenerator::OxAgWorldGeneratorBuilder;
+use lib_oxidizing_agents::world_generator::OxAgWorldGeneratorBuilder;
 
 use fltk;
 use fltk::enums::ColorDepth;
@@ -17,13 +17,16 @@ use fltk::prelude::ImageExt;
 use fltk::prelude::WidgetBase;
 use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, group::Pack, window::Window};
+use lib_oxidizing_agents::world_generator::world_generator::OxAgWorldGenerator;
+use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 
 fn main() {
     let size = 512;
     let seed = gen_seed();
-    let generator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
+    let generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
 
-    let tmp = generator.gen_map();
+    let tmp = generator.generateTileMatrix();
+
 
     let app = app::App::default();
     let mut wind = Window::default().with_size(size as i32, size as i32);
