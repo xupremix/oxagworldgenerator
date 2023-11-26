@@ -6,7 +6,7 @@ use strum::IntoEnumIterator;
 use crate::utils::errors::OxAgError;
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
 use crate::world_generator::utilities::{generate_random_seed, generate_random_world_size};
-use crate::world_generator::world_generator::OxAgWorldGenerator;
+use crate::world_generator::OxAgWorldGenerator;
 
 use super::environmental_condition_options::{
     OxAgEnvironmentalConditions, OxAgEnvironmentalConditionsPresets,

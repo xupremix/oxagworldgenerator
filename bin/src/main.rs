@@ -15,8 +15,8 @@ use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, group::Pack, window::Window};
 use lib_oxidizing_agents;
 use lib_oxidizing_agents::world_generator::utilities::generate_random_seed;
-use lib_oxidizing_agents::world_generator::world_generator::OxAgWorldGenerator;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::worldgenerator::Generator;
 
 fn main() {
