@@ -21,7 +21,7 @@ use lib_oxidizing_agents::world_generator::world_generator::OxAgWorldGenerator;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 
 fn main() {
-    let size = 512;
+    let size: usize = 512;
     let seed = gen_seed();
     let generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
 
