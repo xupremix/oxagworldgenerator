@@ -3,10 +3,8 @@ name = "bin"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-robotics_lib = {path = "../../Robotic-Lib"}
+robotics_lib = {path = "../../../Advanced-Programming-2023/Robotic-Lib"}
 lib_oxidizing_agents = {path = "../"}
 noise = "0.8.2"
 rand = "0.8.5"

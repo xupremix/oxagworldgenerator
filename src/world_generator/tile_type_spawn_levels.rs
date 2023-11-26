@@ -4,11 +4,15 @@ use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
 
-use crate::utils::OxAgError::{RangesAreOutOfBounds, WrongLowerBound, WrongUpperBound};
-use crate::utils::{contains, OxAgError, MAP_RANGE};
+use crate::utils::errors::OxAgError;
+use crate::world_generator::constants::*;
 
+use super::utilities::contains;
+
+/// Levels that will determine the spawn of the different tile types.
+/// TODO: Examples
 #[derive(Debug, Clone)]
-pub struct OxAgWorldGenerationOptions {
+pub struct OxAgTileTypeSpawnLevels {
     pub deep_water_level: RangeInclusive<f64>,
     pub shallow_water_level: RangeInclusive<f64>,
     pub sand_level: RangeInclusive<f64>,
@@ -16,14 +20,15 @@ pub struct OxAgWorldGenerationOptions {
     pub hill_level: RangeInclusive<f64>,
     pub mountain_level: RangeInclusive<f64>,
     pub snow_level: RangeInclusive<f64>,
-    // other implementation for street and lava tiles
+    // TODO: lava & street tiles?
 }
 
-impl OxAgWorldGenerationOptions {
-    pub fn new(seed: u64) -> Self {
+impl OxAgTileTypeSpawnLevels {
+    /// Calculates the spawn levels via a given `seed`.
+    pub fn new_from_seed(seed: u64) -> Self {
         let mut rng = StdRng::seed_from_u64(seed);
 
-        let dw_end = rng.gen_range(MAP_RANGE);
+        let dw_end = rng.gen_range(DEFAULT_SPAWN_RANGE_BOUNDS);
         let sw_end = rng.gen_range(dw_end..=1.0);
         let sd_end = rng.gen_range(sw_end..=1.0);
         let gr_end = rng.gen_range(sd_end..=1.0);
@@ -40,6 +45,10 @@ impl OxAgWorldGenerationOptions {
             snow_level: mt_end..=1.0,
         }
     }
+    
+    /// Validates this spawn levels to make sure they are within bounds.
+    ///
+    /// Returns a [OxAgError] [Result] if validation fails.
     pub fn validate(&self) -> Result<(), OxAgError> {
         let levels = [
             &self.deep_water_level,
@@ -52,23 +61,28 @@ impl OxAgWorldGenerationOptions {
         ];
         // at least one with start = -1.0
         if !levels.iter().any(|l| *l.start() == -1.0) {
-            Err(WrongLowerBound)?
+            Err(OxAgError::WrongLowerBound)?
         }
+        
         // at least one with end = 1.0
         if !levels.iter().any(|l| *l.end() == 1.0) {
-            Err(WrongUpperBound)?
+            Err(OxAgError::WrongUpperBound)?
         }
+        
         // all must be between -1.0 and 1.0        }
-        if levels.iter().any(|l| !contains(&MAP_RANGE, l)) {
-            Err(RangesAreOutOfBounds)?
+        if levels.iter().any(|l| !contains(&DEFAULT_SPAWN_RANGE_BOUNDS, l)) {
+            Err(OxAgError::RangesAreOutOfBounds)?
         }
+        
         Ok(())
     }
-    pub fn from_preset(preset: OxAgWorldGenerationPresets) -> Self {
+    
+    /// Returns a [OxAgTileTypeSpawnLevels] from a given `preset`
+    pub fn from_preset(preset: OxAgTileTypeSpawnLevelPresets) -> Self {
         match preset {
-            OxAgWorldGenerationPresets::DEFAULT => presets::DEFAULT,
-            OxAgWorldGenerationPresets::WATERWORLD => presets::WATER_WORLD,
-            OxAgWorldGenerationPresets::LOWWATERWORLD => presets::LOW_WATER_WORLD,
+            OxAgTileTypeSpawnLevelPresets::DEFAULT => presets::DEFAULT,
+            OxAgTileTypeSpawnLevelPresets::WATERWORLD => presets::WATER_WORLD,
+            OxAgTileTypeSpawnLevelPresets::LOWWATERWORLD => presets::LOW_WATER_WORLD,
         }
     }
 }
@@ -91,13 +105,13 @@ impl OxAgWorldGenerationOptions {
 /// </pre>
 ///
 /// # Entries
-/// - [DEFAULT](enum.OxAgWorldGenerationPresets.html#variant.DEFAULT)
-/// - [WATERWORLD](enum.OxAgWorldGenerationPresets.html#variant.WATERWORLD)
-/// - [LOWWATERWORLD](enum.OxAgWorldGenerationPresets.html#variant.LOWWATERWORLD)
+/// - [DEFAULT](enum.OxAgTileTypeSpawnLevelPresets.html#variant.DEFAULT)
+/// - [WATERWORLD](enum.OxAgTileTypeSpawnLevelPresets.html#variant.WATERWORLD)
+/// - [LOWWATERWORLD](enum.OxAgTileTypeSpawnLevelPresets.html#variant.LOWWATERWORLD)
 ///
 #[derive(Copy, Clone, Debug)]
-pub enum OxAgWorldGenerationPresets {
-    /// # Default world generation option
+pub enum OxAgTileTypeSpawnLevelPresets {
+    /// # Default tile type spawn levels
     /// <pre style="color: orange;">
     /// ┌──────────────────────┬─────────────────┐
     /// │     Parameter        │   Value Range   │
@@ -111,10 +125,10 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.75 ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
-    /// [`PRESETS`](OxAgWorldGenerationPresets)
+    /// [`PRESETS`](OxAgTileTypeSpawnLevelPresets)
     DEFAULT,
     ///
-    /// # Water world generation option
+    /// # Water tile type spawn levels
     /// <pre style="color: orange;">
     /// ┌──────────────────────┬─────────────────┐
     /// │     Parameter        │   Value Range   │
@@ -128,10 +142,10 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.8  ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
-    /// [`PRESETS`](OxAgWorldGenerationPresets)
+    /// [`PRESETS`](OxAgTileTypeSpawnLevelPresets)
     WATERWORLD,
     ///
-    /// # Low water world generation option
+    /// # Low water tile type spawn levels
     /// <pre style="color: orange;">
     /// ┌──────────────────────┬─────────────────┐
     /// │     Parameter        │   Value Range   │
@@ -145,14 +159,14 @@ pub enum OxAgWorldGenerationPresets {
     /// │ snow_level           │  0.7  ..=  1.0  │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
-    /// [`PRESETS`](OxAgWorldGenerationPresets)
+    /// [`PRESETS`](OxAgTileTypeSpawnLevelPresets)
     LOWWATERWORLD,
 }
 
 pub(crate) mod presets {
-    use crate::worldgenerator::world_options::OxAgWorldGenerationOptions;
+    use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
 
-    pub const DEFAULT: OxAgWorldGenerationOptions = OxAgWorldGenerationOptions {
+    pub const DEFAULT: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
         deep_water_level: -1.0..=-0.75,
         shallow_water_level: -0.75..=-0.5,
         sand_level: -0.5..=-0.25,
@@ -161,7 +175,8 @@ pub(crate) mod presets {
         mountain_level: 0.5..=0.75,
         snow_level: 0.75..=1.0,
     };
-    pub const WATER_WORLD: OxAgWorldGenerationOptions = OxAgWorldGenerationOptions {
+    
+    pub const WATER_WORLD: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
         deep_water_level: -1.0..=-0.5,
         shallow_water_level: -0.5..=0.0,
         sand_level: 0.0..=0.2,
@@ -170,7 +185,8 @@ pub(crate) mod presets {
         mountain_level: 0.6..=0.8,
         snow_level: 0.8..=1.0,
     };
-    pub const LOW_WATER_WORLD: OxAgWorldGenerationOptions = OxAgWorldGenerationOptions {
+    
+    pub const LOW_WATER_WORLD: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
         deep_water_level: -1.0..=-0.8,
         shallow_water_level: -0.8..=-0.6,
         sand_level: -0.6..=-0.3,
