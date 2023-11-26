@@ -152,7 +152,7 @@ impl OxAgWorldGeneratorBuilder {
         mut self,
         tile_type_spawn_levels: OxAgTileTypeSpawnLevels,
     ) -> Result<Self, OxAgError> {
-        tile_type_spawn_levels.validate();
+        tile_type_spawn_levels.validate()?;
         self.tile_type_spawn_levels = Some(tile_type_spawn_levels);
         Ok(self)
     }

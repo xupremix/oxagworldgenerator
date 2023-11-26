@@ -112,8 +112,8 @@ impl OxAgWorldGenerator {
             .set_lacunarity(DEFAULT_NOISE_LACUNARITY)
             .set_persistence(DEFAULT_NOISE_PERSISTANCE);
 
-        for y in 0..self.size {
-            for x in 0..self.size {
+        for (y, row) in map.iter_mut().enumerate() {
+            for (x, cell) in row.iter_mut().enumerate() {
                 // initialization
                 let (nx, ny) = (
                     x as f64 / self.size as f64 - 0.5,
@@ -130,7 +130,7 @@ impl OxAgWorldGenerator {
                 //     + 0.25 * fbm_perlin.get([4.0 * nx, 4.0 * ny])
                 //     + 0.125 * fbm_perlin.get([8.0 * nx, 8.0 * ny]);
 
-                map[y][x] = fbm_perlin.get([nx, ny]);
+                *cell = fbm_perlin.get([nx, ny]);
             }
         }
         map

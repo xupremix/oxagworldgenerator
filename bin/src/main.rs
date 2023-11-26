@@ -1,9 +1,3 @@
-use std::fs::File;
-use std::io::Write;
-use std::process::Command;
-
-use robotics_lib;
-
 use fltk;
 use fltk::enums::ColorDepth;
 use fltk::group::PackType;
@@ -17,6 +11,7 @@ use lib_oxidizing_agents;
 use lib_oxidizing_agents::world_generator::utilities::generate_random_seed;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
+use robotics_lib;
 use robotics_lib::world::worldgenerator::Generator;
 
 fn main() {
