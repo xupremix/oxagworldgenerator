@@ -43,9 +43,9 @@ impl OxAgEnvironmentalConditions {
     }
 }
 
-impl Into<EnvironmentalConditions> for OxAgEnvironmentalConditions {
-    fn into(self) -> EnvironmentalConditions {
-        self.0
+impl From<OxAgEnvironmentalConditions> for EnvironmentalConditions {
+    fn from(val: OxAgEnvironmentalConditions) -> Self {
+        val.0
     }
 }
 
