@@ -1,5 +1,3 @@
-
-
 use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
 
 /// Returns a randomly generated seed
