@@ -4,10 +4,6 @@ use std::process::Command;
 
 use robotics_lib;
 
-use lib_oxidizing_agents;
-use lib_oxidizing_agents::utils::{gen_seed, OxAgError};
-use lib_oxidizing_agents::world_generator::OxAgWorldGeneratorBuilder;
-
 use fltk;
 use fltk::enums::ColorDepth;
 use fltk::group::PackType;
@@ -17,16 +13,18 @@ use fltk::prelude::ImageExt;
 use fltk::prelude::WidgetBase;
 use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, group::Pack, window::Window};
+use lib_oxidizing_agents;
+use lib_oxidizing_agents::world_generator::utilities::generate_random_seed;
 use lib_oxidizing_agents::world_generator::world_generator::OxAgWorldGenerator;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+use robotics_lib::world::worldgenerator::Generator;
 
 fn main() {
     let size: usize = 512;
-    let seed = gen_seed();
+    let seed = generate_random_seed();
     let generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
 
-    let tmp = generator.generateTileMatrix();
-
+    let tmp = generator.generate_float_matrix();
 
     let app = app::App::default();
     let mut wind = Window::default().with_size(size as i32, size as i32);

@@ -4,12 +4,16 @@ use robotics_lib::world::tile::Content;
 use strum::IntoEnumIterator;
 
 use crate::utils::errors::OxAgError;
-use crate::world_generator::world_generator::OxAgWorldGenerator;
-use crate::world_generator::utilities::{generate_random_seed, generate_random_world_size};
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use crate::world_generator::utilities::{generate_random_seed, generate_random_world_size};
+use crate::world_generator::world_generator::OxAgWorldGenerator;
 
-use super::tile_content_spawn_options::{OxAgTileContentSpawnOptions, OxAgTileContentSpawnOptionPresets};
-use super::environmental_condition_options::{OxAgEnvironmentalConditions, OxAgEnvironmentalConditionsPresets};
+use super::environmental_condition_options::{
+    OxAgEnvironmentalConditions, OxAgEnvironmentalConditionsPresets,
+};
+use super::tile_content_spawn_options::{
+    OxAgTileContentSpawnOptionPresets, OxAgTileContentSpawnOptions,
+};
 use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
 
 /// World generator builder that can be used to obtain a [OxAgWorldGenerator].
@@ -86,14 +90,18 @@ impl OxAgWorldGeneratorBuilder {
     ///
     /// (If the seed is also [None] it will be randomly generated].
     ///
-    /// TODO: Examples
+    /// Returns the WorldGenerator [Generator](OxAgWorldGenerator)
+    ///
+    /// # Examples
+    /// ```rust
+    /// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+    /// let generator = OxAgWorldGeneratorBuilder::new().build();
+    /// ```
     pub fn build(&self) -> OxAgWorldGenerator {
         let seed = self.seed.unwrap_or(generate_random_seed());
 
         OxAgWorldGenerator {
-            size: self
-                .size
-                .unwrap_or(generate_random_world_size(seed)),
+            size: self.size.unwrap_or(generate_random_world_size(seed)),
             seed,
             tile_type_spawn_levels: self
                 .tile_type_spawn_levels
@@ -110,7 +118,7 @@ impl OxAgWorldGeneratorBuilder {
         }
     }
 
-    /// Returns a [OxAgWorldGeneratorBuilder] with all properties set to [None].
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder) with the properties not set.
     pub fn new() -> Self {
         Self {
             size: None,
@@ -121,89 +129,83 @@ impl OxAgWorldGeneratorBuilder {
         }
     }
 
-    /// Sets the optional seed of the builder.
+    /// Sets the seed of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// If [None] is provided, a seed will randomly be generated during the build phase.
-    pub fn set_seed(mut self, seed: Option<u64>) -> Self {
-        self.seed = seed;
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_seed(mut self, seed: u64) -> Self {
+        self.seed = Some(seed);
         self
     }
 
-    /// Sets the optional size of the builder
+    /// Sets the size of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// If [None] is provided, the size will be calculated via the seed in the build phase.
-    pub fn set_size(mut self, size: Option<usize>) -> Self {
-        self.size = size;
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_size(mut self, size: usize) -> Self {
+        self.size = Some(size);
         self
     }
 
-    /// Sets the optional tile type spawn levels of the builder
+    /// Sets the tile type spawn levels of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// If [None] is provided, the levels will be calculated via the seed in the build phase.
-    /// Otherwise, it will validate those levels.
-    ///
-    /// Returns a [Result] of self for chainging purpouses or an [OxAgError] if the levels are invalid.
+    /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
     pub fn set_tile_type_spawn_levels(
         mut self,
-        tile_type_spawn_levels: Option<OxAgTileTypeSpawnLevels>,
+        tile_type_spawn_levels: OxAgTileTypeSpawnLevels,
     ) -> Result<Self, OxAgError> {
-        if tile_type_spawn_levels.is_some() {
-            tile_type_spawn_levels.as_ref().unwrap().validate()?;
-        }
-
-        self.tile_type_spawn_levels = tile_type_spawn_levels;
-
+        tile_type_spawn_levels.validate();
+        self.tile_type_spawn_levels = Some(tile_type_spawn_levels);
         Ok(self)
     }
 
-    /// Sets the optional tile content spawn options of the builder
+    /// Sets the tile content spawn options of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// If [None] is provided, the options will be calculated via the seed in the build phase.
-    /// Otherwise, it will validate those options.
-    ///
-    /// Returns a [Result] of self for chainging purpouses or an [OxAgError] if the options are invalid.
+    /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
     pub fn set_tile_content_spawn_options(
         mut self,
-        mut tile_content_spawn_options: Option<HashMap<Content, OxAgTileContentSpawnOptions>>,
+        mut tile_content_spawn_options: HashMap<Content, OxAgTileContentSpawnOptions>,
     ) -> Result<Self, OxAgError> {
-        if tile_content_spawn_options.is_some() {
-            for content in Content::iter() {
-                match &content {
-                    Content::None => {
-                        tile_content_spawn_options.as_mut().unwrap().remove(&content.to_default());
-                    }
-                    other => match tile_content_spawn_options.as_ref().unwrap().get(&content.to_default()) {
-                        Some(content_option) => {
-                            content_option.validate(other)?;
-                        }
-                        None => {
-                            tile_content_spawn_options.as_mut().unwrap().insert(content.to_default(), Default::default());
-                        }
-                    },
+        for content in Content::iter() {
+            match &content {
+                Content::None => {
+                    tile_content_spawn_options.remove(&content.to_default());
                 }
+                other => match tile_content_spawn_options.get(&content.to_default()) {
+                    Some(content_option) => {
+                        content_option.validate(other)?;
+                    }
+                    None => {
+                        tile_content_spawn_options.insert(content.to_default(), Default::default());
+                    }
+                },
             }
         }
-
-        self.tile_content_spawn_options = tile_content_spawn_options;
-
+        self.tile_content_spawn_options = Some(tile_content_spawn_options);
         Ok(self)
     }
 
     /// Sets the tile type spawn levels from a [OxAgWorldGenerationPresets] preset.
-    pub fn set_tile_type_spawn_levels_from_preset(mut self, preset: OxAgTileTypeSpawnLevelPresets) -> Self {
+    pub fn set_tile_type_spawn_levels_from_preset(
+        mut self,
+        preset: OxAgTileTypeSpawnLevelPresets,
+    ) -> Self {
         self.tile_type_spawn_levels = Some(OxAgTileTypeSpawnLevels::from_preset(preset));
         self
     }
 
     /// Sets the tile content spawn options from a [OxAgContentGenerationPresets] preset.
-    pub fn set_tile_content_spawn_options_from_preset(mut self, preset: OxAgTileContentSpawnOptionPresets) -> Self {
-        self.tile_content_spawn_options = Some(OxAgTileContentSpawnOptions::new_from_preset(preset));
+    pub fn set_tile_content_spawn_options_from_preset(
+        mut self,
+        preset: OxAgTileContentSpawnOptionPresets,
+    ) -> Self {
+        self.tile_content_spawn_options =
+            Some(OxAgTileContentSpawnOptions::new_from_preset(preset));
         self
     }
 
-    /// Modifies a single tile content spawn options. This will also perform validation on those new options.
+    /// Modifies a single tile content spawn options.
+    /// This will also perform a check to validate the provided options.
     ///
-    /// Returns a [Result] of self for chainging purpouses or an [OxAgError] if the options are invalid.
+    /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
     pub fn alter_content_gen_options(
         mut self,
         content: Content,
@@ -214,7 +216,9 @@ impl OxAgWorldGeneratorBuilder {
         if content == Content::None {
             Err(OxAgError::CannotSetContentOptionForNone)
         } else {
-            let options = self.tile_content_spawn_options.as_mut()
+            let options = self
+                .tile_content_spawn_options
+                .as_mut()
                 .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?;
 
             match options.get_mut(&content.to_default()) {
@@ -230,14 +234,12 @@ impl OxAgWorldGeneratorBuilder {
         }
     }
 
-    /// Sets the optional [EnvironmentalConditions] of the builder.
-    ///
-    /// If [None] is provided, [EnvironmentalConditions] will randomly be generated during the build phase.
+    /// Sets the [EnvironmentalConditions] of the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_environmental_conditions(
         mut self,
-        environmental_conditions: Option<OxAgEnvironmentalConditions>,
+        environmental_conditions: OxAgEnvironmentalConditions,
     ) -> Self {
-        self.environmental_conditions = environmental_conditions;
+        self.environmental_conditions = Some(environmental_conditions);
         self
     }
 

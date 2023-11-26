@@ -1,12 +1,12 @@
-use std::collections::HashMap;
+use crate::world_generator::constants::*;
+use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
+use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
-use crate::world_generator::constants::*;
-use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
-use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
-use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use std::collections::HashMap;
 
 use super::environmental_condition_options::OxAgEnvironmentalConditions;
 
@@ -94,7 +94,7 @@ impl OxAgWorldGenerator {
     /// Returns matrix of floats generated from the seed.
     ///
     /// This float values are meant to be mapped to tile types considering the tile type spawn levels.
-    fn generate_float_matrix(&self) -> Vec<Vec<f64>> {
+    pub fn generate_float_matrix(&self) -> Vec<Vec<f64>> {
         // map init
         let mut map = vec![vec![0.0; self.size]; self.size];
 
@@ -138,6 +138,10 @@ impl OxAgWorldGenerator {
 
 impl Generator for OxAgWorldGenerator {
     fn gen(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions) {
-        (self.generate_tile_matrix(), (self.size, self.size), self.environmental_conditions.clone().into())
+        (
+            self.generate_tile_matrix(),
+            (self.size, self.size),
+            self.environmental_conditions.clone().into(),
+        )
     }
 }
