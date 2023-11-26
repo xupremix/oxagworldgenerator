@@ -252,3 +252,9 @@ impl OxAgWorldGeneratorBuilder {
         self
     }
 }
+
+impl Default for OxAgWorldGeneratorBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
