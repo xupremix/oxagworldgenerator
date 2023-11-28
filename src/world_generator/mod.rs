@@ -4,16 +4,22 @@ pub mod tile_content_spawn_options;
 pub mod tile_type_spawn_levels;
 pub mod utilities;
 pub mod world_generator_builder;
-
 use crate::world_generator::constants::*;
 use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use crate::world_generator::utilities::Flow;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
+use rand::prelude::StdRng;
+use rand::Rng;
+use rand::SeedableRng;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
-use robotics_lib::world::tile::{Content, Tile};
+use robotics_lib::world::tile::Content::Water;
+use robotics_lib::world::tile::TileType::{DeepWater, Hill, Mountain, Sand, Snow};
+use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::worldgenerator::Generator;
 use std::collections::HashMap;
+use std::ops::{Not, RangeInclusive};
 
 use super::world_generator::environmental_condition_options::OxAgEnvironmentalConditions;
 
@@ -53,6 +59,9 @@ pub struct OxAgWorldGenerator {
 
     /// [EnvironmentalConditions] that will be used in the generated world
     pub(crate) environmental_conditions: OxAgEnvironmentalConditions,
+
+    /// [f64] height map multiplier
+    pub(crate) height_multiplier: f64,
 }
 
 impl OxAgWorldGenerator {
@@ -101,9 +110,10 @@ impl OxAgWorldGenerator {
     /// Returns matrix of floats generated from the seed.
     ///
     /// This float values are meant to be mapped to tile types considering the tile type spawn levels.
-    pub fn generate_float_matrix(&self) -> Vec<Vec<f64>> {
+    pub fn generate_float_matrix(&self) -> (Vec<Vec<f64>>, f64, f64) {
+        let rng = StdRng::seed_from_u64(self.seed);
         // map init
-        let mut map = vec![vec![0.0; self.size]; self.size];
+        let mut map = vec![vec![(0.0, Flow::None); self.size]; self.size];
 
         // perlin init
         let fbm_perlin = Fbm::<Perlin>::new(self.seed as u32)
@@ -112,41 +122,319 @@ impl OxAgWorldGenerator {
             .set_lacunarity(DEFAULT_NOISE_LACUNARITY)
             .set_persistence(DEFAULT_NOISE_PERSISTANCE);
 
-        for (y, row) in map.iter_mut().enumerate() {
-            for (x, cell) in row.iter_mut().enumerate() {
-                // initialization
-                let (nx, ny) = (
-                    x as f64 / self.size as f64 - 0.5,
-                    y as f64 / self.size as f64 - 0.5,
-                );
+        let mut min = f64::MAX;
+        let mut max = f64::MIN;
 
-                // nx and ny frequency
-                // let (nx_freq, ny_freq) = (2.5, 2.5);
-                // nx *= nx_freq;
-                // ny *= ny_freq;
+        let mut set_flow = false;
 
-                // map[y][x] = 1.0 * fbm_perlin.get([1.0 * nx, 1.0 * ny])
-                //     + 0.5 * fbm_perlin.get([2.0 * nx, 2.0 * ny])
-                //     + 0.25 * fbm_perlin.get([4.0 * nx, 4.0 * ny])
-                //     + 0.125 * fbm_perlin.get([8.0 * nx, 8.0 * ny]);
-
+        map.iter_mut().enumerate().for_each(|(y, row)| {
+            row.iter_mut().enumerate().for_each(|(x, (cell, flow))| {
+                let (nx, ny) = (x as f64 / self.size as f64, y as f64 / self.size as f64);
                 *cell = fbm_perlin.get([nx, ny]);
+                if *cell < min {
+                    min = *cell;
+                }
+                if *cell > max {
+                    max = *cell;
+                }
+
+                // set flow
+                if set_flow {
+                    if y == 1 {
+                        if x == 1 {
+                            // set top left     (right, down)
+                            map[y - 1][x - 1].1 = {
+                                let right = map[y - 1][x].0;
+                                let down = map[y][x - 1].0;
+                                match (right, down) {
+                                    (right, down) if right == down => Flow::None,
+                                    (right, down) if right > down => Flow::Right(y - 1, x),
+                                    (right, down) if right < down => Flow::Down(y, x - 1),
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else if x == self.size - 1 {
+                            // set top left     (left, right, down)
+                            map[y - 1][x - 1].1 = {
+                                let left = 0.0;
+                                let right = 0.0;
+                                let down = 0.0;
+                                match (right, down, left) {
+                                    (right, down, left) if right == down && down == left => {
+                                        Flow::None
+                                    }
+                                    (right, down, left) if right >= down && down >= left => {
+                                        Flow::Right(y - 1, x)
+                                    }
+                                    (right, down, left) if right <= down && down >= left => {
+                                        Flow::Down(y, x - 1)
+                                    }
+                                    (right, down, left) if right <= down && down <= left => {
+                                        Flow::Left(y - 1, x - 2)
+                                    }
+                                    (right, down, left) if right == down => {
+                                        if rng.gen_bool(0.5) {
+                                            Flow::Right(y - 1, x)
+                                        } else {
+                                            Flow::Down(y, x - 1)
+                                        }
+                                    }
+                                    (right, down, left) if down == left => {
+                                        if rng.gen_bool(0.5) {
+                                            Flow::Down(y, x - 1)
+                                        } else {
+                                            Flow::Left(y - 1, x - 2)
+                                        }
+                                    }
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set top          (left, down)
+                            map[y - 1][x].1 = {
+                                let left = 0.0;
+                                let down = 0.0;
+                                match (down, left) {
+                                    (down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else {
+                            // set top left     (left, right, down)
+                            map[y - 1][x - 1].1 = {
+                                let left = 0.0;
+                                let right = 0.0;
+                                let down = 0.0;
+                                match (right, down, left) {
+                                    (right, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        }
+                    } else if y == self.size - 1 {
+                        if x == 1 {
+                            // set top left     (right, down, up)
+                            map[y - 1][x - 1].1 = {
+                                let right = 0.0;
+                                let down = 0.0;
+                                let up = 0.0;
+                                match (up, right, down) {
+                                    (up, right, down) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set left         (right, up)
+                            map[y][x - 1].1 = {
+                                let right = 0.0;
+                                let up = 0.0;
+                                match (up, right) {
+                                    (up, right) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else if x == self.size - 1 {
+                            // set top left     (up, left, down, right)
+                            map[y - 1][x - 1].1 = {
+                                let up = 0.0;
+                                let left = 0.0;
+                                let down = 0.0;
+                                let right = 0.0;
+                                match (up, right, down, left) {
+                                    (up, right, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set left         (up, left, right)
+                            map[y][x - 1].1 = {
+                                let left = 0.0;
+                                let right = 0.0;
+                                let up = 0.0;
+                                match (up, right, left) {
+                                    (up, right, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set top          (up, left, down)
+                            map[y - 1][x].1 = {
+                                let left = 0.0;
+                                let down = 0.0;
+                                let up = 0.0;
+                                match (up, down, left) {
+                                    (up, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set self         (up, left)
+                            map[y][x].1 = {
+                                let left = 0.0;
+                                let up = 0.0;
+                                match (up, left) {
+                                    (up, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else {
+                            // set top left     (up, left, down, right)
+                            map[y - 1][x - 1].1 = {
+                                let up = 0.0;
+                                let left = 0.0;
+                                let down = 0.0;
+                                let right = 0.0;
+                                match (up, right, down, left) {
+                                    (up, right, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set left         (up, left, right)
+                            map[y][x - 1].1 = {
+                                let up = 0.0;
+                                let left = 0.0;
+                                let right = 0.0;
+                                match (up, right, left) {
+                                    (up, right, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        }
+                    } else {
+                        if x == 1 {
+                            // set top left     (up, right, down)
+                            map[y - 1][x - 1].1 = {
+                                let up = 0.0;
+                                let right = 0.0;
+                                let down = 0.0;
+                                match (up, right, down) {
+                                    (up, right, down) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else if x == self.size - 1 {
+                            // set top left     (up, left, right, down)
+                            map[y - 1][x - 1].1 = {
+                                let up = 0.0;
+                                let left = 0.0;
+                                let right = 0.0;
+                                let down = 0.0;
+                                match (up, right, down, left) {
+                                    (up, right, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                            // set top          (up, left, down)
+                            map[y - 1][x].1 = {
+                                let left = 0.0;
+                                let down = 0.0;
+                                let up = 0.0;
+                                match (up, down, left) {
+                                    (up, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        } else {
+                            //set top left      (up, left, right, down)
+                            map[y - 1][x - 1].1 = {
+                                let up = 0.0;
+                                let left = 0.0;
+                                let right = 0.0;
+                                let down = 0.0;
+                                match (up, right, down, left) {
+                                    (up, right, down, left) => Flow::None,
+                                    _ => Flow::None,
+                                }
+                            };
+                        }
+                    }
+                }
+            });
+            if y == 0 {
+                set_flow = true;
             }
-        }
-        map
+        });
+        (map, min, max)
     }
 
     /// Returns matrix of [Tile] conforming to the generator configuration
-    fn generate_tile_matrix(&self) -> Vec<Vec<Tile>> {
-        let _float_matrix = self.generate_float_matrix();
-        todo!("Map float matrix to tile types based on levels");
+    fn generate_tile_matrix(
+        &self,
+        float_matrix: &Vec<Vec<f64>>,
+        min: f64,
+        max: f64,
+    ) -> Vec<Vec<Tile>> {
+        let mut rng = StdRng::seed_from_u64(self.seed);
+
+        let mut tile_map = vec![
+            vec![
+                Tile {
+                    tile_type: TileType::Grass,
+                    content: Content::None,
+                    elevation: 0,
+                };
+                self.size
+            ];
+            self.size
+        ];
+
+        float_matrix.iter().enumerate().for_each(|(i, row)| {
+            row.iter().enumerate().for_each(|(j, &value)| {
+                let normalized_value = if value > 0.0 {
+                    value / max
+                } else {
+                    -value / min
+                };
+                let level = &self.tile_type_spawn_levels;
+                match normalized_value {
+                    value if level.deep_water_level.contains(&value) => {
+                        tile_map[i][j] = Tile {
+                            tile_type: TileType::DeepWater,
+                            content: Content::Water(
+                                rng.gen_range(0.0..Water(0).properties().max() as f64) as usize,
+                            ),
+                            elevation: ((value + 1.0) * self.height_multiplier) as usize,
+                        }
+                    }
+                    value if level.shallow_water_level.contains(&value) => {
+                        tile_map[i][j] = Tile {
+                            tile_type: TileType::ShallowWater,
+                            content: Content::Water(
+                                rng.gen_range(0.0..Water(0).properties().max() as f64) as usize,
+                            ),
+                            elevation: ((value + 1.0) * self.height_multiplier) as usize,
+                        }
+                    }
+                    value if level.sand_level.contains(&value) => {
+                        tile_map[i][j].tile_type = Sand;
+                    }
+                    value if level.hill_level.contains(&value) => {
+                        tile_map[i][j].tile_type = Hill;
+                    }
+                    value if level.mountain_level.contains(&value) => {
+                        tile_map[i][j].tile_type = Mountain;
+                    }
+                    value if level.snow_level.contains(&value) => {
+                        tile_map[i][j].tile_type = Snow;
+                    }
+                    _ => {}
+                }
+            })
+        });
+
+        self.spawn_contents(tile_map);
+
+        tile_map
+    }
+
+    fn spawn_contents(tile_map: &mut Vec<Vec<Tile>>) {
+        tile_map
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, row)| row.iter_mut().enumerate().for_each(|(j, &cell)| {}))
     }
 }
 
 impl Generator for OxAgWorldGenerator {
     fn gen(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions) {
+        let (map, min, max) = self.generate_float_matrix();
         (
-            self.generate_tile_matrix(),
+            self.generate_tile_matrix(&map, min, max),
             (self.size, self.size),
             self.environmental_conditions.clone().into(),
         )

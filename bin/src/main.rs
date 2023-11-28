@@ -14,12 +14,21 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib;
 use robotics_lib::world::worldgenerator::Generator;
 
-fn main() {
-    let size: usize = 512;
-    let seed = generate_random_seed();
-    let generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new().set_size(size).build();
+use lib_oxidizing_agents::utils::errors::OxAgError;
+use lib_oxidizing_agents::world_generator::tile_type_spawn_levels::{
+    OxAgTileTypeSpawnLevelPresets, OxAgTileTypeSpawnLevels,
+};
+use robotics_lib::world::tile::TileType::*;
 
-    let tmp = generator.generate_float_matrix();
+fn main() {
+    let size: usize = 1024;
+    let seed = 20; // generate_random_seed();
+    let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
+        .set_size(size)
+        .set_tile_type_spawn_levels_from_preset(OxAgTileTypeSpawnLevelPresets::DEFAULT)
+        .build();
+
+    let tmp = generator.gen().0;
 
     let app = app::App::default();
     let mut wind = Window::default().with_size(size as i32, size as i32);
@@ -32,14 +41,14 @@ fn main() {
         for (iter, pixel) in fb.chunks_exact_mut(4).enumerate() {
             let x = iter % f.w() as usize;
             let y = iter / f.w() as usize;
-            let color = match tmp[x][y] {
-                (-2.0..=-0.6) => Color::from_hex_str("#042B90"),
-                (-0.6..=-0.4) => Color::from_hex_str("#08A5F3"),
-                (-0.4..=-0.2) => Color::from_hex_str("#F3CE08"),
-                (-0.2..=0.25) => Color::from_hex_str("#57FF43"),
-                (0.25..=0.7) => Color::from_hex_str("#DC970D"),
-                (0.7..=1.2) => Color::from_hex_str("#6F482A"),
-                (1.2..=2.0) => Color::from_hex_str("#FFFFFF"),
+            let color = match tmp[x][y].tile_type {
+                DeepWater => Color::from_hex_str("#042B90"),
+                ShallowWater => Color::from_hex_str("#08A5F3"),
+                Sand => Color::from_hex_str("#F3CE08"),
+                Grass => Color::from_hex_str("#57FF43"),
+                Hill => Color::from_hex_str("#DC970D"),
+                Mountain => Color::from_hex_str("#6F482A"),
+                Snow => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
             };
             let color = color.unwrap().to_rgb();

@@ -1,3 +1,6 @@
+use rand::prelude::StdRng;
+use rand::Rng;
+use rand::SeedableRng;
 use std::collections::HashMap;
 
 use robotics_lib::world::tile::Content;
@@ -40,7 +43,7 @@ use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
 /// let defaultGenerator = OxAgWorldGeneratorBuilder::new().build();
 ///
 /// let customSizeGenerator = OxAgWorldGeneratorBuilder::new()
-///     .set_size(Some(100))
+///     .set_size(100)
 ///     .build();
 ///
 /// TODO("Other examples")
@@ -73,6 +76,12 @@ pub struct OxAgWorldGeneratorBuilder {
     ///
     /// If [None] they will be calculated via the seed.
     environmental_conditions: Option<OxAgEnvironmentalConditions>,
+
+    /// Optional [f64] that will be used to calculate the height of the map.
+    /// (0.0) if you don't want to set it
+    ///
+    /// If [None] they will be calculated via the seed.
+    height_multiplier: Option<f64>,
 }
 
 impl OxAgWorldGeneratorBuilder {
@@ -115,7 +124,15 @@ impl OxAgWorldGeneratorBuilder {
                 .environmental_conditions
                 .clone()
                 .unwrap_or(OxAgEnvironmentalConditions::new_from_seed(seed)),
+            height_multiplier: self
+                .height_multiplier
+                .unwrap_or(OxAgWorldGeneratorBuilder::multiplier_from_seed(seed)),
         }
+    }
+
+    fn multiplier_from_seed(seed: u64) -> f64 {
+        let mut rng = StdRng::seed_from_u64(seed);
+        rng.gen::<f64>()
     }
 
     /// Returns the [Builder](OxAgWorldGeneratorBuilder) with the properties not set.
@@ -126,6 +143,7 @@ impl OxAgWorldGeneratorBuilder {
             tile_type_spawn_levels: None,
             tile_content_spawn_options: None,
             environmental_conditions: None,
+            height_multiplier: None,
         }
     }
 
@@ -134,6 +152,14 @@ impl OxAgWorldGeneratorBuilder {
     /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_seed(mut self, seed: u64) -> Self {
         self.seed = Some(seed);
+        self
+    }
+
+    /// Sets the height multiplier of the [Builder](OxAgWorldGeneratorBuilder)
+    ///
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_height_multiplier(mut self, multiplier: f64) -> Self {
+        self.height_multiplier = Some(multiplier);
         self
     }
 

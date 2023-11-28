@@ -85,6 +85,7 @@ impl OxAgTileTypeSpawnLevels {
             OxAgTileTypeSpawnLevelPresets::DEFAULT => presets::DEFAULT,
             OxAgTileTypeSpawnLevelPresets::WATERWORLD => presets::WATER_WORLD,
             OxAgTileTypeSpawnLevelPresets::LOWWATERWORLD => presets::LOW_WATER_WORLD,
+            OxAgTileTypeSpawnLevelPresets::HILL => presets::HILL,
         }
     }
 }
@@ -163,6 +164,23 @@ pub enum OxAgTileTypeSpawnLevelPresets {
     /// </pre>
     /// [`PRESETS`](OxAgTileTypeSpawnLevelPresets)
     LOWWATERWORLD,
+    ///
+    /// # Low water tile type spawn levels
+    /// <pre style="color: orange;">
+    /// ┌──────────────────────┬─────────────────┐
+    /// │     Parameter        │   Value Range   │
+    /// ├──────────────────────┼─────────────────┤
+    /// │ deep_water_level     │ -1.0  ..= -0.8  │
+    /// │ shallow_water_level  │ -0.8  ..= -0.6  │
+    /// │ sand_level           │ -0.6  ..= -0.3  │
+    /// │ grass_level          │ -0.3  ..=  0.1  │
+    /// │ hill_level           │  0.1  ..=  0.4  │
+    /// │ mountain_level       │  0.4  ..=  0.7  │
+    /// │ snow_level           │  0.7  ..=  1.0  │
+    /// └──────────────────────┴─────────────────┘
+    /// </pre>
+    /// [`PRESETS`](OxAgTileTypeSpawnLevelPresets)
+    HILL,
 }
 
 pub(crate) mod presets {
@@ -196,5 +214,15 @@ pub(crate) mod presets {
         hill_level: 0.1..=0.4,
         mountain_level: 0.4..=0.7,
         snow_level: 0.7..=1.0,
+    };
+
+    pub const HILL: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
+        deep_water_level: -1.0..=-1.0,
+        shallow_water_level: -1.0..=-1.0,
+        sand_level: -1.0..=-1.0,
+        grass_level: -1.0..=-1.0,
+        hill_level: -1.0..=1.0,
+        mountain_level: 1.0..=1.0,
+        snow_level: 1.0..=1.0,
     };
 }
