@@ -5,9 +5,8 @@ use rand::Rng;
 use rand::SeedableRng;
 
 use crate::utils::errors::OxAgError;
+use crate::utils::Container;
 use crate::world_generator::constants::*;
-
-use super::utilities::contains;
 
 /// Levels that will determine the spawn of the different tile types.
 /// TODO: Examples
@@ -45,7 +44,7 @@ impl OxAgTileTypeSpawnLevels {
             snow_level: mt_end..=1.0,
         }
     }
-    
+
     /// Validates this spawn levels to make sure they are within bounds.
     ///
     /// Returns a [OxAgError] [Result] if validation fails.
@@ -63,20 +62,23 @@ impl OxAgTileTypeSpawnLevels {
         if !levels.iter().any(|l| *l.start() == -1.0) {
             Err(OxAgError::WrongLowerBound)?
         }
-        
+
         // at least one with end = 1.0
         if !levels.iter().any(|l| *l.end() == 1.0) {
             Err(OxAgError::WrongUpperBound)?
         }
-        
+
         // all must be between -1.0 and 1.0        }
-        if levels.iter().any(|l| !contains(&DEFAULT_SPAWN_RANGE_BOUNDS, l)) {
+        if levels
+            .iter()
+            .any(|l| !l.within(&DEFAULT_SPAWN_RANGE_BOUNDS))
+        {
             Err(OxAgError::RangesAreOutOfBounds)?
         }
-        
+
         Ok(())
     }
-    
+
     /// Returns a [OxAgTileTypeSpawnLevels] from a given `preset`
     pub fn from_preset(preset: OxAgTileTypeSpawnLevelPresets) -> Self {
         match preset {
@@ -175,7 +177,7 @@ pub(crate) mod presets {
         mountain_level: 0.5..=0.75,
         snow_level: 0.75..=1.0,
     };
-    
+
     pub const WATER_WORLD: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
         deep_water_level: -1.0..=-0.5,
         shallow_water_level: -0.5..=0.0,
@@ -185,7 +187,7 @@ pub(crate) mod presets {
         mountain_level: 0.6..=0.8,
         snow_level: 0.8..=1.0,
     };
-    
+
     pub const LOW_WATER_WORLD: OxAgTileTypeSpawnLevels = OxAgTileTypeSpawnLevels {
         deep_water_level: -1.0..=-0.8,
         shallow_water_level: -0.8..=-0.6,

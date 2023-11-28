@@ -45,10 +45,9 @@ impl OxAgTileContentSpawnOptions {
             .contains(&self.spawn_level)
             .then_some(())
             .ok_or(OxAgError::InvalidSpawnLevel(content.clone()))?;
-        
         Ok(())
     }
-    
+
     /// Creates a new [OxAgTileContentSpawnOptions], calculating it from a given `seed`.
     pub fn new_from_seed(seed: u64) -> HashMap<Content, Self> {
         let mut rng = StdRng::seed_from_u64(seed);
@@ -68,7 +67,7 @@ impl OxAgTileContentSpawnOptions {
             })
             .collect()
     }
-    
+
     /// Creates a new [OxAgTileContentSpawnOptions] from a given `preset`.
     pub fn new_from_preset(preset: OxAgTileContentSpawnOptionPresets) -> HashMap<Content, Self> {
         match preset {
@@ -84,7 +83,7 @@ pub enum OxAgTileContentSpawnOptionPresets {
 
 pub(crate) mod presets {
     use std::collections::HashMap;
-    
+
     use robotics_lib::world::tile::Content;
 
     use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;

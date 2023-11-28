@@ -7,3 +7,9 @@ impl OxAgTool {
         Self { x: 30 }
     }
 }
+
+impl Default for OxAgTool {
+    fn default() -> Self {
+        Self::new()
+    }
+}

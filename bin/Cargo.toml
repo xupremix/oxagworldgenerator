@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-robotics_lib = {path = "../../../Advanced-Programming-2023/Robotic-Lib"}
+robotics_lib = {path = "../../Robotic-Lib"}
 lib_oxidizing_agents = {path = "../"}
 noise = "0.8.2"
 rand = "0.8.5"

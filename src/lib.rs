@@ -6,6 +6,7 @@
 
 #![warn(missing_docs)]
 
+#[cfg(test)]
 mod test;
 pub mod tools;
 pub mod utils;
