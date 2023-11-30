@@ -14,6 +14,7 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib;
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree, Water};
 use robotics_lib::world::worldgenerator::Generator;
+use std::time::{Duration, Instant};
 
 use lib_oxidizing_agents::utils::errors::OxAgError;
 use lib_oxidizing_agents::world_generator::tile_content_spawn_options::{
@@ -25,8 +26,9 @@ use lib_oxidizing_agents::world_generator::tile_type_spawn_levels::{
 use robotics_lib::world::tile::TileType::*;
 
 fn main() {
-    let size: usize = 1000;
-    let seed = 2069; // generate_random_seed();
+    let size: usize = 2048;
+    let seed = 444; // generate_random_seed();
+    let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
         .set_size(size)
@@ -35,6 +37,8 @@ fn main() {
         .build();
 
     let tmp = generator.gen().0;
+    let duration = start.elapsed();
+    println!("Duration: {:?}", duration);
 
     let app = app::App::default();
     let mut wind = Window::default().with_size(size as i32, size as i32);

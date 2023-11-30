@@ -4,21 +4,25 @@ pub mod tile_content_spawn_options;
 pub mod tile_type_spawn_levels;
 pub mod utilities;
 pub mod world_generator_builder;
+
 use crate::world_generator::constants::*;
 use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use crate::world_generator::utilities::ToValue;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
-use robotics_lib::world::tile::Content::Water;
+use robotics_lib::world::tile::Content::{Fire, Fish, Water};
 use robotics_lib::world::tile::TileType::{DeepWater, Hill, Mountain, Sand, Snow};
 use robotics_lib::world::tile::{Content, Tile, TileType};
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::worldgenerator::{get_tiletype_percentage, Generator};
+use std::cmp::min;
 use std::collections::HashMap;
-use std::ops::{Not, RangeInclusive};
+use std::ops::{Not, Range, RangeInclusive};
+use strum::IntoEnumIterator;
 
 use super::world_generator::environmental_condition_options::OxAgEnvironmentalConditions;
 
@@ -61,6 +65,9 @@ pub struct OxAgWorldGenerator {
 
     /// [f64] height map multiplier
     pub(crate) height_multiplier: f64,
+
+    /// [f32] score
+    pub(crate) score: f32,
 }
 
 impl OxAgWorldGenerator {
@@ -81,6 +88,10 @@ impl OxAgWorldGenerator {
     /// Since the world is a square the size indicates the width and height uniquely.
     pub fn get_size(&self) -> usize {
         self.size
+    }
+
+    pub fn get_score(&self) -> f32 {
+        self.score
     }
 
     /// Returns the seed that the generator will use to generate the world.
@@ -201,7 +212,9 @@ impl OxAgWorldGenerator {
                     value if level.snow_level.contains(&value) => {
                         tile_map[i][j].tile_type = Snow;
                     }
-                    _ => {}
+                    _ => {
+                        // distance from the nearest bound
+                    }
                 }
             })
         });
@@ -212,10 +225,177 @@ impl OxAgWorldGenerator {
     }
 
     fn spawn_contents(&self, tile_map: &mut Vec<Vec<Tile>>) {
-        tile_map
-            .iter_mut()
-            .enumerate()
-            .for_each(|(i, row)| row.iter_mut().enumerate().for_each(|(j, cell)| {}))
+        let percentage_map = get_tiletype_percentage(tile_map);
+
+        // let contents = self
+        //     .tile_content_spawn_options
+        //     .iter()
+        //     .collect::<Vec<(&Content, &OxAgTileContentSpawnOptions)>>()
+        //     .sort();
+        for (content, content_option) in self.tile_content_spawn_options.iter() {
+            let content = &content.to_default();
+            if content_option.is_present {
+                let percentage = TileType::iter()
+                    .filter_map(|tiletype| {
+                        if tiletype.properties().can_hold(content) {
+                            match percentage_map.get(&tiletype) {
+                                Some(percentage) => Some(percentage),
+                                None => Some(&0.0),
+                            }
+                        } else {
+                            None
+                        }
+                    })
+                    .sum::<f64>();
+                if content_option.in_batches {
+                    println!("Adding {:?} in batches", content);
+                    self.spawn_in_batches(content, content_option, tile_map, percentage);
+                } else {
+                    println!("Adding {:?} ", content);
+                    self.spawn_randomly(content, content_option, tile_map, percentage);
+                }
+            } else {
+                println!("Skipping {:?}", content);
+            }
+        }
+    }
+
+    fn spawn_in_batches(
+        &self,
+        content: &Content,
+        content_option: &OxAgTileContentSpawnOptions,
+        tile_map: &mut Vec<Vec<Tile>>,
+        percentage: f64,
+    ) {
+        let mut rng = StdRng::seed_from_u64(self.seed);
+        let mut radius = 1.0;
+        if content_option.max_radius != 0 {
+            radius = rng.gen_range(1.0..content_option.max_radius as f64);
+        }
+        let max_spawn_number = if content_option.with_max_spawn_number {
+            content_option.max_spawn_number
+        } else {
+            rng.gen_range(
+                content_option.min_spawn_number
+                    ..((self.size.pow(2) as f64 * percentage)
+                        / (radius.powi(2) * 3.14 + DEFAULT_BATCH_DISTANCE as f64))
+                        as usize,
+            )
+        };
+        for _ in 0..max_spawn_number {
+            let mut row = 0;
+            let mut col = 0;
+            loop {
+                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+                if tile_map[row][col].tile_type.properties().can_hold(content) {
+                    break;
+                }
+            }
+            self.spawn_circle(tile_map, row, col, radius as usize, content);
+        }
+    }
+
+    fn spawn_circle(
+        &self,
+        matrix: &mut Vec<Vec<Tile>>,
+        center_x: usize,
+        center_y: usize,
+        radius: usize,
+        content: &Content,
+    ) {
+        let mut rng = StdRng::seed_from_u64(self.seed);
+        let matrix_size = matrix.len();
+        let min_radius = radius.min(
+            center_x
+                .min(center_y)
+                .min(matrix_size - center_x - 1)
+                .min(matrix_size - center_y - 1),
+        ) as isize;
+
+        let mut x: isize = min_radius;
+        let mut y: isize = 0;
+        let mut decision = 1 - x; // Decision parameter to determine next point
+
+        let mut value = 0;
+        if content.properties().max() != 0 {
+            value = rng.gen_range(0..content.properties().max());
+        }
+
+        let center_x = center_x as isize;
+        let center_y = center_y as isize;
+        while x >= y {
+            // Plot points using symmetry in all octants
+            self.add(matrix, center_x + x, center_y + y, content);
+            self.add(matrix, center_x + y, center_y + x, content);
+            self.add(matrix, center_x - y, center_y + x, content);
+            self.add(matrix, center_x - x, center_y + y, content);
+            self.add(matrix, center_x - x, center_y - y, content);
+            self.add(matrix, center_x - y, center_y - x, content);
+            self.add(matrix, center_x + y, center_y - x, content);
+            self.add(matrix, center_x + x, center_y - y, content);
+
+            y += 1;
+            if decision <= 0 {
+                decision += 2 * y + 1;
+            } else {
+                x -= 1;
+                decision += 2 * (y - x) + 1;
+            }
+        }
+
+        // Fill the center of the circle
+        for i in center_x - min_radius + 1..center_x + min_radius {
+            for j in center_y - min_radius + 1..center_y + min_radius {
+                if (i - center_x).pow(2) + (j - center_y).pow(2) <= min_radius.pow(2) as isize {
+                    self.add(matrix, i, j, content);
+                }
+            }
+        }
+    }
+
+    fn add(&self, map: &mut Vec<Vec<Tile>>, row: isize, col: isize, content: &Content) {
+        let mut rng = StdRng::seed_from_u64(self.seed);
+        let mut value = 0;
+        if content.properties().max() != 0 {
+            value = rng.gen_range(0..content.properties().max());
+        }
+        let row = row as usize;
+        let col = col as usize;
+        if map[row][col].tile_type.properties().can_hold(content) {
+            map[row][col].content = content.to(value);
+        }
+    }
+
+    fn spawn_randomly(
+        &self,
+        content: &Content,
+        content_option: &OxAgTileContentSpawnOptions,
+        tile_map: &mut Vec<Vec<Tile>>,
+        percentage: f64,
+    ) {
+        let mut rng = StdRng::seed_from_u64(self.seed);
+        let max_spawn_number = if content_option.with_max_spawn_number {
+            content_option.max_spawn_number
+        } else {
+            rng.gen_range(
+                content_option.min_spawn_number..(self.size.pow(2) as f64 * percentage) as usize,
+            )
+        };
+        for _ in 0..max_spawn_number {
+            let mut row = 0;
+            let mut col = 0;
+            loop {
+                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+                if tile_map[row][col].tile_type.properties().can_hold(content) {
+                    break;
+                }
+            }
+            let mut value = 0;
+            if content.properties().max() != 0 {
+                value = rng.gen_range(0..content.properties().max());
+            }
+            tile_map[row][col].content = content.to(value);
+        }
     }
 }
 
@@ -226,7 +406,7 @@ impl Generator for OxAgWorldGenerator {
             self.generate_tile_matrix(&map, min, max),
             (self.size, self.size),
             self.environmental_conditions.clone().into(),
-            0.0,
+            self.score,
         )
     }
 }

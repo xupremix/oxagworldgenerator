@@ -7,6 +7,7 @@ use robotics_lib::world::tile::Content;
 use strum::IntoEnumIterator;
 
 use crate::utils::errors::OxAgError;
+use crate::world_generator::constants::DEFAULT_SCORE;
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
 use crate::world_generator::utilities::{generate_random_seed, generate_random_world_size};
 use crate::world_generator::OxAgWorldGenerator;
@@ -78,10 +79,14 @@ pub struct OxAgWorldGeneratorBuilder {
     environmental_conditions: Option<OxAgEnvironmentalConditions>,
 
     /// Optional [f64] that will be used to calculate the height of the map.
-    /// (0.0) if you don't want to set it
     ///
     /// If [None] they will be calculated via the seed.
     height_multiplier: Option<f64>,
+
+    /// Optional [f32] that will be used to set the score
+    ///
+    /// If [None] they will be calculated via the seed.
+    score: Option<f32>,
 }
 
 impl OxAgWorldGeneratorBuilder {
@@ -108,9 +113,10 @@ impl OxAgWorldGeneratorBuilder {
     /// ```
     pub fn build(&self) -> OxAgWorldGenerator {
         let seed = self.seed.unwrap_or(generate_random_seed());
+        let size = self.size.unwrap_or(generate_random_world_size(seed));
 
         OxAgWorldGenerator {
-            size: self.size.unwrap_or(generate_random_world_size(seed)),
+            size,
             seed,
             tile_type_spawn_levels: self
                 .tile_type_spawn_levels
@@ -119,7 +125,7 @@ impl OxAgWorldGeneratorBuilder {
             tile_content_spawn_options: self
                 .tile_content_spawn_options
                 .clone()
-                .unwrap_or(OxAgTileContentSpawnOptions::new_from_seed(seed)),
+                .unwrap_or(OxAgTileContentSpawnOptions::new_from_seed(seed, size)),
             environmental_conditions: self
                 .environmental_conditions
                 .clone()
@@ -127,6 +133,7 @@ impl OxAgWorldGeneratorBuilder {
             height_multiplier: self
                 .height_multiplier
                 .unwrap_or(OxAgWorldGeneratorBuilder::multiplier_from_seed(seed)),
+            score: self.score.unwrap_or(DEFAULT_SCORE),
         }
     }
 
@@ -144,6 +151,7 @@ impl OxAgWorldGeneratorBuilder {
             tile_content_spawn_options: None,
             environmental_conditions: None,
             height_multiplier: None,
+            score: None,
         }
     }
 
@@ -152,6 +160,14 @@ impl OxAgWorldGeneratorBuilder {
     /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_seed(mut self, seed: u64) -> Self {
         self.seed = Some(seed);
+        self
+    }
+
+    /// Sets the score of the [Builder](OxAgWorldGeneratorBuilder)
+    ///
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_score(mut self, score: f32) -> Self {
+        self.score = Some(score);
         self
     }
 
@@ -190,20 +206,8 @@ impl OxAgWorldGeneratorBuilder {
         mut self,
         mut tile_content_spawn_options: HashMap<Content, OxAgTileContentSpawnOptions>,
     ) -> Result<Self, OxAgError> {
-        for content in Content::iter() {
-            match &content {
-                Content::None => {
-                    tile_content_spawn_options.remove(&content.to_default());
-                }
-                other => match tile_content_spawn_options.get(&content.to_default()) {
-                    Some(content_option) => {
-                        content_option.validate(other)?;
-                    }
-                    None => {
-                        tile_content_spawn_options.insert(content.to_default(), Default::default());
-                    }
-                },
-            }
+        if tile_content_spawn_options.get(&Content::None).is_some() {
+            tile_content_spawn_options.remove(&Content::None);
         }
         self.tile_content_spawn_options = Some(tile_content_spawn_options);
         Ok(self)
@@ -237,8 +241,6 @@ impl OxAgWorldGeneratorBuilder {
         content: Content,
         content_option: OxAgTileContentSpawnOptions,
     ) -> Result<Self, OxAgError> {
-        content_option.validate(&content)?;
-
         if content == Content::None {
             Err(OxAgError::CannotSetContentOptionForNone)
         } else {
