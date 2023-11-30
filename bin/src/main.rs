@@ -12,20 +12,26 @@ use lib_oxidizing_agents::world_generator::utilities::generate_random_seed;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib;
+use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree, Water};
 use robotics_lib::world::worldgenerator::Generator;
 
 use lib_oxidizing_agents::utils::errors::OxAgError;
+use lib_oxidizing_agents::world_generator::tile_content_spawn_options::{
+    OxAgTileContentSpawnOptionPresets, OxAgTileContentSpawnOptions,
+};
 use lib_oxidizing_agents::world_generator::tile_type_spawn_levels::{
     OxAgTileTypeSpawnLevelPresets, OxAgTileTypeSpawnLevels,
 };
 use robotics_lib::world::tile::TileType::*;
 
 fn main() {
-    let size: usize = 1024;
-    let seed = 20; // generate_random_seed();
+    let size: usize = 1000;
+    let seed = 2069; // generate_random_seed();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
+        .set_seed(seed)
         .set_size(size)
-        .set_tile_type_spawn_levels_from_preset(OxAgTileTypeSpawnLevelPresets::DEFAULT)
+        .set_tile_type_spawn_levels_from_preset(OxAgTileTypeSpawnLevelPresets::WATERWORLD)
+        .set_tile_content_spawn_options_from_preset(OxAgTileContentSpawnOptionPresets::DEFAULT)
         .build();
 
     let tmp = generator.gen().0;
@@ -41,7 +47,7 @@ fn main() {
         for (iter, pixel) in fb.chunks_exact_mut(4).enumerate() {
             let x = iter % f.w() as usize;
             let y = iter / f.w() as usize;
-            let color = match tmp[x][y].tile_type {
+            let mut color = match tmp[x][y].tile_type {
                 DeepWater => Color::from_hex_str("#042B90"),
                 ShallowWater => Color::from_hex_str("#08A5F3"),
                 Sand => Color::from_hex_str("#F3CE08"),
@@ -51,6 +57,19 @@ fn main() {
                 Snow => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
             };
+            if tmp[x][y].content.to_default() == Fire {
+                color = Color::from_hex_str("#E22403");
+            } else if tmp[x][y].content.to_default() == Tree(0) {
+                color = Color::from_hex_str("#1D6004");
+            } else if tmp[x][y].content.to_default() == Garbage(0) {
+                color = Color::from_hex_str("#641FAF");
+            } else if tmp[x][y].content.to_default() == Rock(0) {
+                color = Color::from_hex_str("#2F2323");
+            } else if tmp[x][y].content.to_default() == Fish(0) {
+                color = Color::from_hex_str("#8F8EA1");
+            } else if tmp[x][y].content.to_default() == Coin(0) {
+                color = Color::from_hex_str("#000000");
+            }
             let color = color.unwrap().to_rgb();
             pixel.copy_from_slice(&[color.0, color.1, color.2, 255]);
         }
