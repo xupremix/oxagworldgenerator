@@ -9,11 +9,3 @@ pub fn generate_random_seed() -> u64 {
 pub fn generate_random_world_size(seed: u64) -> usize {
     StdRng::seed_from_u64(seed).gen_range(0..u8::MAX) as usize
 }
-
-pub(crate) enum Flow {
-    Up(usize, usize),
-    Right(usize, usize),
-    Down(usize, usize),
-    Left(usize, usize),
-    None,
-}
