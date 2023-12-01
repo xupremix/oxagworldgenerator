@@ -4,6 +4,9 @@ use robotics_lib::world::tile::Content::{
     Bank, Bin, Coin, Crate, Fire, Fish, Garbage, Market, Rock, Tree, Water,
 };
 use std::cmp::min;
+use std::fmt::format;
+use std::io;
+use std::io::Write;
 
 /// Returns a randomly generated seed
 pub fn generate_random_seed() -> u64 {
@@ -36,4 +39,27 @@ impl ToValue for Content {
             Content::None => Content::None,
         }
     }
+}
+
+pub(crate) fn progress_bar(
+    iteration: usize,
+    total: usize,
+    prefix: &str,
+    length: usize,
+    fill: &str,
+) {
+    let total = total - 1;
+    let fill_len = length * iteration / total;
+    let out = iteration == total;
+    let suffix = if out { "\n" } else { "\r" };
+    let bar = format!(
+        "{} |{}{}| {:.1}% {}{}",
+        prefix,
+        fill.repeat(fill_len),
+        "-".repeat(length - fill_len),
+        100.0 * (iteration as f64 / total as f64),
+        "Complete",
+        suffix
+    );
+    print!("{bar}");
 }

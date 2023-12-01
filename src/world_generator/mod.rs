@@ -8,7 +8,7 @@ pub mod world_generator_builder;
 use crate::world_generator::constants::*;
 use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
-use crate::world_generator::utilities::ToValue;
+use crate::world_generator::utilities::{progress_bar, ToValue};
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 use rand::prelude::StdRng;
@@ -21,6 +21,8 @@ use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::worldgenerator::{get_tiletype_percentage, Generator};
 use std::cmp::min;
 use std::collections::HashMap;
+use std::io;
+use std::io::Write;
 use std::ops::{Not, Range, RangeInclusive};
 use strum::IntoEnumIterator;
 
@@ -68,6 +70,9 @@ pub struct OxAgWorldGenerator {
 
     /// [f32] score
     pub(crate) score: f32,
+
+    // [bool] with_info
+    pub(crate) with_info: bool,
 }
 
 impl OxAgWorldGenerator {
@@ -92,6 +97,10 @@ impl OxAgWorldGenerator {
 
     pub fn get_score(&self) -> f32 {
         self.score
+    }
+
+    pub fn get_with_info(&self) -> bool {
+        self.with_info
     }
 
     /// Returns the seed that the generator will use to generate the world.
@@ -137,6 +146,7 @@ impl OxAgWorldGenerator {
 
         let mut set_flow = false;
 
+        let mut itercount = (0, self.size.pow(2));
         map.iter_mut().enumerate().for_each(|(y, row)| {
             row.iter_mut().enumerate().for_each(|(x, (cell))| {
                 let (nx, ny) = (x as f64 / self.size as f64, y as f64 / self.size as f64);
@@ -146,6 +156,10 @@ impl OxAgWorldGenerator {
                 }
                 if *cell > max {
                     max = *cell;
+                }
+                if self.with_info {
+                    progress_bar(itercount.0, itercount.1, "Generating height map:", 50, "■");
+                    itercount.0 += 1;
                 }
             });
         });
@@ -173,6 +187,7 @@ impl OxAgWorldGenerator {
             self.size
         ];
 
+        let mut itercount = (0, self.size.pow(2));
         float_matrix.iter().enumerate().for_each(|(i, row)| {
             row.iter().enumerate().for_each(|(j, &value)| {
                 let normalized_value = if value > 0.0 {
@@ -216,6 +231,10 @@ impl OxAgWorldGenerator {
                         // distance from the nearest bound
                     }
                 }
+                if self.with_info {
+                    progress_bar(itercount.0, itercount.1, "Generating tile map:", 50, "■");
+                    itercount.0 += 1;
+                }
             })
         });
 
@@ -232,6 +251,9 @@ impl OxAgWorldGenerator {
         //     .iter()
         //     .collect::<Vec<(&Content, &OxAgTileContentSpawnOptions)>>()
         //     .sort();
+        if self.with_info {
+            println!("Spawning contents:")
+        }
         for (content, content_option) in self.tile_content_spawn_options.iter() {
             let content = &content.to_default();
             if content_option.is_present {
@@ -248,10 +270,8 @@ impl OxAgWorldGenerator {
                     })
                     .sum::<f64>();
                 if content_option.in_batches {
-                    println!("Adding {:?} in batches", content);
                     self.spawn_in_batches(content, content_option, tile_map, percentage);
                 } else {
-                    println!("Adding {:?} ", content);
                     self.spawn_randomly(content, content_option, tile_map, percentage);
                 }
             } else {
@@ -282,7 +302,7 @@ impl OxAgWorldGenerator {
                         as usize,
             )
         };
-        for _ in 0..max_spawn_number {
+        for i in 0..max_spawn_number {
             let mut row = 0;
             let mut col = 0;
             loop {
@@ -292,6 +312,15 @@ impl OxAgWorldGenerator {
                 }
             }
             self.spawn_circle(tile_map, row, col, radius as usize, content);
+            if self.with_info {
+                progress_bar(
+                    i,
+                    max_spawn_number,
+                    &format!("Spawning {:?} in batches:", content),
+                    50,
+                    "■",
+                );
+            }
         }
     }
 
@@ -381,7 +410,7 @@ impl OxAgWorldGenerator {
                 content_option.min_spawn_number..(self.size.pow(2) as f64 * percentage) as usize,
             )
         };
-        for _ in 0..max_spawn_number {
+        for i in 0..max_spawn_number {
             let mut row = 0;
             let mut col = 0;
             loop {
@@ -395,6 +424,15 @@ impl OxAgWorldGenerator {
                 value = rng.gen_range(0..content.properties().max());
             }
             tile_map[row][col].content = content.to(value);
+            if self.with_info {
+                progress_bar(
+                    i,
+                    max_spawn_number,
+                    &format!("Spawning {:?}:", content),
+                    50,
+                    "■",
+                );
+            }
         }
     }
 }

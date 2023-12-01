@@ -87,6 +87,9 @@ pub struct OxAgWorldGeneratorBuilder {
     ///
     /// If [None] they will be calculated via the seed.
     score: Option<f32>,
+
+    /// Optional [bool] that is used to log the actions to console
+    with_info: Option<bool>,
 }
 
 impl OxAgWorldGeneratorBuilder {
@@ -134,6 +137,7 @@ impl OxAgWorldGeneratorBuilder {
                 .height_multiplier
                 .unwrap_or(OxAgWorldGeneratorBuilder::multiplier_from_seed(seed)),
             score: self.score.unwrap_or(DEFAULT_SCORE),
+            with_info: self.with_info.unwrap_or(false),
         }
     }
 
@@ -152,6 +156,7 @@ impl OxAgWorldGeneratorBuilder {
             environmental_conditions: None,
             height_multiplier: None,
             score: None,
+            with_info: None,
         }
     }
 
@@ -168,6 +173,14 @@ impl OxAgWorldGeneratorBuilder {
     /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_score(mut self, score: f32) -> Self {
         self.score = Some(score);
+        self
+    }
+
+    ///  Sets the with_info of the [Builder](OxAgWorldGeneratorBuilder)
+    ///
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_with_info(mut self, with_info: bool) -> Self {
+        self.with_info = Some(with_info);
         self
     }
 

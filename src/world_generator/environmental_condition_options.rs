@@ -33,7 +33,7 @@ impl OxAgEnvironmentalConditions {
         ))
     }
 
-    /// Calculates [OxAgEnvironmentalConditions] from a given `wrapper`
+    /// Calculates [OxAgEnvironmentalConditions] from a given `wrapper`
     pub fn new_from_preset(
         preset: OxAgEnvironmentalConditionsPresets,
     ) -> OxAgEnvironmentalConditions {
