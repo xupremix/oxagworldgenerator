@@ -26,7 +26,7 @@ use lib_oxidizing_agents::world_generator::tile_type_spawn_levels::{
 use robotics_lib::world::tile::TileType::*;
 
 fn main() {
-    let size: usize = 1024;
+    let size: usize = 512;
     let seed = 44445; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()

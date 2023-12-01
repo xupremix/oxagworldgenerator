@@ -54,7 +54,7 @@ pub(crate) fn progress_bar(
     let (suffix, termination) = if out {
         ("\n", "Complete ✔️")
     } else {
-        ("\r", "In process")
+        ("\r", "Building...")
     };
     let bar = format!(
         "{} |{}{}| {:.1}% {}{}",
