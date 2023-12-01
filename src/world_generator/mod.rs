@@ -148,7 +148,7 @@ impl OxAgWorldGenerator {
 
         let mut itercount = (0, self.size.pow(2));
         map.iter_mut().enumerate().for_each(|(y, row)| {
-            row.iter_mut().enumerate().for_each(|(x, (cell))| {
+            row.iter_mut().enumerate().for_each(|(x, cell)| {
                 let (nx, ny) = (x as f64 / self.size as f64, y as f64 / self.size as f64);
                 *cell = fbm_perlin.get([nx, ny]);
                 if *cell < min {

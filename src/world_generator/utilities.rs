@@ -37,6 +37,10 @@ impl ToValue for Content {
             Content::Market(_) => Market(value),
             Content::Fish(_) => Fish(value),
             Content::None => Content::None,
+            Content::Building(_) => Content::Building(0..value),
+            Content::Scarecrow(_) => Content::Scarecrow(value),
+            Content::Bush(_) => Content::Bush(value),
+            Content::Jolly_block(_) => Content::Jolly_block(value),
         }
     }
 }
