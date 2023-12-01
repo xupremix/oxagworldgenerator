@@ -26,11 +26,8 @@ impl OxAgEnvironmentalConditions {
             .filter(|_| rng.gen_bool(DEFAULT_WEATHER_PROBABILITY))
             .collect::<Vec<WeatherType>>();
 
-        OxAgEnvironmentalConditions(EnvironmentalConditions::new(
-            &vec,
-            rng.gen::<u8>(),
-            rng.gen::<u8>(),
-        ))
+        let env = EnvironmentalConditions::new(&vec, rng.gen::<u8>(), rng.gen::<u8>()).unwrap();
+        OxAgEnvironmentalConditions(env)
     }
 
     /// Calculates [OxAgEnvironmentalConditions] from a given `wrapper`
@@ -55,10 +52,13 @@ pub enum OxAgEnvironmentalConditionsPresets {
 }
 
 pub(crate) mod presets {
-    use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
+    use robotics_lib::world::environmental_conditions::{EnvironmentalConditions, WeatherType};
 
     use super::OxAgEnvironmentalConditions;
 
-    pub const DEFAULT: fn() -> OxAgEnvironmentalConditions =
-        || OxAgEnvironmentalConditions(EnvironmentalConditions::new(&[], 0, 0));
+    pub const DEFAULT: fn() -> OxAgEnvironmentalConditions = || {
+        OxAgEnvironmentalConditions(
+            EnvironmentalConditions::new(&[WeatherType::Rainy], 0, 0).unwrap(),
+        )
+    };
 }
