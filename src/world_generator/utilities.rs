@@ -51,14 +51,18 @@ pub(crate) fn progress_bar(
     let total = total - 1;
     let fill_len = length * iteration / total;
     let out = iteration == total;
-    let suffix = if out { "\n" } else { "\r" };
+    let (suffix, termination) = if out {
+        ("\n", "Complete ✔️")
+    } else {
+        ("\r", "In process")
+    };
     let bar = format!(
         "{} |{}{}| {:.1}% {}{}",
         prefix,
         fill.repeat(fill_len),
         "-".repeat(length - fill_len),
         100.0 * (iteration as f64 / total as f64),
-        "Complete",
+        termination,
         suffix
     );
     print!("{bar}");
