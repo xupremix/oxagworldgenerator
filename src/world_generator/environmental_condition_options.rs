@@ -4,7 +4,7 @@ use rand::SeedableRng;
 use robotics_lib::world::environmental_conditions::{EnvironmentalConditions, WeatherType};
 use strum::IntoEnumIterator;
 
-use super::constants::DEFAULT_WEATHER_PROBABILITY;
+use crate::utils::constants::DEFAULT_WEATHER_PROBABILITY;
 
 /// A wrapper around [EnvironmentalConditions] for ease of use.
 #[derive(Debug, Clone)]
@@ -26,7 +26,8 @@ impl OxAgEnvironmentalConditions {
             .filter(|_| rng.gen_bool(DEFAULT_WEATHER_PROBABILITY))
             .collect::<Vec<WeatherType>>();
 
-        let env = EnvironmentalConditions::new(&vec, rng.gen::<u8>(), rng.gen::<u8>()).unwrap();
+        let env =
+            EnvironmentalConditions::new(&vec, rng.gen::<u8>(), rng.gen_range(0..=24)).unwrap();
         OxAgEnvironmentalConditions(env)
     }
 

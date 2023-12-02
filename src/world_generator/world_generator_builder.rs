@@ -6,10 +6,10 @@ use std::collections::HashMap;
 use robotics_lib::world::tile::Content;
 use strum::IntoEnumIterator;
 
+use crate::utils::constants::DEFAULT_SCORE;
 use crate::utils::errors::OxAgError;
-use crate::world_generator::constants::DEFAULT_SCORE;
+use crate::utils::{generate_random_seed, generate_random_world_size};
 use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
-use crate::world_generator::utilities::{generate_random_seed, generate_random_world_size};
 use crate::world_generator::OxAgWorldGenerator;
 
 use super::environmental_condition_options::{
@@ -47,7 +47,6 @@ use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
 ///     .set_size(100)
 ///     .build();
 ///
-/// TODO("Other examples")
 /// ```
 pub struct OxAgWorldGeneratorBuilder {
     /// Optional size that will be used to generate the world.

@@ -1,4 +1,3 @@
-use robotics_lib::world::tile::Content;
 use std::ops::RangeInclusive;
 
 pub const DEFAULT_WORLD_SIZE: usize = 256;
@@ -21,7 +20,7 @@ pub const DEFAULT_NOISE_XY_UPPER_BOUND: f64 = 1.0;
 // TODO: Should we let users configure these?
 pub const DEFAULT_NOISE_FREQUENCY: f64 = 2.5;
 pub const DEFAULT_NOISE_LACUNARITY: f64 = 2.0;
-pub const DEFAULT_NOISE_PERSISTANCE: f64 = 0.6;
+pub const DEFAULT_NOISE_PERSISTENCE: f64 = 0.6;
 pub const DEFAULT_NOISE_OCTAVES: usize = 12;
 pub const DEFAULT_SCORE: f32 = 100.0;
 

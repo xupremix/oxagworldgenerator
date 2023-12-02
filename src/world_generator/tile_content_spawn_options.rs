@@ -8,7 +8,7 @@ use strum::IntoEnumIterator;
 
 use crate::utils::errors::OxAgError;
 
-use super::constants::*;
+use crate::utils::constants::*;
 
 /// Options that determine how the tile [Content] are spawned
 /// TODO: Examples

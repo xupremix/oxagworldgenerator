@@ -4,9 +4,9 @@ use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
 
+use crate::utils::constants::*;
 use crate::utils::errors::OxAgError;
 use crate::utils::Container;
-use crate::world_generator::constants::*;
 
 /// Levels that will determine the spawn of the different tile types.
 /// TODO: Examples

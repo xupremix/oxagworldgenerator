@@ -10,3 +10,6 @@ robotics_lib = {path = "../Robotic-Lib"}
 rand = "0.8.5"
 noise = {version = "0.8.2" }
 strum = "0.25.0"
+image = "0.24.7"
+time = "0.3.30"
+fltk = "1.4.18"
