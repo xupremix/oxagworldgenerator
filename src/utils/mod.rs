@@ -1,25 +1,19 @@
-use std::ops::RangeInclusive;
+use std::io::Write;
+
+use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
 
 pub mod constants;
 pub mod errors;
-
-/// trait to check if some data is within some other data
-pub trait Container<C> {
-    fn within(&self, range: &C) -> bool;
-}
-
-impl Container<RangeInclusive<f64>> for RangeInclusive<f64> {
-    fn within(&self, range: &RangeInclusive<f64>) -> bool {
-        (range.start() <= self.start()) && (range.end() >= self.end())
-    }
-}
-
-use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
-use std::io::Write;
+pub mod traits;
 
 /// Returns a randomly generated seed
 pub fn generate_random_seed() -> u64 {
     thread_rng().gen::<u64>()
+}
+
+pub fn multiplier_from_seed(seed: u64) -> f64 {
+    let mut rng = StdRng::seed_from_u64(seed);
+    rng.gen::<f64>()
 }
 
 /// Returs a randomly generated world size

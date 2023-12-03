@@ -1,16 +1,17 @@
-use crate::utils::constants::{
-    DEFAULT_NOISE_FREQUENCY, DEFAULT_NOISE_LACUNARITY, DEFAULT_NOISE_OCTAVES,
-    DEFAULT_NOISE_PERSISTENCE,
-};
-use crate::utils::progress_bar;
-use crate::world_generator::spawning_tools::{F64MatData, TileMat};
-use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
 use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content::Water;
 use robotics_lib::world::tile::TileType::{DeepWater, Hill, Mountain, Sand, ShallowWater, Snow};
 use robotics_lib::world::tile::{Content, Tile, TileType};
+
+use crate::utils::constants::{
+    DEFAULT_NOISE_FREQUENCY, DEFAULT_NOISE_LACUNARITY, DEFAULT_NOISE_OCTAVES,
+    DEFAULT_NOISE_PERSISTENCE,
+};
+use crate::utils::progress_bar;
+use crate::world_generator::spawning_tools::{F64MatData, TileMat};
+use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 
 pub(crate) fn f64_mat(seed: u64, size: usize, with_info: bool) -> F64MatData {
     // map init
@@ -56,7 +57,7 @@ pub(crate) fn f64_mat(seed: u64, size: usize, with_info: bool) -> F64MatData {
 impl F64MatData {
     pub(crate) fn to_tile_mat(
         self,
-        spawn_levels: &OxAgTileTypeSpawnLevels,
+        spawn_levels: &OxAgTileTypeOptions,
         multiplier: f64,
     ) -> TileMat {
         let mut rng = StdRng::seed_from_u64(self.seed);

@@ -1,24 +1,25 @@
-pub mod environmental_condition_options;
-mod spawning_tools;
-pub mod tile_content_spawn_options;
-pub mod tile_type_spawn_levels;
-pub mod world_generator_builder;
+use std::collections::HashMap;
+use std::io::Write;
+use std::ops::Not;
 
-use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
-use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
-use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
-use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use rand::Rng;
 use rand::SeedableRng;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
-use std::collections::HashMap;
-use std::io::Write;
-use std::ops::Not;
 use strum::IntoEnumIterator;
 
-use super::world_generator::environmental_condition_options::OxAgEnvironmentalConditions;
+use crate::world_generator::content_options::OxAgContentOptions;
+use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
+use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
+use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+
+pub mod content_options;
+pub mod environmental_condition_options;
+pub mod presets;
+mod spawning_tools;
+pub mod tile_type_options;
+pub mod world_generator_builder;
 
 /// World generator that implements the [Generator] trait.
 ///
@@ -49,13 +50,13 @@ pub struct OxAgWorldGenerator {
     pub(crate) seed: u64,
 
     /// Levels that will determine the spawn of the different tile types.
-    pub(crate) tile_type_spawn_levels: OxAgTileTypeSpawnLevels,
+    pub(crate) tile_type_options: OxAgTileTypeOptions,
 
-    /// [HashMap] with the [Content] as the key and [OxAgTileContentSpawnOptions] as its value.
-    pub(crate) tile_content_spawn_options: HashMap<Content, OxAgTileContentSpawnOptions>,
+    /// [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
+    pub(crate) content_options: Vec<(Content, OxAgContentOptions)>,
 
     /// [EnvironmentalConditions] that will be used in the generated world
-    pub(crate) environmental_conditions: OxAgEnvironmentalConditions,
+    pub(crate) environmental_conditions: EnvironmentalConditions,
 
     /// [f64] height map multiplier
     pub(crate) height_multiplier: f64,
@@ -107,17 +108,17 @@ impl OxAgWorldGenerator {
     }
 
     /// Returns the levels that will determine the spawn of the different tile types.
-    pub fn get_tile_type_spawn_levels(&self) -> &OxAgTileTypeSpawnLevels {
-        &self.tile_type_spawn_levels
+    pub fn get_tile_type_options(&self) -> &OxAgTileTypeOptions {
+        &self.tile_type_options
     }
 
-    /// Returns an [HashMap] with the [Content] as the key and [OxAgTileContentSpawnOptions] as its value
-    pub fn get_tile_content_spawn_options(&self) -> &HashMap<Content, OxAgTileContentSpawnOptions> {
-        &self.tile_content_spawn_options
+    /// Returns an [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value
+    pub fn get_content_options(&self) -> &Vec<(Content, OxAgContentOptions)> {
+        &self.content_options
     }
 
     /// Returns the [EnvironmentalConditions] that will be used in the generated world
-    pub fn get_environmental_conditions(&self) -> &OxAgEnvironmentalConditions {
+    pub fn get_environmental_conditions(&self) -> &EnvironmentalConditions {
         &self.environmental_conditions
     }
 
@@ -133,11 +134,11 @@ impl Generator for OxAgWorldGenerator {
     fn gen(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions, f32) {
         (
             self.generate_float_matrix()
-                .to_tile_mat(self.get_tile_type_spawn_levels(), self.height_multiplier)
-                .spawn_contents(self.get_tile_content_spawn_options())
+                .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
+                .spawn_contents(self.get_content_options())
                 .map,
             (self.size, self.size),
-            self.environmental_conditions.clone().into(),
+            self.environmental_conditions.clone(),
             self.score,
         )
     }

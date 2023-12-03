@@ -1,24 +1,20 @@
-use rand::prelude::StdRng;
-use rand::Rng;
-use rand::SeedableRng;
 use std::collections::HashMap;
 
+use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::Content;
-use strum::IntoEnumIterator;
 
 use crate::utils::constants::DEFAULT_SCORE;
 use crate::utils::errors::OxAgError;
-use crate::utils::{generate_random_seed, generate_random_world_size};
-use crate::world_generator::tile_type_spawn_levels::OxAgTileTypeSpawnLevels;
+use crate::utils::traits::FromSeed;
+use crate::utils::traits::Loadable;
+use crate::utils::{generate_random_seed, generate_random_world_size, multiplier_from_seed};
+use crate::world_generator::presets::content_presets::OxAgContentPresets;
+use crate::world_generator::presets::environmental_presets::OxAgEnvironmentalConditionPresets;
+use crate::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
+use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 use crate::world_generator::OxAgWorldGenerator;
 
-use super::environmental_condition_options::{
-    OxAgEnvironmentalConditions, OxAgEnvironmentalConditionsPresets,
-};
-use super::tile_content_spawn_options::{
-    OxAgTileContentSpawnOptionPresets, OxAgTileContentSpawnOptions,
-};
-use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
+use super::content_options::OxAgContentOptions;
 
 /// World generator builder that can be used to obtain a [OxAgWorldGenerator].
 ///
@@ -27,7 +23,7 @@ use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
 /// * `size` - size that will be used to generate the world
 /// * `seed` - Seed that the [OxAgWorldGenerator] will use to generate the world.
 /// * `tile_type_spawn_levels` - levels that will determine the spawn of the different tile types.
-/// * `tile_content_spawn_options` - [HashMap] with the [Content] as the key and [OxAgTileContentSpawnOptions] as its value.
+/// * `tile_content_spawn_options` - [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
 /// * `environmental_conditions` - [EnvironmentalConditions] that will be used in the generated world.
 ///
 /// All those properties are [Option], and by default they are set to [None].
@@ -41,9 +37,9 @@ use super::tile_type_spawn_levels::OxAgTileTypeSpawnLevelPresets;
 /// ```rust
 /// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 ///
-/// let defaultGenerator = OxAgWorldGeneratorBuilder::new().build();
+/// let default_generator = OxAgWorldGeneratorBuilder::new().build();
 ///
-/// let customSizeGenerator = OxAgWorldGeneratorBuilder::new()
+/// let custom_size_generator = OxAgWorldGeneratorBuilder::new()
 ///     .set_size(100)
 ///     .build();
 ///
@@ -65,17 +61,17 @@ pub struct OxAgWorldGeneratorBuilder {
     /// Optional levels that will determine the spawn of the different tile types.
     ///
     /// If [None] they will be calculated via the seed.
-    tile_type_spawn_levels: Option<OxAgTileTypeSpawnLevels>,
+    tile_type_options: Option<OxAgTileTypeOptions>,
 
-    /// Optional [HashMap] with the [Content] as the key and [OxAgTileContentSpawnOptions] as its value.
+    /// Optional [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
     ///
     /// If [None] it will be calculated via the seed.
-    tile_content_spawn_options: Option<HashMap<Content, OxAgTileContentSpawnOptions>>,
+    content_options: Option<Vec<(Content, OxAgContentOptions)>>,
 
     /// Optional [OxAgEnvironmentalConditions] that will be used in the generated world.
     ///
     /// If [None] they will be calculated via the seed.
-    environmental_conditions: Option<OxAgEnvironmentalConditions>,
+    environmental_conditions: Option<EnvironmentalConditions>,
 
     /// Optional [f64] that will be used to calculate the height of the map.
     ///
@@ -95,8 +91,8 @@ impl OxAgWorldGeneratorBuilder {
     /// Builds the [OxAgWorldGenerator] using its options:
     /// * `size` - size that will be used to generate the world
     /// * `seed` - Seed that the [OxAgWorldGenerator] will use to generate the world.
-    /// * `tile_type_spawn_levels` - levels that will determine the spawn of the different tile types.
-    /// * `tile_content_spawn_options` - [HashMap] with the [Content] as the key and [OxAgTileContentSpawnOptions] as its value.
+    /// * `tile_type_options` - levels that will determine the spawn of the different tile types.
+    /// * `content_options` - [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
     /// * `environmental_conditions` - [EnvironmentalConditions] that will be used in the generated world.
     ///
     /// All those properties are [Option], and by default they are set to [None].
@@ -120,29 +116,22 @@ impl OxAgWorldGeneratorBuilder {
         OxAgWorldGenerator {
             size,
             seed,
-            tile_type_spawn_levels: self
-                .tile_type_spawn_levels
+            tile_type_options: self
+                .tile_type_options
                 .clone()
-                .unwrap_or(OxAgTileTypeSpawnLevels::new_from_seed(seed)),
-            tile_content_spawn_options: self
-                .tile_content_spawn_options
+                .unwrap_or(OxAgTileTypeOptions::new_from_seed(seed)),
+            content_options: self
+                .content_options
                 .clone()
-                .unwrap_or(OxAgTileContentSpawnOptions::new_from_seed(seed, size)),
+                .unwrap_or(OxAgContentOptions::new_from_seed(seed, size)),
             environmental_conditions: self
                 .environmental_conditions
                 .clone()
-                .unwrap_or(OxAgEnvironmentalConditions::new_from_seed(seed)),
-            height_multiplier: self
-                .height_multiplier
-                .unwrap_or(OxAgWorldGeneratorBuilder::multiplier_from_seed(seed)),
+                .unwrap_or(EnvironmentalConditions::new_from_seed(seed)),
+            height_multiplier: self.height_multiplier.unwrap_or(multiplier_from_seed(seed)),
             score: self.score.unwrap_or(DEFAULT_SCORE),
-            with_info: self.with_info.unwrap_or(false),
+            with_info: self.with_info.unwrap_or(true),
         }
-    }
-
-    fn multiplier_from_seed(seed: u64) -> f64 {
-        let mut rng = StdRng::seed_from_u64(seed);
-        rng.gen::<f64>()
     }
 
     /// Returns the [Builder](OxAgWorldGeneratorBuilder) with the properties not set.
@@ -150,8 +139,8 @@ impl OxAgWorldGeneratorBuilder {
         Self {
             size: None,
             seed: None,
-            tile_type_spawn_levels: None,
-            tile_content_spawn_options: None,
+            tile_type_options: None,
+            content_options: None,
             environmental_conditions: None,
             height_multiplier: None,
             score: None,
@@ -202,45 +191,57 @@ impl OxAgWorldGeneratorBuilder {
     /// Sets the tile type spawn levels of the [Builder](OxAgWorldGeneratorBuilder)
     ///
     /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
-    pub fn set_tile_type_spawn_levels(
+    pub fn set_tile_type_options(
         mut self,
-        tile_type_spawn_levels: OxAgTileTypeSpawnLevels,
+        tile_type_options: OxAgTileTypeOptions,
     ) -> Result<Self, OxAgError> {
-        tile_type_spawn_levels.validate()?;
-        self.tile_type_spawn_levels = Some(tile_type_spawn_levels);
+        tile_type_options.validate()?;
+        self.tile_type_options = Some(tile_type_options);
         Ok(self)
     }
 
     /// Sets the tile content spawn options of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
-    pub fn set_tile_content_spawn_options(
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_content_options(
         mut self,
-        mut tile_content_spawn_options: HashMap<Content, OxAgTileContentSpawnOptions>,
-    ) -> Result<Self, OxAgError> {
-        if tile_content_spawn_options.get(&Content::None).is_some() {
-            tile_content_spawn_options.remove(&Content::None);
-        }
-        self.tile_content_spawn_options = Some(tile_content_spawn_options);
-        Ok(self)
+        mut content_options: Vec<(Content, OxAgContentOptions)>,
+    ) -> Self {
+        content_options.retain_mut(|(c, _)| {
+            *c = c.to_default();
+            *c != Content::None
+        });
+        self.content_options = Some(content_options);
+        self
+    }
+
+    /// Sets the [EnvironmentalConditions] of the [Builder](OxAgWorldGeneratorBuilder)
+    pub fn set_environmental_conditions(
+        mut self,
+        environmental_conditions: EnvironmentalConditions,
+    ) -> Self {
+        self.environmental_conditions = Some(environmental_conditions);
+        self
     }
 
     /// Sets the tile type spawn levels from a [OxAgWorldGenerationPresets] preset.
-    pub fn set_tile_type_spawn_levels_from_preset(
-        mut self,
-        preset: OxAgTileTypeSpawnLevelPresets,
-    ) -> Self {
-        self.tile_type_spawn_levels = Some(OxAgTileTypeSpawnLevels::from_preset(preset));
+    pub fn set_tile_type_options_from_preset(mut self, preset: OxAgTileTypePresets) -> Self {
+        self.tile_type_options = Some(preset.load());
         self
     }
 
     /// Sets the tile content spawn options from a [OxAgContentGenerationPresets] preset.
-    pub fn set_tile_content_spawn_options_from_preset(
+    pub fn set_content_options_from_preset(mut self, preset: OxAgContentPresets) -> Self {
+        self.content_options = Some(preset.load());
+        self
+    }
+
+    /// Sets the [EnvironmentalConditions] from a [EnvironmentalConditionsPresets] preset.
+    pub fn set_environmental_conditions_from_preset(
         mut self,
-        preset: OxAgTileContentSpawnOptionPresets,
+        preset: OxAgEnvironmentalConditionPresets,
     ) -> Self {
-        self.tile_content_spawn_options =
-            Some(OxAgTileContentSpawnOptions::new_from_preset(preset));
+        self.environmental_conditions = Some(preset.load());
         self
     }
 
@@ -248,48 +249,35 @@ impl OxAgWorldGeneratorBuilder {
     /// This will also perform a check to validate the provided options.
     ///
     /// Returns a [Result] of the [Builder](OxAgWorldGeneratorBuilder) or an [OxAgError] if the options are invalid.
-    pub fn alter_content_gen_options(
+    pub fn alter_content_option(
         mut self,
         content: Content,
-        content_option: OxAgTileContentSpawnOptions,
+        content_option: OxAgContentOptions,
     ) -> Result<Self, OxAgError> {
         if content == Content::None {
             Err(OxAgError::CannotSetContentOptionForNone)
         } else {
-            let options = self
-                .tile_content_spawn_options
+            if !self
+                .content_options
                 .as_mut()
-                .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?;
-
-            match options.get_mut(&content.to_default()) {
-                Some(value) => {
-                    *value = content_option;
-                }
-                None => {
-                    options.insert(content.to_default(), content_option);
-                }
+                .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?
+                .iter_mut()
+                .any(|(c, o)| {
+                    if c.to_default() == content.to_default() {
+                        *o = content_option;
+                        true
+                    } else {
+                        false
+                    }
+                })
+            {
+                self.content_options
+                    .as_mut()
+                    .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?
+                    .push((content.to_default(), content_option))
             }
-
             Ok(self)
         }
-    }
-
-    /// Sets the [EnvironmentalConditions] of the [Builder](OxAgWorldGeneratorBuilder)
-    pub fn set_environmental_conditions(
-        mut self,
-        environmental_conditions: OxAgEnvironmentalConditions,
-    ) -> Self {
-        self.environmental_conditions = Some(environmental_conditions);
-        self
-    }
-
-    /// Sets the [EnvironmentalConditions] from a [EnvironmentalConditionsPresets] preset.
-    pub fn set_environmental_conditions_from_preset(
-        mut self,
-        preset: OxAgEnvironmentalConditionsPresets,
-    ) -> Self {
-        self.environmental_conditions = Some(OxAgEnvironmentalConditions::new_from_preset(preset));
-        self
     }
 }
 

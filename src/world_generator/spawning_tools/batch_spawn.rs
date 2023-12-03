@@ -1,16 +1,17 @@
-use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
-use crate::utils::progress_bar;
-use crate::world_generator::spawning_tools::TileMat;
-use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content;
+
+use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
+use crate::utils::progress_bar;
+use crate::world_generator::content_options::OxAgContentOptions;
+use crate::world_generator::spawning_tools::TileMat;
 
 impl TileMat {
     pub(crate) fn spawn_batches(
         &mut self,
         content: &Content,
-        content_option: &OxAgTileContentSpawnOptions,
+        content_option: &OxAgContentOptions,
         percentage: f64,
     ) {
         let mut rng = StdRng::seed_from_u64(self.seed);

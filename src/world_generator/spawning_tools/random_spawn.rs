@@ -1,15 +1,16 @@
-use crate::utils::progress_bar;
-use crate::world_generator::spawning_tools::TileMat;
-use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content;
+
+use crate::utils::progress_bar;
+use crate::world_generator::content_options::OxAgContentOptions;
+use crate::world_generator::spawning_tools::TileMat;
 
 impl TileMat {
     pub(crate) fn spawn_randomly(
         &mut self,
         content: &Content,
-        content_option: &OxAgTileContentSpawnOptions,
+        content_option: &OxAgContentOptions,
         percentage: f64,
     ) {
         let mut rng = StdRng::seed_from_u64(self.seed);
@@ -21,13 +22,9 @@ impl TileMat {
             )
         };
         for i in 0..max_spawn_number {
-            let mut row = 0;
-            let mut col = 0;
-            loop {
-                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
-                if self.map[row][col].tile_type.properties().can_hold(content) {
-                    break;
-                }
+            let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+            while !self.map[row][col].tile_type.properties().can_hold(content) {
+                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size))
             }
             let mut value = 0;
             if content.properties().max() != 0 {

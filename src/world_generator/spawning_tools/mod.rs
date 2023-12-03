@@ -1,8 +1,8 @@
-use crate::world_generator::tile_content_spawn_options::OxAgTileContentSpawnOptions;
 use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::worldgenerator::get_tiletype_percentage;
-use std::collections::HashMap;
 use strum::IntoEnumIterator;
+
+use crate::world_generator::content_options::OxAgContentOptions;
 
 pub(crate) mod batch_spawn;
 pub(crate) mod matrix_spawn;
@@ -27,15 +27,9 @@ pub(crate) struct TileMat {
 impl TileMat {
     pub(crate) fn spawn_contents(
         mut self,
-        content_options: &HashMap<Content, OxAgTileContentSpawnOptions>,
+        content_options: &Vec<(Content, OxAgContentOptions)>,
     ) -> Self {
         let percentage_map = get_tiletype_percentage(&self.map);
-
-        // let contents = self
-        //     .tile_content_spawn_options
-        //     .iter()
-        //     .collect::<Vec<(&Content, &OxAgTileContentSpawnOptions)>>()
-        //     .sort();
         if self.with_info {
             println!("Spawning contents:")
         }
