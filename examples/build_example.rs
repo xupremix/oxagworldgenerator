@@ -19,7 +19,7 @@ fn main() {
         .set_with_info(true)
         .build();
 
-    let tmp = generator.gen().0;
+    let _tmp = generator.gen().0;
     let duration: Duration = start.elapsed();
     println!("Duration: {:?}", duration);
 }

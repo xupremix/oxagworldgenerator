@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use fltk;
+
 use fltk::enums::ColorDepth;
 use fltk::image::RgbImage;
 use fltk::prelude::GroupExt;
@@ -8,12 +8,12 @@ use fltk::prelude::ImageExt;
 use fltk::prelude::WidgetBase;
 use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, window::Window};
-use robotics_lib;
+
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::worldgenerator::Generator;
 
-use lib_oxidizing_agents;
+
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;

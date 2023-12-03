@@ -89,7 +89,7 @@ impl TileMat {
         // Fill the center of the circle
         for i in center_x - min_radius + 1..center_x + min_radius {
             for j in center_y - min_radius + 1..center_y + min_radius {
-                if (i - center_x).pow(2) + (j - center_y).pow(2) <= min_radius.pow(2) as isize {
+                if (i - center_x).pow(2) + (j - center_y).pow(2) <= min_radius.pow(2) {
                     self.add(i, j, content);
                 }
             }
