@@ -21,3 +21,9 @@
 - [ ] create a good-looking README.md
 - [ ] transmit the progress bar to an event handler - if specified
 - [ ] run clippy fix for the lib warning `cargo clippy --fix`
+- [ ] check for memory allocation (and if there are any improvements)
+- [ ] add the logic for checking if a tile is spawning out of a range
+- [ ] update the logic for the circles, allowing them to be placed on the corners
+- [ ] add serialization to file eg. load and save functions (option to clone the map)
+- [ ] check where to spawn the robot
+- [ ] consider the concept of savestate given a `HashMap<(usize, usize), Tile>` + private encryption
