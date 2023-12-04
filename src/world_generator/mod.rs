@@ -1,13 +1,6 @@
-
-
-
-
-
-
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
-
 
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
@@ -137,7 +130,7 @@ impl Generator for OxAgWorldGenerator {
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
                 .spawn_contents(self.get_content_options())
                 .map,
-            (self.size, self.size),
+            (0, 0),
             self.environmental_conditions.clone(),
             self.score,
         )
