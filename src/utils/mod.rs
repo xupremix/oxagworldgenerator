@@ -1,5 +1,3 @@
-
-
 use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
 
 pub mod constants;
@@ -28,6 +26,9 @@ pub(crate) fn progress_bar(
     length: usize,
     fill: &str,
 ) {
+    if total == 1 {
+        println!("Total should never reach 1");
+    }
     let total = total - 1;
     let fill_len = length * iteration / total;
     let out = iteration == total;

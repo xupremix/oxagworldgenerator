@@ -116,7 +116,7 @@ impl OxAgWorldGenerator {
     }
 
     /// Returns an [HashMap] with the [Content] as the key and [Percentage](f64) as its value
-    pub fn get_content_spawn_options(&self) -> &HashMap<Content, f64> {
+    pub fn get_content_spawn_percent(&self) -> &HashMap<Content, f64> {
         &self.content_spawn_percent
     }
 
@@ -138,7 +138,7 @@ impl Generator for OxAgWorldGenerator {
         (
             self.generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
-                .spawn_contents(self.get_content_options())
+                .spawn_contents(self.get_content_options(), self.get_content_spawn_percent())
                 .map,
             (0, 0),
             self.environmental_conditions.clone(),

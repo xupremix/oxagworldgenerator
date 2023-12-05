@@ -13,19 +13,21 @@ use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::worldgenerator::Generator;
 
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
+use lib_oxidizing_agents::world_generator::presets::content_spawn_presets::OxAgContentSpawnPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
     let size: usize = 512;
-    let seed = 44445; // generate_random_seed();
+    let seed = 675416; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
         .set_size(size)
-        .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
+        .set_tile_type_options_from_preset(OxAgTileTypePresets::LowWaterWorld)
         .set_content_options_from_preset(OxAgContentPresets::Default)
+        .set_content_spawn_percent_from_preset(OxAgContentSpawnPresets::Default)
         .set_with_info(true)
         .build();
 
@@ -54,21 +56,19 @@ fn main() {
                 Snow => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
             };
-            // if tmp[x][y].content.to_default() == Fire {
-            //     color = Color::from_hex_str("#E22403");
-            // }
-            if tmp[x][y].content.to_default() == Tree(0) {
+            if tmp[x][y].content.to_default() == Fire {
+                color = Color::from_hex_str("#E22403");
+            } else if tmp[x][y].content.to_default() == Tree(0) {
                 color = Color::from_hex_str("#1D6004");
+            } else if tmp[x][y].content.to_default() == Garbage(0) {
+                color = Color::from_hex_str("#641FAF");
+            } else if tmp[x][y].content.to_default() == Rock(0) {
+                color = Color::from_hex_str("#2F2323");
+            } else if tmp[x][y].content.to_default() == Fish(0) {
+                color = Color::from_hex_str("#8F8EA1");
+            } else if tmp[x][y].content.to_default() == Coin(0) {
+                color = Color::from_hex_str("#000000");
             }
-            // else if tmp[x][y].content.to_default() == Garbage(0) {
-            //     color = Color::from_hex_str("#641FAF");
-            // } else if tmp[x][y].content.to_default() == Rock(0) {
-            //     color = Color::from_hex_str("#2F2323");
-            // } else if tmp[x][y].content.to_default() == Fish(0) {
-            //     color = Color::from_hex_str("#8F8EA1");
-            // } else if tmp[x][y].content.to_default() == Coin(0) {
-            //     color = Color::from_hex_str("#000000");
-            // }
             let color = color.unwrap().to_rgb();
             pixel.copy_from_slice(&[color.0, color.1, color.2, 255]);
         }
