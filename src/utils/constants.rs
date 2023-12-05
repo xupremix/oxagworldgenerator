@@ -23,5 +23,5 @@ pub const DEFAULT_NOISE_LACUNARITY: f64 = 2.0;
 pub const DEFAULT_NOISE_PERSISTENCE: f64 = 0.6;
 pub const DEFAULT_NOISE_OCTAVES: usize = 12;
 pub const DEFAULT_SCORE: f32 = 100.0;
-
+pub const CONTENT_PERCENTAGE_RANGE: RangeInclusive<f64> = 0.0..=1.0;
 pub const DEFAULT_BATCH_DISTANCE: usize = 12;

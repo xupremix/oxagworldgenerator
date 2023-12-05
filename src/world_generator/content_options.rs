@@ -5,6 +5,9 @@ use robotics_lib::world::tile::Content;
 use strum::IntoEnumIterator;
 
 use crate::utils::constants::*;
+use crate::utils::errors::OxAgError;
+use crate::utils::errors::OxAgError::{InvalidContentOption, InvalidContentOptionProvided};
+use crate::utils::traits::Validator;
 
 /// Options that determine how the tile [Content] are spawned
 /// TODO: Examples
@@ -18,6 +21,31 @@ pub struct OxAgContentOptions {
     pub max_radius: usize,
     pub with_max_spawn_number: bool,
     pub max_spawn_number: usize,
+    pub percentage: f64,
+}
+
+impl Validator for OxAgContentOptions {
+    fn validate(&self) -> Result<(), OxAgError> {
+        if !CONTENT_PERCENTAGE_RANGE.contains(&self.percentage) {
+            Err(InvalidContentOptionProvided)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+impl Validator for Vec<(Content, OxAgContentOptions)> {
+    fn validate(&self) -> Result<(), OxAgError> {
+        let mut out = Content::None;
+        if self.iter().any(|(c, op)| {
+            out = c.to_default();
+            !CONTENT_PERCENTAGE_RANGE.contains(&op.percentage)
+        }) {
+            Err(InvalidContentOption(out))
+        } else {
+            Ok(())
+        }
+    }
 }
 
 impl Default for OxAgContentOptions {
@@ -29,6 +57,7 @@ impl Default for OxAgContentOptions {
             max_radius: 0,
             with_max_spawn_number: true,
             max_spawn_number: 0,
+            percentage: 1.0,
         }
     }
 }
@@ -55,6 +84,7 @@ impl OxAgContentOptions {
                                 0..(size.pow(2) / (max_radius.pow(2) as f64 * 3.14) as usize
                                     + DEFAULT_BATCH_DISTANCE),
                             ),
+                            percentage: rng.gen_range(0.0..1.0),
                         },
                     ))
                 }

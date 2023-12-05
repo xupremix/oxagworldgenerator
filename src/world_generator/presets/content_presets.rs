@@ -35,17 +35,19 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 0,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.08,
             },
         ),
         (
             Content::Tree(0),
             OxAgContentOptions {
-                in_batches: true,
+                in_batches: false,
                 is_present: true,
                 min_spawn_number: 3,
                 max_radius: 40,
                 with_max_spawn_number: false,
                 max_spawn_number: 100,
+                percentage: 0.3,
             },
         ),
         (
@@ -57,6 +59,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 0,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.05,
             },
         ),
         (
@@ -68,6 +71,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 10,
                 with_max_spawn_number: true,
                 max_spawn_number: 40,
+                percentage: 0.04,
             },
         ),
         (
@@ -79,6 +83,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 3,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.07,
             },
         ),
         (
@@ -90,6 +95,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 3,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.01,
             },
         ),
         (
@@ -101,6 +107,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 1,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.01,
             },
         ),
         (
@@ -112,6 +119,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 3,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.01,
             },
         ),
         (
@@ -123,6 +131,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 1,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 1.0,
             },
         ),
         (
@@ -134,6 +143,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 max_radius: 1,
                 with_max_spawn_number: false,
                 max_spawn_number: 0,
+                percentage: 0.2,
             },
         ),
     ])

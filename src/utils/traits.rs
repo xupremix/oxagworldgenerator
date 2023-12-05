@@ -1,5 +1,6 @@
-use crate::utils::errors::OxAgError;
 use std::ops::RangeInclusive;
+
+use crate::utils::errors::OxAgError;
 
 pub trait FromSeed {
     fn new_from_seed(seed: u64) -> Self;

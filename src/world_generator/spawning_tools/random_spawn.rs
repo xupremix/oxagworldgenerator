@@ -1,7 +1,8 @@
+use std::cmp::max;
+
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content;
-use std::cmp::max;
 
 use crate::utils::progress_bar;
 use crate::world_generator::content_options::OxAgContentOptions;
@@ -13,8 +14,8 @@ impl TileMat {
         content: &Content,
         content_option: &OxAgContentOptions,
         percentage: f64,
+        rng: &mut StdRng,
     ) {
-        let mut rng = StdRng::seed_from_u64(self.seed);
         let max_spawn_number = if content_option.with_max_spawn_number {
             content_option.max_spawn_number
         } else {

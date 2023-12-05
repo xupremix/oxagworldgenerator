@@ -1,14 +1,15 @@
+use std::collections::HashMap;
+
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::Content;
-use std::collections::HashMap;
 
 use crate::utils::constants::DEFAULT_SCORE;
 use crate::utils::errors::OxAgError;
+use crate::utils::errors::OxAgError::ContentOptionsNotSet;
 use crate::utils::traits::Loadable;
 use crate::utils::traits::{FromSeed, Validator};
 use crate::utils::{generate_random_seed, generate_random_world_size, multiplier_from_seed};
 use crate::world_generator::presets::content_presets::OxAgContentPresets;
-use crate::world_generator::presets::content_spawn_presets::OxAgContentSpawnPresets;
 use crate::world_generator::presets::environmental_presets::OxAgEnvironmentalConditionPresets;
 use crate::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
@@ -68,11 +69,6 @@ pub struct OxAgWorldGeneratorBuilder {
     /// If [None] it will be calculated via the seed.
     content_options: Option<Vec<(Content, OxAgContentOptions)>>,
 
-    /// Optional [HashMap] with the [Content] as the key and [Percentage](f64) as its value.
-    ///
-    /// If [None] it will be calculated via the seed.
-    content_spawn_percent: Option<HashMap<Content, f64>>,
-
     /// Optional [OxAgEnvironmentalConditions] that will be used in the generated world.
     ///
     /// If [None] they will be calculated via the seed.
@@ -129,10 +125,6 @@ impl OxAgWorldGeneratorBuilder {
                 .content_options
                 .clone()
                 .unwrap_or(OxAgContentOptions::new_from_seed(seed, size)),
-            content_spawn_percent: self
-                .content_spawn_percent
-                .clone()
-                .unwrap_or(HashMap::new_from_seed(seed)),
             environmental_conditions: self
                 .environmental_conditions
                 .clone()
@@ -150,7 +142,6 @@ impl OxAgWorldGeneratorBuilder {
             seed: None,
             tile_type_options: None,
             content_options: None,
-            content_spawn_percent: None,
             environmental_conditions: None,
             height_multiplier: None,
             score: None,
@@ -216,24 +207,9 @@ impl OxAgWorldGeneratorBuilder {
     pub fn set_content_options(
         mut self,
         mut content_options: Vec<(Content, OxAgContentOptions)>,
-    ) -> Self {
-        content_options.retain_mut(|(c, _)| {
-            *c = c.to_default();
-            *c != Content::None
-        });
-        self.content_options = Some(content_options);
-        self
-    }
-
-    /// Sets the tile content spawn options of the [Builder](OxAgWorldGeneratorBuilder)
-    ///
-    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
-    pub fn set_content_spawn_percent(
-        mut self,
-        mut content_spawn_percent: HashMap<Content, f64>,
     ) -> Result<Self, OxAgError> {
-        content_spawn_percent.validate()?;
-        self.content_spawn_percent = Some(content_spawn_percent);
+        content_options.validate()?;
+        self.content_options = Some(content_options);
         Ok(self)
     }
 
@@ -258,15 +234,6 @@ impl OxAgWorldGeneratorBuilder {
         self
     }
 
-    /// Sets the tile content spawn options from a [OxAgContentSpawnPresets] preset.
-    pub fn set_content_spawn_percent_from_preset(
-        mut self,
-        preset: OxAgContentSpawnPresets,
-    ) -> Self {
-        self.content_spawn_percent = Some(preset.load());
-        self
-    }
-
     /// Sets the [EnvironmentalConditions] from a [EnvironmentalConditionsPresets] preset.
     pub fn set_environmental_conditions_from_preset(
         mut self,
@@ -285,30 +252,26 @@ impl OxAgWorldGeneratorBuilder {
         content: Content,
         content_option: OxAgContentOptions,
     ) -> Result<Self, OxAgError> {
-        if content == Content::None {
-            Err(OxAgError::CannotSetContentOptionForNone)
-        } else {
-            if !self
-                .content_options
-                .as_mut()
-                .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?
-                .iter_mut()
-                .any(|(c, o)| {
-                    if c.to_default() == content.to_default() {
-                        *o = content_option;
-                        true
-                    } else {
-                        false
-                    }
-                })
-            {
-                self.content_options
-                    .as_mut()
-                    .ok_or(OxAgError::ContentOptionNotSet(content.to_default()))?
-                    .push((content.to_default(), content_option))
-            }
-            Ok(self)
+        content_option.validate()?;
+        let found = self
+            .content_options
+            .as_mut()
+            .ok_or(ContentOptionsNotSet)?
+            .iter_mut()
+            .any(|(c, opt)| {
+                if *c == content.to_default() {
+                    *opt = content_option;
+                    true
+                } else {
+                    false
+                }
+            });
+        if !found {
+            let mut option = self.content_options.clone().unwrap();
+            option.push((content.to_default(), content_option));
+            self.content_options = Some(option);
         }
+        Ok(self)
     }
 }
 

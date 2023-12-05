@@ -1,7 +1,8 @@
+use std::cmp::max;
+
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content;
-use std::cmp::max;
 
 use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
 use crate::utils::progress_bar;
@@ -14,24 +15,21 @@ impl TileMat {
         content: &Content,
         content_option: &OxAgContentOptions,
         percentage: f64,
+        rng: &mut StdRng,
     ) {
-        let mut rng = StdRng::seed_from_u64(self.seed);
-        let mut radius = 1.0;
-        if content_option.max_radius != 0 {
-            radius = rng.gen_range(1.0..content_option.max_radius as f64);
-        }
+        let max_rad = max(1, content_option.max_radius) as f64;
+        let mut radius = max_rad;
         let max_spawn_number = if content_option.with_max_spawn_number {
             content_option.max_spawn_number
         } else {
             let max = max(
                 content_option.min_spawn_number,
                 ((self.size.pow(2) as f64 * percentage)
-                    / (radius.powi(2) * 3.14 + DEFAULT_BATCH_DISTANCE as f64))
+                    / (max_rad.powi(2) * 3.14 + DEFAULT_BATCH_DISTANCE as f64))
                     as usize,
             );
             rng.gen_range(content_option.min_spawn_number..=max)
         };
-        println!("Max spawn number: {max_spawn_number}");
         let mut tot = 0.0;
         for i in 0..max_spawn_number {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
@@ -39,6 +37,7 @@ impl TileMat {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
             tot += radius * radius * std::f64::consts::PI;
+            radius = rng.gen_range(1.0..=max_rad);
             self.spawn_circle(row, col, radius as usize, content);
             if self.with_info {
                 progress_bar(
@@ -50,11 +49,6 @@ impl TileMat {
                 );
             }
         }
-        println!("Total n: {tot}");
-    }
-
-    pub(crate) fn spawn_lava_lake(&mut self) {
-        //
     }
 
     fn spawn_circle(&mut self, center_x: usize, center_y: usize, radius: usize, content: &Content) {

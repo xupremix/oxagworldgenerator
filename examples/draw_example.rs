@@ -7,27 +7,24 @@ use fltk::prelude::ImageExt;
 use fltk::prelude::WidgetBase;
 use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, window::Window};
-
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::worldgenerator::Generator;
 
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
-use lib_oxidizing_agents::world_generator::presets::content_spawn_presets::OxAgContentSpawnPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
-    let size: usize = 512;
-    let seed = 675416; // generate_random_seed();
+    let size: usize = 1024;
+    let seed = 69666; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
         .set_size(size)
         .set_tile_type_options_from_preset(OxAgTileTypePresets::LowWaterWorld)
         .set_content_options_from_preset(OxAgContentPresets::Default)
-        .set_content_spawn_percent_from_preset(OxAgContentSpawnPresets::Default)
         .set_with_info(true)
         .build();
 
