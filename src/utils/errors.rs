@@ -16,4 +16,5 @@ pub enum OxAgError {
     WrongUpperBound,
     InvalidSpawnLevel(Content),
     RangesAreOutOfBounds,
+    InvalidContentSpawnOption(Content),
 }

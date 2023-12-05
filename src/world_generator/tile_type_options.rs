@@ -6,7 +6,7 @@ use rand::SeedableRng;
 
 use crate::utils::constants::*;
 use crate::utils::errors::OxAgError;
-use crate::utils::traits::{Container, FromSeed};
+use crate::utils::traits::{Container, FromSeed, Validator};
 
 #[derive(Debug, Clone)]
 pub struct OxAgTileTypeOptions {
@@ -42,11 +42,11 @@ impl FromSeed for OxAgTileTypeOptions {
     }
 }
 
-impl OxAgTileTypeOptions {
+impl Validator for OxAgTileTypeOptions {
     /// Validates this spawn levels to make sure they are within bounds.
     ///
     /// Returns a [OxAgError] [Result] if validation fails.
-    pub fn validate(&self) -> Result<(), OxAgError> {
+    fn validate(&self) -> Result<(), OxAgError> {
         let levels = [
             &self.deep_water_level,
             &self.shallow_water_level,

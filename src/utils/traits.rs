@@ -1,3 +1,4 @@
+use crate::utils::errors::OxAgError;
 use std::ops::RangeInclusive;
 
 pub trait FromSeed {
@@ -17,4 +18,8 @@ impl Container<RangeInclusive<f64>> for RangeInclusive<f64> {
     fn within(&self, range: &RangeInclusive<f64>) -> bool {
         (range.start() <= self.start()) && (range.end() >= self.end())
     }
+}
+
+pub trait Validator {
+    fn validate(&self) -> Result<(), OxAgError>;
 }

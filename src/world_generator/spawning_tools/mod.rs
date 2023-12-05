@@ -1,3 +1,4 @@
+use robotics_lib::world::tile::TileType::Grass;
 use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::worldgenerator::get_tiletype_percentage;
 use strum::IntoEnumIterator;
@@ -33,6 +34,7 @@ impl TileMat {
         if self.with_info {
             println!("Spawning contents:")
         }
+        //println!("Grass percentage {}", percentage_map.get(&Grass).unwrap());
         for (content, content_option) in content_options.iter() {
             let content = &content.to_default();
             if content_option.is_present {
@@ -49,6 +51,10 @@ impl TileMat {
                     })
                     .sum::<f64>();
                 if content_option.in_batches {
+                    println!(
+                        "Content: {:?}, percentage of tiles: {}",
+                        content, percentage
+                    );
                     self.spawn_batches(content, content_option, percentage);
                 } else {
                     self.spawn_randomly(content, content_option, percentage);

@@ -29,11 +29,14 @@ impl TileMat {
                         as usize,
             )
         };
+        println!("Max spawn number: {max_spawn_number}");
+        let mut tot = 0.0;
         for i in 0..max_spawn_number {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
+            tot += radius * radius * std::f64::consts::PI;
             self.spawn_circle(row, col, radius as usize, content);
             if self.with_info {
                 progress_bar(
@@ -45,6 +48,11 @@ impl TileMat {
                 );
             }
         }
+        println!("Total n: {tot}");
+    }
+
+    pub(crate) fn spawn_lava_lake(&mut self) {
+        //
     }
 
     fn spawn_circle(&mut self, center_x: usize, center_y: usize, radius: usize, content: &Content) {

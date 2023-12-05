@@ -1,6 +1,7 @@
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
+use std::collections::HashMap;
 
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
@@ -8,6 +9,7 @@ use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 
 pub mod content_options;
+pub mod content_spawn_option;
 pub mod environmental_condition_options;
 pub mod presets;
 mod spawning_tools;
@@ -47,6 +49,9 @@ pub struct OxAgWorldGenerator {
 
     /// [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
     pub(crate) content_options: Vec<(Content, OxAgContentOptions)>,
+
+    /// [HashMap] with the [Content] as the key and [Percentage](sdt::f64) as its value.
+    pub(crate) content_spawn_percent: HashMap<Content, f64>,
 
     /// [EnvironmentalConditions] that will be used in the generated world
     pub(crate) environmental_conditions: EnvironmentalConditions,
@@ -108,6 +113,11 @@ impl OxAgWorldGenerator {
     /// Returns an [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value
     pub fn get_content_options(&self) -> &Vec<(Content, OxAgContentOptions)> {
         &self.content_options
+    }
+
+    /// Returns an [HashMap] with the [Content] as the key and [Percentage](f64) as its value
+    pub fn get_content_spawn_options(&self) -> &HashMap<Content, f64> {
+        &self.content_spawn_percent
     }
 
     /// Returns the [EnvironmentalConditions] that will be used in the generated world
