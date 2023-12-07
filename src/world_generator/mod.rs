@@ -126,15 +126,25 @@ impl OxAgWorldGenerator {
 }
 
 impl Generator for OxAgWorldGenerator {
-    fn gen(&mut self) -> (Vec<Vec<Tile>>, (usize, usize), EnvironmentalConditions, f32) {
+    fn gen(
+        &mut self,
+    ) -> (
+        Vec<Vec<Tile>>,
+        (usize, usize),
+        EnvironmentalConditions,
+        f32,
+        Option<HashMap<Content, f32>>,
+    ) {
         (
             self.generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
+                .spawn_lava()
                 .spawn_contents(self.get_content_options())
                 .map,
             (0, 0),
             self.environmental_conditions.clone(),
             self.score,
+            None,
         )
     }
 }

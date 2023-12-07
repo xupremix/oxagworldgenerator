@@ -30,13 +30,11 @@ impl TileMat {
             );
             rng.gen_range(content_option.min_spawn_number..=max)
         };
-        let mut tot = 0.0;
         for i in 0..max_spawn_number {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
-            tot += radius * radius * std::f64::consts::PI;
             radius = rng.gen_range(1.0..=max_rad);
             self.spawn_circle(row, col, radius as usize, content);
             if self.with_info {
@@ -63,11 +61,6 @@ impl TileMat {
         let mut x: isize = min_radius;
         let mut y: isize = 0;
         let mut decision = 1 - x; // Decision parameter to determine next point
-
-        let mut value = 0;
-        if content.properties().max() != 0 {
-            value = rng.gen_range(0..content.properties().max());
-        }
 
         let center_x = center_x as isize;
         let center_y = center_y as isize;

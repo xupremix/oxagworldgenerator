@@ -9,11 +9,12 @@ use strum::IntoEnumIterator;
 use crate::world_generator::content_options::OxAgContentOptions;
 
 pub(crate) mod batch_spawn;
+mod line_spawn;
 pub(crate) mod matrix_spawn;
 pub(crate) mod random_spawn;
 
 pub(crate) struct F64MatData {
-    map: Vec<Vec<f64>>,
+    map: Vec<Vec<(f64, bool)>>,
     min: f64,
     max: f64,
     seed: u64,

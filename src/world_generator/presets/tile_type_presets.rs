@@ -112,9 +112,11 @@ pub(crate) const DEFAULT: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: 0.25..=0.5,
     mountain_level: 0.5..=0.75,
     snow_level: 0.75..=1.0,
+    river_n: 10..=16,
+    street_n: 0..=10,
 };
 
-pub const WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
+pub(crate) const WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
     deep_water_level: -1.0..=-0.5,
     shallow_water_level: -0.5..=0.0,
     sand_level: 0.0..=0.2,
@@ -122,9 +124,11 @@ pub const WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: 0.4..=0.6,
     mountain_level: 0.6..=0.8,
     snow_level: 0.8..=1.0,
+    river_n: 0..=10,
+    street_n: 0..=10,
 };
 
-pub const LOW_WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
+pub(crate) const LOW_WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
     deep_water_level: -1.0..=-0.8,
     shallow_water_level: -0.8..=-0.6,
     sand_level: -0.6..=-0.3,
@@ -132,9 +136,11 @@ pub const LOW_WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: 0.1..=0.4,
     mountain_level: 0.4..=0.7,
     snow_level: 0.7..=1.0,
+    river_n: 0..=10,
+    street_n: 0..=10,
 };
 
-pub const HILL: OxAgTileTypeOptions = OxAgTileTypeOptions {
+pub(crate) const HILL: OxAgTileTypeOptions = OxAgTileTypeOptions {
     deep_water_level: -1.0..=-1.0,
     shallow_water_level: -1.0..=-1.0,
     sand_level: -1.0..=-1.0,
@@ -142,4 +148,6 @@ pub const HILL: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: -1.0..=1.0,
     mountain_level: 1.0..=1.0,
     snow_level: 1.0..=1.0,
+    river_n: 0..=0,
+    street_n: 0..=0,
 };

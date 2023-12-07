@@ -206,7 +206,7 @@ impl OxAgWorldGeneratorBuilder {
     /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_content_options(
         mut self,
-        mut content_options: Vec<(Content, OxAgContentOptions)>,
+        content_options: Vec<(Content, OxAgContentOptions)>,
     ) -> Result<Self, OxAgError> {
         content_options.validate()?;
         self.content_options = Some(content_options);

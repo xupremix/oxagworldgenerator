@@ -25,7 +25,7 @@ impl TileMat {
             );
             rng.gen_range(content_option.min_spawn_number..=max)
         };
-        for i in 0..max_spawn_number {
+        for _ in 0..max_spawn_number {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size))
