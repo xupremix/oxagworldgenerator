@@ -11,6 +11,7 @@ use crate::world_generator::content_options::OxAgContentOptions;
 pub(crate) mod batch_spawn;
 mod line_spawn;
 pub(crate) mod matrix_spawn;
+mod maze;
 pub(crate) mod random_spawn;
 
 pub(crate) struct F64MatData {

@@ -61,6 +61,8 @@ pub struct OxAgWorldGenerator {
 
     /// [bool] with_info
     pub(crate) with_info: bool,
+
+    pub(crate) maze: bool,
 }
 
 impl OxAgWorldGenerator {
@@ -88,6 +90,9 @@ impl OxAgWorldGenerator {
 
     pub fn get_score(&self) -> f32 {
         self.score
+    }
+    pub fn get_maze(&self) -> bool {
+        self.maze
     }
 
     pub fn get_with_info(&self) -> bool {
@@ -135,12 +140,17 @@ impl Generator for OxAgWorldGenerator {
         f32,
         Option<HashMap<Content, f32>>,
     ) {
-        (
+        let map = if self.maze {
+            vec![]
+        } else {
             self.generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
                 .spawn_lava()
                 .spawn_contents(self.get_content_options())
-                .map,
+                .map
+        };
+        (
+            map,
             (0, 0),
             self.environmental_conditions.clone(),
             self.score,
