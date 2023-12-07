@@ -131,14 +131,14 @@ impl F64MatData {
 
         self.lava_spawn(&mut map, spawn_levels, &mut rng);
 
-        for _ in 0..=rng.gen_range(spawn_levels.river_n.clone()) {
+        for _ in 0..rng.gen_range(spawn_levels.river_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while ![Hill, Mountain].contains(&map[row][col].tile_type) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
             self.river_spawn(&mut map, ShallowWater, &[ShallowWater], row, col);
         }
-        for _ in 0..=rng.gen_range(spawn_levels.street_n.clone()) {
+        for _ in 0..rng.gen_range(spawn_levels.street_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while ![Mountain].contains(&map[row][col].tile_type) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));

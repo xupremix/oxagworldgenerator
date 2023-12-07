@@ -113,7 +113,7 @@ pub(crate) const DEFAULT: OxAgTileTypeOptions = OxAgTileTypeOptions {
     mountain_level: 0.5..=0.75,
     snow_level: 0.75..=1.0,
     river_n: 10..=16,
-    street_n: 0..=10,
+    street_n: 0..=0,
     lava_n: 5..=8,
     lava_radius: 4..=9,
 };
