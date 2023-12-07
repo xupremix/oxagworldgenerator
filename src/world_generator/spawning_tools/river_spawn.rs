@@ -1,17 +1,10 @@
 use crate::world_generator::spawning_tools::F64MatData;
-use robotics_lib::world::tile::TileType::Lava;
+use robotics_lib::world::tile::TileType::{DeepWater, Lava, ShallowWater};
 use robotics_lib::world::tile::{Tile, TileType};
 use std::collections::VecDeque;
 
 impl F64MatData {
-    pub(crate) fn river_spawn(
-        &mut self,
-        map: &mut Vec<Vec<Tile>>,
-        tile: TileType,
-        targets: &[TileType],
-        row: usize,
-        col: usize,
-    ) -> bool {
+    pub(crate) fn river_spawn(&mut self, map: &mut Vec<Vec<Tile>>, row: usize, col: usize) -> bool {
         let mut directions = [(2.0, (-1, 0)), (2.0, (0, 1)), (2.0, (1, 0)), (2.0, (0, -1))];
 
         if row as i32 - 1 >= 0
@@ -43,12 +36,12 @@ impl F64MatData {
             return false;
         }
 
-        if targets.contains(&map[row][col].tile_type) {
+        if [ShallowWater, DeepWater].contains(&map[row][col].tile_type) {
             return true;
         }
 
         self.map[row][col].1 = true;
-        map[row][col].tile_type = tile.clone();
+        map[row][col].tile_type = ShallowWater;
 
         directions.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
 
@@ -63,7 +56,7 @@ impl F64MatData {
                 (row as i32 + row_offset) as usize,
                 (col as i32 + col_offset) as usize,
             );
-            if self.river_spawn(map, tile, targets, new_row, new_col) {
+            if self.river_spawn(map, new_row, new_col) {
                 return true;
             }
         }

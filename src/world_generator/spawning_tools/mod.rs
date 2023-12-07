@@ -15,6 +15,7 @@ pub(crate) mod matrix_spawn;
 mod maze;
 pub(crate) mod random_spawn;
 mod river_spawn;
+mod street_spawn;
 
 pub(crate) struct F64MatData {
     map: Vec<Vec<(f64, bool)>>,

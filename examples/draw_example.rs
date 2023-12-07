@@ -17,8 +17,8 @@ use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGen
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
-    let size: usize = 1500;
-    let seed = 6942069420; // generate_random_seed();
+    let size: usize = 1024;
+    let seed = 452471; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
@@ -52,6 +52,7 @@ fn main() {
                 Mountain => Color::from_hex_str("#6F482A"),
                 Snow => Color::from_hex_str("#FFFFFF"),
                 Lava => Color::from_hex_str("#fc4903"),
+                Street => Color::from_hex_str("#000000"),
                 _ => Color::from_hex_str("#000000"),
             };
             if tmp[x][y].content.to_default() == Fire {

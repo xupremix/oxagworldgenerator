@@ -25,3 +25,5 @@ pub const DEFAULT_NOISE_OCTAVES: usize = 12;
 pub const DEFAULT_SCORE: f32 = 100.0;
 pub const CONTENT_PERCENTAGE_RANGE: RangeInclusive<f64> = 0.0..=1.0;
 pub const DEFAULT_BATCH_DISTANCE: usize = 12;
+
+pub const SAME_DIR_PROBABILITY: f64 = 0.8;

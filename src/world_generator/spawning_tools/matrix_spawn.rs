@@ -3,7 +3,7 @@ use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content::Water;
 use robotics_lib::world::tile::TileType::{
-    DeepWater, Hill, Mountain, Sand, ShallowWater, Snow, Street,
+    DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow,
 };
 use robotics_lib::world::tile::{Content, Tile, TileType};
 
@@ -67,7 +67,7 @@ impl F64MatData {
         let mut map = vec![
             vec![
                 Tile {
-                    tile_type: TileType::Grass,
+                    tile_type: Grass,
                     content: Content::None,
                     elevation: 0,
                 };
@@ -133,17 +133,24 @@ impl F64MatData {
 
         for _ in 0..rng.gen_range(spawn_levels.river_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
-            while ![Hill, Mountain].contains(&map[row][col].tile_type) {
+            while ![Hill, Mountain].contains(&map[row][col].tile_type) || self.map[row][col].1 {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
-            self.river_spawn(&mut map, ShallowWater, &[ShallowWater], row, col);
+            self.river_spawn(&mut map, row, col);
         }
         for _ in 0..rng.gen_range(spawn_levels.street_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
-            while ![Mountain].contains(&map[row][col].tile_type) {
+            while ![Hill, Grass].contains(&map[row][col].tile_type) || self.map[row][col].1 {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
-            self.river_spawn(&mut map, Street, &[Sand], row, col);
+            let n = rng.gen_range(spawn_levels.street_len.clone());
+            let dir = match (rng.gen_range(0..4)) {
+                0 => (0, 1),
+                1 => (1, 0),
+                2 => (0, -1),
+                _ => (-1, 0),
+            };
+            self.street_spawn(&mut map, row, col, &mut rng, dir, n);
         }
         TileMat {
             map,

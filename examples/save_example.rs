@@ -1,5 +1,4 @@
-use robotics_lib::world::worldgenerator::Generator;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
@@ -8,7 +7,7 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
     let size: usize = 256;
-    let seed = 75176; // generate_random_seed();
+    let seed = 751776; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
@@ -19,4 +18,7 @@ fn main() {
         .build();
 
     generator.save("test.json").unwrap();
+
+    let duration: Duration = start.elapsed();
+    println!("Duration: {:?}", duration);
 }

@@ -19,6 +19,7 @@ pub struct OxAgTileTypeOptions {
     pub snow_level: RangeInclusive<f64>,
     pub river_n: RangeInclusive<usize>,
     pub street_n: RangeInclusive<usize>,
+    pub street_len: RangeInclusive<usize>,
     pub lava_n: RangeInclusive<usize>,
     pub lava_radius: RangeInclusive<usize>,
 }
@@ -41,6 +42,8 @@ impl FromSeed for OxAgTileTypeOptions {
         let l_max = rng.gen_range(0..l_max);
         let lr_max = rng.gen_range(1..8);
         let lr_max = rng.gen_range(0..lr_max);
+        let st_max = rng.gen_range(1..20);
+        let st_max = rng.gen_range(0..st_max);
 
         Self {
             deep_water_level: -1.0..=dw_end,
@@ -52,6 +55,7 @@ impl FromSeed for OxAgTileTypeOptions {
             snow_level: mt_end..=1.0,
             river_n: 0..=r_max,
             street_n: 0..=s_max,
+            street_len: 0..=st_max,
             lava_n: 0..=l_max,
             lava_radius: 0..=lr_max,
         }
