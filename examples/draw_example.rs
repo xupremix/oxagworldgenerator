@@ -7,6 +7,7 @@ use fltk::prelude::ImageExt;
 use fltk::prelude::WidgetBase;
 use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, window::Window};
+use image::error::UnsupportedErrorKind::Color;
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::worldgenerator::Generator;
@@ -51,6 +52,7 @@ fn main() {
                 Hill => Color::from_hex_str("#DC970D"),
                 Mountain => Color::from_hex_str("#6F482A"),
                 Snow => Color::from_hex_str("#FFFFFF"),
+                Lava => Color::from_hex_str("#fc4903"),
                 _ => Color::from_hex_str("#000000"),
             };
             if tmp[x][y].content.to_default() == Fire {
