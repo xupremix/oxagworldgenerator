@@ -163,7 +163,6 @@ impl Generator for OxAgWorldGenerator {
         } else {
             self.generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
-                .spawn_lava()
                 .spawn_contents(self.get_content_options())
                 .map
         };

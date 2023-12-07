@@ -1,10 +1,10 @@
 use crate::world_generator::spawning_tools::F64MatData;
+use robotics_lib::world::tile::TileType::Lava;
 use robotics_lib::world::tile::{Tile, TileType};
-use std::cmp::Ordering;
 use std::collections::VecDeque;
 
 impl F64MatData {
-    pub(crate) fn line_spawn(
+    pub(crate) fn river_spawn(
         &mut self,
         map: &mut Vec<Vec<Tile>>,
         tile: TileType,
@@ -14,16 +14,28 @@ impl F64MatData {
     ) -> bool {
         let mut directions = [(2.0, (-1, 0)), (2.0, (0, 1)), (2.0, (1, 0)), (2.0, (0, -1))];
 
-        if row as i32 - 1 >= 0 && !self.map[row - 1][col].1 {
+        if row as i32 - 1 >= 0
+            && !self.map[row - 1][col].1
+            && !(map[row - 1][col].tile_type == Lava)
+        {
             directions[0].0 = self.map[row - 1][col].0;
         }
-        if col + 1 < self.size && !self.map[row][col + 1].1 {
+        if col + 1 < self.size
+            && !self.map[row][col + 1].1
+            && !(map[row][col + 1].tile_type == Lava)
+        {
             directions[1].0 = self.map[row][col + 1].0;
         }
-        if row + 1 < self.size && !self.map[row + 1][col].1 {
+        if row + 1 < self.size
+            && !self.map[row + 1][col].1
+            && !(map[row + 1][col].tile_type == Lava)
+        {
             directions[2].0 = self.map[row + 1][col].0;
         }
-        if col as i32 - 1 >= 0 && !self.map[row][col - 1].1 {
+        if col as i32 - 1 >= 0
+            && !self.map[row][col - 1].1
+            && !(map[row][col - 1].tile_type == Lava)
+        {
             directions[3].0 = self.map[row][col - 1].0;
         }
 
@@ -51,7 +63,7 @@ impl F64MatData {
                 (row as i32 + row_offset) as usize,
                 (col as i32 + col_offset) as usize,
             );
-            if self.line_spawn(map, tile, targets, new_row, new_col) {
+            if self.river_spawn(map, tile, targets, new_row, new_col) {
                 return true;
             }
         }

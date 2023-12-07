@@ -7,6 +7,7 @@ use robotics_lib::world::tile::Content;
 use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
 use crate::utils::progress_bar;
 use crate::world_generator::content_options::OxAgContentOptions;
+use crate::world_generator::spawning_tools::circle_spawn::spawn_circle;
 use crate::world_generator::spawning_tools::TileMat;
 
 impl TileMat {
@@ -36,7 +37,15 @@ impl TileMat {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
             radius = rng.gen_range(1.0..=max_rad);
-            self.spawn_circle(row, col, radius as usize, content);
+            spawn_circle(
+                &mut self.map,
+                rng,
+                self.size,
+                row,
+                col,
+                radius as usize,
+                &(Some(content.to_default()), None),
+            );
             if self.with_info {
                 progress_bar(
                     i,
@@ -46,63 +55,6 @@ impl TileMat {
                     "■",
                 );
             }
-        }
-    }
-
-    fn spawn_circle(&mut self, center_x: usize, center_y: usize, radius: usize, content: &Content) {
-        let mut rng = StdRng::seed_from_u64(self.seed);
-        let min_radius = radius.min(
-            center_x
-                .min(center_y)
-                .min(self.size - center_x - 1)
-                .min(self.size - center_y - 1),
-        ) as isize;
-
-        let mut x: isize = min_radius;
-        let mut y: isize = 0;
-        let mut decision = 1 - x; // Decision parameter to determine next point
-
-        let center_x = center_x as isize;
-        let center_y = center_y as isize;
-        while x >= y {
-            self.add(center_x + x, center_y + y, content);
-            self.add(center_x + y, center_y + x, content);
-            self.add(center_x - y, center_y + x, content);
-            self.add(center_x - x, center_y + y, content);
-            self.add(center_x - x, center_y - y, content);
-            self.add(center_x - y, center_y - x, content);
-            self.add(center_x + y, center_y - x, content);
-            self.add(center_x + x, center_y - y, content);
-
-            y += 1;
-            if decision <= 0 {
-                decision += 2 * y + 1;
-            } else {
-                x -= 1;
-                decision += 2 * (y - x) + 1;
-            }
-        }
-
-        // Fill the center of the circle
-        for i in center_x - min_radius + 1..center_x + min_radius {
-            for j in center_y - min_radius + 1..center_y + min_radius {
-                if (i - center_x).pow(2) + (j - center_y).pow(2) <= min_radius.pow(2) {
-                    self.add(i, j, content);
-                }
-            }
-        }
-    }
-
-    fn add(&mut self, row: isize, col: isize, content: &Content) {
-        let mut rng = StdRng::seed_from_u64(self.seed);
-        let mut value = 0;
-        if content.properties().max() != 0 {
-            value = rng.gen_range(0..content.properties().max());
-        }
-        let row = row as usize;
-        let col = col as usize;
-        if self.map[row][col].tile_type.properties().can_hold(content) {
-            self.map[row][col].content = content.to_value(value);
         }
     }
 }

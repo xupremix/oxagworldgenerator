@@ -70,7 +70,7 @@ const DEFAULT: fn() -> Vec<(Content, OxAgContentOptions)> = || {
                 min_spawn_number: 10,
                 max_radius: 10,
                 with_max_spawn_number: true,
-                max_spawn_number: 40,
+                max_spawn_number: 20,
                 percentage: 0.04,
             },
         ),

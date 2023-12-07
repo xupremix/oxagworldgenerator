@@ -9,10 +9,12 @@ use strum::IntoEnumIterator;
 use crate::world_generator::content_options::OxAgContentOptions;
 
 pub(crate) mod batch_spawn;
-mod line_spawn;
+mod circle_spawn;
+mod lava_spawn;
 pub(crate) mod matrix_spawn;
 mod maze;
 pub(crate) mod random_spawn;
+mod river_spawn;
 
 pub(crate) struct F64MatData {
     map: Vec<Vec<(f64, bool)>>,
@@ -31,11 +33,6 @@ pub(crate) struct TileMat {
 }
 
 impl TileMat {
-    /// TODO
-    pub(crate) fn spawn_lava(mut self) -> Self {
-        self
-    }
-
     pub(crate) fn spawn_contents(
         mut self,
         content_options: &Vec<(Content, OxAgContentOptions)>,

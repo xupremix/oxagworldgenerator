@@ -41,6 +41,8 @@ impl OxAgWorldGeneratorBuilder {
                 snow_level: 0.0..=0.0,
                 river_n: 0..=0,
                 street_n: 0..=0,
+                lava_n: 0..=0,
+                lava_radius: 0..=0,
             },
             map_save: Some(map_save),
             environmental_conditions: self.environmental_conditions.clone().unwrap_or(

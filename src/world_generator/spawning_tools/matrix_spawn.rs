@@ -3,7 +3,7 @@ use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::Content::Water;
 use robotics_lib::world::tile::TileType::{
-    DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow, Street,
+    DeepWater, Hill, Mountain, Sand, ShallowWater, Snow, Street,
 };
 use robotics_lib::world::tile::{Content, Tile, TileType};
 
@@ -128,19 +128,22 @@ impl F64MatData {
                 }
             })
         });
+
+        self.lava_spawn(&mut map, spawn_levels, &mut rng);
+
         for _ in 0..=rng.gen_range(spawn_levels.river_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while ![Hill, Mountain].contains(&map[row][col].tile_type) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
-            self.line_spawn(&mut map, ShallowWater, &[ShallowWater], row, col);
+            self.river_spawn(&mut map, ShallowWater, &[ShallowWater], row, col);
         }
         for _ in 0..=rng.gen_range(spawn_levels.street_n.clone()) {
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while ![Mountain].contains(&map[row][col].tile_type) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
-            self.line_spawn(&mut map, Street, &[Sand], row, col);
+            self.river_spawn(&mut map, Street, &[Sand], row, col);
         }
         TileMat {
             map,
