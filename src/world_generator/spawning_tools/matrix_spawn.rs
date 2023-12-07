@@ -77,44 +77,50 @@ impl F64MatData {
         let mut idx = (0, self.size.pow(2));
         self.map.iter().enumerate().for_each(|(i, row)| {
             row.iter().enumerate().for_each(|(j, &value)| {
-                let normalized_value = if value > 0.0 {
-                    value / self.max
-                } else {
-                    -value / self.min
-                };
-                match normalized_value {
-                    value
+                let normalized_value = self.normalizer(value);
+                if (map[i][j].tile_type != ShallowWater) {
+                    match normalized_value {
+                        value
                         if spawn_levels.deep_water_level.contains(&value)
                             | spawn_levels.shallow_water_level.contains(&value) =>
-                    {
-                        let tile_type = if spawn_levels.deep_water_level.contains(&value) {
-                            DeepWater
-                        } else {
-                            ShallowWater
-                        };
-                        let content =
-                            Water(rng.gen_range(0.0..Water(0).properties().max() as f64) as usize);
-                        let elevation = ((value + 1.0) * multiplier) as usize;
-                        map[i][j] = Tile {
-                            tile_type,
-                            content,
-                            elevation,
+                            {
+                                let tile_type = if spawn_levels.deep_water_level.contains(&value) {
+                                    DeepWater
+                                } else {
+                                    ShallowWater
+                                };
+                                let content =
+                                    Water(rng.gen_range(0.0..Water(0).properties().max() as f64) as usize);
+                                let elevation = ((value + 1.0) * multiplier) as usize;
+                                map[i][j] = Tile {
+                                    tile_type,
+                                    content,
+                                    elevation,
+                                }
+                            }
+                        value if spawn_levels.sand_level.contains(&value) => {
+                            map[i][j].tile_type = Sand;
                         }
-                    }
-                    value if spawn_levels.sand_level.contains(&value) => {
-                        map[i][j].tile_type = Sand;
-                    }
-                    value if spawn_levels.hill_level.contains(&value) => {
-                        map[i][j].tile_type = Hill;
-                    }
-                    value if spawn_levels.mountain_level.contains(&value) => {
-                        map[i][j].tile_type = Mountain;
-                    }
-                    value if spawn_levels.snow_level.contains(&value) => {
-                        map[i][j].tile_type = Snow;
-                    }
-                    _ => {
-                        // distance from the nearest bound
+                        value if spawn_levels.hill_level.contains(&value) => {
+                            map[i][j].tile_type = Hill;
+                        }
+                        value if spawn_levels.mountain_level.contains(&value) => {
+                            if rng.gen_bool(0.30) {
+                                self.river_builder(&mut map, i, j, crate::world_generator::spawning_tools::matrix_spawn::RiverDirection::None);
+                            } else {
+                                map[i][j].tile_type = Mountain;
+                            }
+                        }
+                        value if spawn_levels.snow_level.contains(&value) => {
+                            if rng.gen_bool(0.30) {
+                                self.river_builder(&mut map, i, j, RiverDirection::None);
+                            } else {
+                                map[i][j].tile_type = Snow;
+                            }
+                        }
+                        _ => {
+                            // distance from the nearest bound
+                        }
                     }
                 }
                 if self.with_info {
@@ -130,4 +136,109 @@ impl F64MatData {
             size: self.size,
         }
     }
+
+    fn river_builder(
+        &self,
+        map: &mut Vec<Vec<Tile>>,
+        x: usize,
+        y: usize,
+        direction: RiverDirection,
+    ) {
+        // Check the bound
+        if ((x + 1) >= self.size
+            || (y + 1) >= self.size
+            || (x as i32 - 1) < 0
+            || (y as i32 - 1) < 0)
+        {
+            return;
+        } else if (map[x][y].tile_type == ShallowWater) {
+            return;
+        }
+
+        // Set the new tile
+        println!("Called here... x:{}, y:{}", x, y);
+        map[x][y].tile_type = ShallowWater;
+
+        let (mut north_side, mut south_side, mut east_side, mut west_side) = (2.0, 2.0, 2.0, 2.0);
+
+        match direction {
+            RiverDirection::None => {
+                north_side = self.normalizer(self.map[x][y - 1]);
+                south_side = self.normalizer(self.map[x][y + 1]);
+                east_side = self.normalizer(self.map[x - 1][y]);
+                west_side = self.normalizer(self.map[x + 1][y]);
+            }
+            RiverDirection::North => {
+                south_side = self.normalizer(self.map[x][y + 1]);
+                east_side = self.normalizer(self.map[x - 1][y]);
+                west_side = self.normalizer(self.map[x + 1][y]);
+            }
+            RiverDirection::South => {
+                north_side = self.normalizer(self.map[x][y - 1]);
+                east_side = self.normalizer(self.map[x - 1][y]);
+                west_side = self.normalizer(self.map[x + 1][y]);
+            }
+            RiverDirection::East => {
+                north_side = self.normalizer(self.map[x][y - 1]);
+                south_side = self.normalizer(self.map[x][y + 1]);
+                east_side = self.normalizer(self.map[x - 1][y]);
+            }
+            RiverDirection::West => {
+                north_side = self.normalizer(self.map[x][y - 1]);
+                south_side = self.normalizer(self.map[x][y + 1]);
+                west_side = self.normalizer(self.map[x + 1][y]);
+            }
+        }
+
+        // Print the for direction value
+        println!(
+            "north:{:.2} south:{:.2} east:{:.2} west:{:.2}",
+            north_side, south_side, east_side, west_side
+        );
+
+        // find the lowest point between these 4
+        let mut mini = north_side.min(south_side);
+        mini = mini.min(east_side);
+        mini = mini.min(west_side);
+
+        // Now that we have the minimum... let's check if it is actually the minimum
+        println!("min: {:.2}", mini);
+
+        // Now that we have the minimum, we need to setup the direction to go
+        // Also need to check the bound...
+        if (mini == north_side) {
+            // We need to go north...
+            // Recursive call to function with new coordinates
+            self.river_builder(map, x, y - 1, RiverDirection::South);
+        } else if (mini == south_side) {
+            // We need to go south...
+            self.river_builder(map, x, y + 1, RiverDirection::North);
+        } else if (mini == east_side) {
+            // We need to go east...
+            self.river_builder(map, x - 1, y, RiverDirection::East);
+        } else if (mini == west_side) {
+            // We need to go west...
+            self.river_builder(map, x + 1, y, RiverDirection::West);
+        } else {
+            // Like... we got nowhere to go...
+            // Now we can place the water tile in the tile map
+            return;
+        }
+    }
+
+    fn normalizer(&self, num: f64) -> f64 {
+        if num > 0.0 {
+            num / self.max
+        } else {
+            -num / self.min
+        }
+    }
+}
+
+enum RiverDirection {
+    None,
+    North,
+    South,
+    East,
+    West,
 }

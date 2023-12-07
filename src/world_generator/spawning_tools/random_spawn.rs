@@ -35,15 +35,15 @@ impl TileMat {
                 value = rng.gen_range(0..content.properties().max());
             }
             self.map[row][col].content = content.to_value(value);
-            if self.with_info {
-                progress_bar(
-                    i,
-                    max_spawn_number,
-                    &format!("Spawning {:?}:", content),
-                    50,
-                    "■",
-                );
-            }
+            //if self.with_info {
+            //    progress_bar(
+            //        i,
+            //        max_spawn_number,
+            //        &format!("Spawning {:?}:", content),
+            //        50,
+            //        "■",
+            //    );
+            //}
         }
     }
 }
