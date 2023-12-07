@@ -49,7 +49,7 @@ pub struct OxAgWorldGeneratorBuilder {
     /// Optional size that will be used to generate the world.
     ///
     /// If [None] it will be calculated via the seed.
-    size: Option<usize>,
+    pub(crate) size: Option<usize>,
 
     /// Seed that the [OxAgWorldGenerator] will use to generate the world.
     ///
@@ -57,37 +57,37 @@ pub struct OxAgWorldGeneratorBuilder {
     /// It can then differ if generated with different [world_options] and [content_options].
     ///
     /// This is optional, if [None] a random seed will be generated.
-    seed: Option<u64>,
+    pub(crate) seed: Option<u64>,
 
     /// Optional levels that will determine the spawn of the different tile types.
     ///
     /// If [None] they will be calculated via the seed.
-    tile_type_options: Option<OxAgTileTypeOptions>,
+    pub(crate) tile_type_options: Option<OxAgTileTypeOptions>,
 
     /// Optional [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
     ///
     /// If [None] it will be calculated via the seed.
-    content_options: Option<Vec<(Content, OxAgContentOptions)>>,
+    pub(crate) content_options: Option<Vec<(Content, OxAgContentOptions)>>,
 
     /// Optional [OxAgEnvironmentalConditions] that will be used in the generated world.
     ///
     /// If [None] they will be calculated via the seed.
-    environmental_conditions: Option<EnvironmentalConditions>,
+    pub(crate) environmental_conditions: Option<EnvironmentalConditions>,
 
     /// Optional [f64] that will be used to calculate the height of the map.
     ///
     /// If [None] they will be calculated via the seed.
-    height_multiplier: Option<f64>,
+    pub(crate) height_multiplier: Option<f64>,
 
     /// Optional [f32] that will be used to set the score
     ///
     /// If [None] they will be calculated via the seed.
-    score: Option<f32>,
+    pub(crate) score: Option<f32>,
 
-    maze: Option<bool>,
+    pub(crate) maze: Option<bool>,
 
     /// Optional [bool] that is used to log the actions to console
-    with_info: Option<bool>,
+    pub(crate) with_info: Option<bool>,
 }
 
 impl OxAgWorldGeneratorBuilder {
@@ -135,6 +135,7 @@ impl OxAgWorldGeneratorBuilder {
             score: self.score.unwrap_or(DEFAULT_SCORE),
             with_info: self.with_info.unwrap_or(true),
             maze: self.maze.unwrap_or(false),
+            map_save: None,
         }
     }
 

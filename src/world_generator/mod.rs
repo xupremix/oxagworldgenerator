@@ -12,6 +12,7 @@ use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 pub mod content_options;
 pub mod environmental_condition_options;
 pub mod presets;
+mod serial;
 mod spawning_tools;
 pub mod tile_type_options;
 pub mod world_generator_builder;
@@ -63,6 +64,13 @@ pub struct OxAgWorldGenerator {
     pub(crate) with_info: bool,
 
     pub(crate) maze: bool,
+
+    pub(crate) map_save: Option<(
+        Vec<Vec<Tile>>,
+        (usize, usize),
+        f32,
+        Option<HashMap<Content, f32>>,
+    )>,
 }
 
 impl OxAgWorldGenerator {
@@ -140,6 +148,16 @@ impl Generator for OxAgWorldGenerator {
         f32,
         Option<HashMap<Content, f32>>,
     ) {
+        if self.map_save.is_some() {
+            let save = self.map_save.clone().unwrap();
+            return (
+                save.0,
+                save.1,
+                self.environmental_conditions.clone(),
+                save.2,
+                save.3,
+            );
+        }
         let map = if self.maze {
             vec![]
         } else {

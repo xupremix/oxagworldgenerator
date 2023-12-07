@@ -17,8 +17,8 @@ use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGen
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
-    let size: usize = 1024;
-    let seed = 755176; // generate_random_seed();
+    let size: usize = 256;
+    let seed = 75176; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
@@ -53,19 +53,19 @@ fn main() {
                 Snow => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
             };
-            // if tmp[x][y].content.to_default() == Fire {
-            //     color = Color::from_hex_str("#E22403");
-            // } else if tmp[x][y].content.to_default() == Tree(0) {
-            //     color = Color::from_hex_str("#1D6004");
-            // } else if tmp[x][y].content.to_default() == Garbage(0) {
-            //     color = Color::from_hex_str("#641FAF");
-            // } else if tmp[x][y].content.to_default() == Rock(0) {
-            //     color = Color::from_hex_str("#2F2323");
-            // } else if tmp[x][y].content.to_default() == Fish(0) {
-            //     color = Color::from_hex_str("#8F8EA1");
-            // } else if tmp[x][y].content.to_default() == Coin(0) {
-            //     color = Color::from_hex_str("#000000");
-            // }
+            if tmp[x][y].content.to_default() == Fire {
+                color = Color::from_hex_str("#E22403");
+            } else if tmp[x][y].content.to_default() == Tree(0) {
+                color = Color::from_hex_str("#1D6004");
+            } else if tmp[x][y].content.to_default() == Garbage(0) {
+                color = Color::from_hex_str("#641FAF");
+            } else if tmp[x][y].content.to_default() == Rock(0) {
+                color = Color::from_hex_str("#2F2323");
+            } else if tmp[x][y].content.to_default() == Fish(0) {
+                color = Color::from_hex_str("#8F8EA1");
+            } else if tmp[x][y].content.to_default() == Coin(0) {
+                color = Color::from_hex_str("#000000");
+            }
             let color = color.unwrap().to_rgb();
             pixel.copy_from_slice(&[color.0, color.1, color.2, 255]);
         }
