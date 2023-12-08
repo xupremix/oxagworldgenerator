@@ -1,4 +1,3 @@
-use rand::Rng;
 use robotics_lib::world::tile::TileType::{
     DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow,
 };
