@@ -7,6 +7,5 @@
 #![warn(missing_docs)]
 #[cfg(test)]
 mod test;
-pub mod tool;
 pub mod utils;
 pub mod world_generator;

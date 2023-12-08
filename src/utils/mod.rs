@@ -1,5 +1,4 @@
 use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
-
 pub mod constants;
 pub mod errors;
 pub mod traits;
@@ -14,7 +13,7 @@ pub fn multiplier_from_seed(seed: u64) -> f64 {
     rng.gen::<f64>()
 }
 
-/// Returs a randomly generated world size
+/// Returns a randomly generated world size
 pub fn generate_random_world_size(seed: u64) -> usize {
     StdRng::seed_from_u64(seed).gen_range(0..u8::MAX) as usize
 }

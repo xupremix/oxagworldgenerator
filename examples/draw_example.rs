@@ -17,7 +17,7 @@ use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGen
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
-    let size: usize = 1024;
+    let size: usize = 512;
     let seed = 452471; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
