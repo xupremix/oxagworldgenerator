@@ -5,7 +5,7 @@
 # TODOS:
 
 - [x] add lava tiles  
-- [ ] add street tiles  
+- [x] add street tiles  
 - [x] consider adding rivers  
 - [x] modify the rate of content spawns  
 - [ ] update presets  
@@ -13,7 +13,7 @@
 - [x] make some examples of the builder
 - [ ] make the tests `cargo test`
 - [ ] update the visualizer for the faire
-- [ ] check if we want to add teleport tiles
+- [x] check if we want to add teleport tiles
 - [ ] consider if the want to add the wall tile
 - [ ] improve logic by maybe using parallel iterators etc...  
 - [ ] add in-line comments to the code

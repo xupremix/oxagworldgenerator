@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
@@ -68,6 +68,7 @@ pub struct OxAgWorldGenerator {
     pub(crate) map_save: Option<(
         Vec<Vec<Tile>>,
         (usize, usize),
+        EnvironmentalConditions,
         f32,
         Option<HashMap<Content, f32>>,
     )>,
@@ -149,14 +150,7 @@ impl Generator for OxAgWorldGenerator {
         Option<HashMap<Content, f32>>,
     ) {
         if self.map_save.is_some() {
-            let save = self.map_save.clone().unwrap();
-            return (
-                save.0,
-                save.1,
-                self.environmental_conditions.clone(),
-                save.2,
-                save.3,
-            );
+            return self.map_save.clone().unwrap();
         }
         let map = if self.maze {
             vec![]

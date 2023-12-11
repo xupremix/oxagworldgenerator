@@ -18,12 +18,12 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
     let size: usize = 512;
-    let seed = 452471; // generate_random_seed();
+    let seed = 4545445452471; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
         .set_seed(seed)
         .set_size(size)
-        .set_tile_type_options_from_preset(OxAgTileTypePresets::Default)
+        .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
         .set_content_options_from_preset(OxAgContentPresets::Default)
         .set_with_info(true)
         .build();

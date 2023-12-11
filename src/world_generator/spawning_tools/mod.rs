@@ -1,9 +1,7 @@
 use rand::prelude::StdRng;
 use rand::SeedableRng;
-use std::collections::HashMap;
-
 use robotics_lib::world::tile::{Content, Tile, TileType};
-use robotics_lib::world::worldgenerator::get_tiletype_percentage;
+use robotics_lib::world::world_generator::get_tiletype_percentage;
 use strum::IntoEnumIterator;
 
 use crate::world_generator::content_options::OxAgContentOptions;
