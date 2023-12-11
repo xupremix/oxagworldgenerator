@@ -80,7 +80,7 @@ impl TileMat {
             rng.gen_range(content_option.min_spawn_number..=max)
         };
 
-        let bunch_noise = f64_mat(
+        let batches_noise = f64_mat(
             self.seed + rng.next_u64(),
             rng.gen_range(1..=(radius as usize)),
             false,
@@ -91,7 +91,7 @@ impl TileMat {
             (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
         }
 
-        bunch_noise
+        batches_noise
             .map
             .iter()
             .enumerate()
