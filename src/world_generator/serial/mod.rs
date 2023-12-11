@@ -2,6 +2,7 @@ use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use crate::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
+use robotics_lib::world::environmental_conditions::WeatherType::Sunny;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::world_generator::Generator;
 use serde_json;
@@ -9,15 +10,10 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::{Read, Write};
-use robotics_lib::world::environmental_conditions::WeatherType::Sunny;
 
 impl OxAgWorldGenerator {
     pub fn save(&mut self, path: &str) -> io::Result<()> {
-        File::create(path)?.write_all(
-            serde_json::to_string(&self.gen())
-                .unwrap()
-                .as_bytes(),
-        )
+        File::create(path)?.write_all(serde_json::to_string(&self.gen()).unwrap().as_bytes())
     }
 }
 

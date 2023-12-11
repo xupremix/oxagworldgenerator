@@ -1,10 +1,10 @@
 use std::time::{Duration, Instant};
 
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
+use lib_oxidizing_agents::world_generator::presets::environmental_presets::OxAgEnvironmentalConditionPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
-use lib_oxidizing_agents::world_generator::presets::environmental_presets::OxAgEnvironmentalConditionPresets;
 
 fn main() {
     let size: usize = 256;

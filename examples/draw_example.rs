@@ -26,7 +26,6 @@ fn main() {
         .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
         .set_content_options_from_preset(OxAgContentPresets::Default)
         .set_with_info(true)
-        .set_maze(true)
         .build();
 
     let tmp = generator.gen().0;
