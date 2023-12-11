@@ -1,6 +1,6 @@
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
-use robotics_lib::world::tile::TileType::{DeepWater, ShallowWater};
+use robotics_lib::world::tile::TileType::{DeepWater, ShallowWater, Teleport};
 use robotics_lib::world::tile::{Content, Tile, TileType};
 
 pub(crate) fn spawn_circle(
@@ -76,7 +76,7 @@ fn add(
         (None, Some(tile_type)) => {
             let row = row as usize;
             let col = col as usize;
-            if ![ShallowWater, DeepWater].contains(&map[row][col].tile_type) {
+            if ![ShallowWater, DeepWater, Teleport(false)].contains(&map[row][col].tile_type) {
                 map[row][col].tile_type = *tile_type;
             }
         }

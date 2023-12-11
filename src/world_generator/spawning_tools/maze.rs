@@ -1,11 +1,11 @@
+use crate::world_generator::spawning_tools::circle_spawn::spawn_circle;
 use crate::world_generator::spawning_tools::MazeBuilder;
 use rand::prelude::StdRng;
 use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
-use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::tile::TileType::Grass;
+use robotics_lib::world::tile::{Content, Tile, TileType};
 use serde::de::Unexpected::Option;
-use crate::world_generator::spawning_tools::circle_spawn::spawn_circle;
 
 pub(crate) fn maze_builder_init(seed: u64, mut size: usize) -> MazeBuilder {
     MazeBuilder {
@@ -117,9 +117,15 @@ impl MazeBuilder {
     }
 
     fn spawn_end(&mut self, rng: &mut StdRng) {
-        let (mut x, mut y) = (rng.gen_range(1..self.size -1), rng.gen_range(1..self.size-1));
+        let (mut x, mut y) = (
+            rng.gen_range(1..self.size - 1),
+            rng.gen_range(1..self.size - 1),
+        );
         while self.map[y][x].tile_type != TileType::Street {
-            (x, y) = (rng.gen_range(1..self.size -1), rng.gen_range(1..self.size-1));
+            (x, y) = (
+                rng.gen_range(1..self.size - 1),
+                rng.gen_range(1..self.size - 1),
+            );
         }
         self.map[y][x].content = Content::JollyBlock(1);
     }
@@ -128,7 +134,15 @@ impl MazeBuilder {
         let (spawn_x, spawn_y) = self.starting_node(rng);
         let size = self.size as f32;
         let radius = rng.gen_range(1..size.sqrt() as usize);
-        spawn_circle(&mut self.map, rng, self.size, spawn_x, spawn_y,radius, &(None, Some(Grass)));
-        self.map[spawn_y][spawn_x].tile_type = TileType::Teleport(false);
+        spawn_circle(
+            &mut self.map,
+            rng,
+            self.size,
+            spawn_x,
+            spawn_y,
+            radius,
+            &(None, Some(Grass)),
+        );
+        self.map[spawn_x][spawn_y].tile_type = TileType::Teleport(false);
     }
 }

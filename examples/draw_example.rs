@@ -17,7 +17,7 @@ use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGen
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
-    let size: usize = 512;
+    let size: usize = 1024;
     let seed = 4545445452471; // generate_random_seed();
     let start = Instant::now();
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
@@ -26,8 +26,9 @@ fn main() {
         .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
         .set_content_options_from_preset(OxAgContentPresets::Default)
         .set_with_info(true)
-        .set_maze(true)
-        .build().unwrap();
+        .set_maze(false)
+        .build()
+        .unwrap();
 
     let tmp = generator.gen().0;
     let duration: Duration = start.elapsed();
@@ -55,6 +56,7 @@ fn main() {
                 Lava => Color::from_hex_str("#fc4903"),
                 Street => Color::from_hex_str("#000000"),
                 Wall => Color::from_hex_str("#FFFFFF"),
+                Teleport(_) => Color::from_hex_str("#EB5CEB"),
                 _ => Color::from_hex_str("#000000"),
             };
             if tmp[x][y].content.to_default() == Fire {
