@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::maze::maze_builder_init;

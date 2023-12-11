@@ -2,10 +2,11 @@ use robotics_lib::world::tile::TileType::{
     DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow, Street, Wall,
 };
 use std::time::{Duration, Instant};
+use rand::Rng;
 
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 
 fn main() {
     let size: usize = 32;

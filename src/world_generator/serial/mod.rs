@@ -5,7 +5,7 @@ use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use crate::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 use serde_json;
 use std::collections::HashMap;
 use std::fs::File;
