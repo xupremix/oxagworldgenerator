@@ -58,6 +58,7 @@ impl OxAgWorldGeneratorBuilder {
             with_info: false,
             content_options: vec![],
             maze: false,
+            score_map: None,
         })
     }
 }

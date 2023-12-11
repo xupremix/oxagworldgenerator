@@ -5,7 +5,8 @@ use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::world_generator::Generator;
 
 use crate::world_generator::content_options::OxAgContentOptions;
-use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData};
+use crate::world_generator::spawning_tools::maze::maze_builder_init;
+use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData, MazeBuilder};
 use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 
@@ -64,6 +65,8 @@ pub struct OxAgWorldGenerator {
     pub(crate) with_info: bool,
 
     pub(crate) maze: bool,
+
+    pub(crate) score_map: Option<HashMap<Content, f32>>,
 
     pub(crate) map_save: Option<(
         Vec<Vec<Tile>>,
@@ -131,11 +134,25 @@ impl OxAgWorldGenerator {
         &self.environmental_conditions
     }
 
+    pub fn get_score_map(&self) -> &Option<HashMap<Content, f32>> {
+        &self.score_map
+    }
+
     /// Returns matrix of floats generated from the seed.
     ///
     /// This float values are meant to be mapped to tile types considering the tile type spawn levels.
     fn generate_float_matrix(&self) -> F64MatData {
         f64_mat(self.seed, self.size, self.with_info)
+    }
+
+    /// Returns a matrix filled with wall.
+    ///
+    /// This matrix will become a maze.
+    fn generate_base_maze(&mut self) -> MazeBuilder {
+        if (self.size % 2 == 0) {
+            self.size += 1;
+        }
+        maze_builder_init(self.seed, self.size)
     }
 }
 
@@ -152,20 +169,27 @@ impl Generator for OxAgWorldGenerator {
         if self.map_save.is_some() {
             return self.map_save.clone().unwrap();
         }
-        let map = if self.maze {
-            vec![]
+        if self.maze {
+            let mut map = self.generate_base_maze().builder();
+            (
+                map.0,
+                map.1,
+                self.environmental_conditions.clone(),
+                self.score,
+                self.score_map.clone(),
+            )
         } else {
-            self.generate_float_matrix()
+            let (map, spawn) = self
+                .generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
-                .spawn_contents(self.get_content_options())
-                .map
-        };
-        (
-            map,
-            (0, 0),
-            self.environmental_conditions.clone(),
-            self.score,
-            None,
-        )
+                .spawn_contents(self.get_content_options());
+            (
+                map.map,
+                spawn,
+                self.environmental_conditions.clone(),
+                self.score,
+                self.score_map.clone(),
+            )
+        }
     }
 }

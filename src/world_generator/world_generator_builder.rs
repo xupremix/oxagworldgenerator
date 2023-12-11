@@ -88,6 +88,8 @@ pub struct OxAgWorldGeneratorBuilder {
 
     /// Optional [bool] that is used to log the actions to console
     pub(crate) with_info: Option<bool>,
+
+    pub(crate) score_map: Option<HashMap<Content, f32>>,
 }
 
 impl OxAgWorldGeneratorBuilder {
@@ -135,6 +137,7 @@ impl OxAgWorldGeneratorBuilder {
             score: self.score.unwrap_or(DEFAULT_SCORE),
             with_info: self.with_info.unwrap_or(true),
             maze: self.maze.unwrap_or(false),
+            score_map: self.score_map.clone(),
             map_save: None,
         }
     }
@@ -151,6 +154,7 @@ impl OxAgWorldGeneratorBuilder {
             score: None,
             maze: None,
             with_info: None,
+            score_map: None,
         }
     }
 
@@ -167,6 +171,11 @@ impl OxAgWorldGeneratorBuilder {
     /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_score(mut self, score: f32) -> Self {
         self.score = Some(score);
+        self
+    }
+
+    pub fn set_score_map(mut self, score_map: Option<HashMap<Content, f32>>) -> Self {
+        self.score_map = score_map;
         self
     }
 

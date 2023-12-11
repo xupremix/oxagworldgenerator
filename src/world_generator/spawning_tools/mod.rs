@@ -1,5 +1,7 @@
 use rand::prelude::StdRng;
-use rand::SeedableRng;
+use rand::{Rng, SeedableRng};
+use std::collections::HashMap;
+
 use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::world_generator::get_tiletype_percentage;
 use strum::IntoEnumIterator;
@@ -10,7 +12,7 @@ pub(crate) mod batch_spawn;
 mod circle_spawn;
 mod lava_spawn;
 pub(crate) mod matrix_spawn;
-mod maze;
+pub(crate) mod maze;
 pub(crate) mod random_spawn;
 mod river_spawn;
 mod street_spawn;
@@ -24,6 +26,12 @@ pub(crate) struct F64MatData {
     with_info: bool,
 }
 
+pub(crate) struct MazeBuilder {
+    seed: u64,
+    size: usize,
+    map: Vec<Vec<Tile>>,
+}
+
 pub(crate) struct TileMat {
     pub map: Vec<Vec<Tile>>,
     with_info: bool,
@@ -35,7 +43,7 @@ impl TileMat {
     pub(crate) fn spawn_contents(
         mut self,
         content_options: &Vec<(Content, OxAgContentOptions)>,
-    ) -> Self {
+    ) -> (Self, (usize, usize)) {
         let mut rng = StdRng::seed_from_u64(self.seed);
         let percentage_map = get_tiletype_percentage(&self.map);
         if self.with_info {
@@ -66,6 +74,14 @@ impl TileMat {
                 println!("Skipping {:?}", content);
             }
         }
-        self
+        self.choose_spawn(&mut rng)
+    }
+
+    fn choose_spawn(self, rng: &mut StdRng) -> (Self, (usize, usize)) {
+        let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+        while !self.map[row][col].tile_type.properties().walk() {
+            (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+        }
+        (self, (row, col))
     }
 }
