@@ -80,6 +80,8 @@ impl TileMat {
             rng.gen_range(content_option.min_spawn_number..=max)
         };
 
+        let mut placed_stuff = 0;
+
         for i in 0..max_spawn_number {
             let batches_noise = f64_mat(
                 self.seed + rng.next_u64(),
@@ -111,11 +113,12 @@ impl TileMat {
                                     col + tmp_col - radius as usize,
                                 );
                                 if self.map[row][col].tile_type.properties().can_hold(content) {
-                                    println!("Placed Stuff");
+                                    // println!("Placed Stuff: {}", placed_stuff);
+                                    // placed_stuff +=1;
                                     let value: usize = if (row > content.properties().max()) {
                                         content.properties().max()
                                     } else {
-                                        rng.gen_range(row..content.properties().max())
+                                        rng.gen_range(row..=content.properties().max())
                                     };
                                     self.map[row][col].content = content.to_value(value);
                                 }
