@@ -11,7 +11,7 @@ use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::world_generator::Generator;
 
-use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 
 fn main() {
     let start = Instant::now();
