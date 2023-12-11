@@ -12,4 +12,5 @@ pub enum OxAgError {
     RangesAreOutOfBounds,
     InvalidContentOption(Content),
     InvalidContentOptionProvided,
+    MazeSizeTooSmall,
 }

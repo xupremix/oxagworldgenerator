@@ -114,11 +114,15 @@ impl OxAgWorldGeneratorBuilder {
     /// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
     /// let generator = OxAgWorldGeneratorBuilder::new().build();
     /// ```
-    pub fn build(&self) -> OxAgWorldGenerator {
+    pub fn build(&self) -> Result<OxAgWorldGenerator, OxAgError> {
         let seed = self.seed.unwrap_or(generate_random_seed());
         let size = self.size.unwrap_or(generate_random_world_size(seed));
 
-        OxAgWorldGenerator {
+        if size < 5 && self.maze.unwrap_or(false) {
+            return Err(OxAgError::MazeSizeTooSmall);
+        }
+
+        Ok(OxAgWorldGenerator {
             size,
             seed,
             tile_type_options: self
@@ -139,7 +143,7 @@ impl OxAgWorldGeneratorBuilder {
             maze: self.maze.unwrap_or(false),
             score_map: self.score_map.clone(),
             map_save: None,
-        }
+        })
     }
 
     /// Returns the [Builder](OxAgWorldGeneratorBuilder) with the properties not set.

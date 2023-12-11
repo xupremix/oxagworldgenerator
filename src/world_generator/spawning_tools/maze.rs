@@ -1,5 +1,5 @@
 use crate::world_generator::spawning_tools::MazeBuilder;
-use rand::rngs::StdRng;
+use rand::prelude::StdRng;
 use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::{Content, Tile, TileType};
@@ -25,9 +25,10 @@ pub(crate) fn maze_builder_init(seed: u64, mut size: usize) -> MazeBuilder {
 impl MazeBuilder {
     // maze builder
     pub(crate) fn builder(mut self) -> (Vec<Vec<Tile>>, (usize, usize)) {
-        let mut rng = StdRng::seed_from_u64(self.seed);
-        let (mut spawn_x, mut spawn_y) = self.starting_node(&mut rng);
-        self.maze_builder_loop(spawn_x as i32, spawn_y as i32, &mut rng);
+        let mut rng = &mut StdRng::seed_from_u64(self.seed);
+        let (mut spawn_x, mut spawn_y) = self.starting_node(rng);
+        self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
+        self.spawn_end(rng);
         (self.map, (spawn_x, spawn_y))
     }
     // Path setter
@@ -104,5 +105,13 @@ impl MazeBuilder {
                 }
             }
         }
+    }
+
+    fn spawn_end(&mut self, rng: &mut StdRng) {
+        let (mut x, mut y) = (rng.gen_range(1..self.size -1), rng.gen_range(1..self.size-1));
+        while self.map[y][x].tile_type != TileType::Street {
+            (x, y) = (rng.gen_range(1..self.size -1), rng.gen_range(1..self.size-1));
+        }
+        self.map[y][x].content = Content::JollyBlock(1);
     }
 }
