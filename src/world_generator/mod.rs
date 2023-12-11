@@ -5,8 +5,8 @@ use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::worldgenerator::Generator;
 
 use crate::world_generator::content_options::OxAgContentOptions;
-use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData, MazeBuilder};
 use crate::world_generator::spawning_tools::maze::maze_builder_init;
+use crate::world_generator::spawning_tools::{matrix_spawn::f64_mat, F64MatData, MazeBuilder};
 use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 use crate::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 

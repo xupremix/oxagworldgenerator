@@ -27,11 +27,7 @@ impl MazeBuilder {
     pub(crate) fn builder(mut self) -> (Vec<Vec<Tile>>, (usize, usize)) {
         let mut rng = StdRng::seed_from_u64(self.seed);
         let (mut spawn_x, mut spawn_y) = self.starting_node(&mut rng);
-        self.maze_builder_loop(
-            spawn_x as i32,
-            spawn_y as i32,
-            &mut rng,
-        );
+        self.maze_builder_loop(spawn_x as i32, spawn_y as i32, &mut rng);
         (self.map, (spawn_x, spawn_y))
     }
     // Path setter
@@ -102,9 +98,9 @@ impl MazeBuilder {
                     self.set_path(link_cell_x as usize, link_cell_y as usize);
 
                     // Add the new coordinates to the stack instead of recursive call
-                    stack.push((x , y));
+                    stack.push((x, y));
                     stack.push((node_x, node_y));
-                    break
+                    break;
                 }
             }
         }
