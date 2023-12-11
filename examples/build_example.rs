@@ -12,7 +12,7 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::world_generator::Generator;
 
 fn main() {
-    let size: usize = 32;
+    let size: usize = 256;
     let seed = 451; // generate_random_seed();
     let start = Instant::now();
     //
@@ -35,7 +35,7 @@ fn main() {
     let tmp = generator.gen();
     let duration: Duration = start.elapsed();
     println!("Duration: {:?}", duration);
-
+    /*
     tmp.0.iter().enumerate().for_each(|(y, row)| {
         row.iter().enumerate().for_each(|(x, cell)| {
             if cell.content.to_default() == Content::JollyBlock(0) {
@@ -59,5 +59,5 @@ fn main() {
         });
 
         println!();
-    })
+    })*/
 }

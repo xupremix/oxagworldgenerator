@@ -80,44 +80,49 @@ impl TileMat {
             rng.gen_range(content_option.min_spawn_number..=max)
         };
 
-        let batches_noise = f64_mat(
-            self.seed + rng.next_u64(),
-            rng.gen_range(1..=(radius as usize)),
-            false,
-        );
+        for i in 0..max_spawn_number {
+            let batches_noise = f64_mat(
+                self.seed + rng.next_u64(),
+                rng.gen_range(1..=(radius as usize)),
+                false,
+            );
 
-        let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
-        while !self.map[row][col].tile_type.properties().can_hold(content) {
-            (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
-        }
+            let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+            while !self.map[row][col].tile_type.properties().can_hold(content) {
+                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+            }
 
-        batches_noise
-            .map
-            .iter()
-            .enumerate()
-            .for_each(|(tmp_row, rows)| {
-                rows.iter().enumerate().for_each(|(tmp_col, cell)| {
-                    if (-0.25..=0.25).contains(&cell.0) {
-                        if !(((row as i32 - radius as i32 + tmp_row as i32) as usize) < 0
-                            || ((col as i32 - radius as i32 + tmp_col as i32) as usize) < 0
-                            || ((row as i32 - radius as i32 + tmp_row as i32) as usize) > self.size
-                            || ((col as i32 - radius as i32 + tmp_col as i32) as usize) > self.size)
-                        {
-                            let (row, col) = (
-                                row + tmp_row - radius as usize,
-                                col + tmp_col - radius as usize,
-                            );
-                            if self.map[row][col].tile_type.properties().can_hold(content) {
-                                let value: usize = if (row > content.properties().max()) {
-                                    content.properties().max()
-                                } else {
-                                    rng.gen_range(row..content.properties().max())
-                                };
-                                self.map[row][col].content = content.to_value(value);
+            batches_noise
+                .map
+                .iter()
+                .enumerate()
+                .for_each(|(tmp_row, rows)| {
+                    rows.iter().enumerate().for_each(|(tmp_col, cell)| {
+                        if (-0.25..=0.25).contains(&cell.0) {
+                            if !(((row as i32 - radius as i32 + tmp_row as i32) as usize) < 0
+                                || ((col as i32 - radius as i32 + tmp_col as i32) as usize) < 0
+                                || ((row as i32 - radius as i32 + tmp_row as i32) as usize)
+                                    > self.size
+                                || ((col as i32 - radius as i32 + tmp_col as i32) as usize)
+                                    > self.size)
+                            {
+                                let (row, col) = (
+                                    row + tmp_row - radius as usize,
+                                    col + tmp_col - radius as usize,
+                                );
+                                if self.map[row][col].tile_type.properties().can_hold(content) {
+                                    println!("Placed Stuff");
+                                    let value: usize = if (row > content.properties().max()) {
+                                        content.properties().max()
+                                    } else {
+                                        rng.gen_range(row..content.properties().max())
+                                    };
+                                    self.map[row][col].content = content.to_value(value);
+                                }
                             }
                         }
-                    }
+                    })
                 })
-            })
+        }
     }
 }
