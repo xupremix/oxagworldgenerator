@@ -56,7 +56,7 @@ impl MazeBuilder {
     }
 
     fn teleport_spawner(&mut self, rng: &mut StdRng) {
-        let max = rng.gen_range(0.0..(self.size as f32 * 0.01));
+        let max = rng.gen_range(0.0..(self.size as f32 * 0.1));
         if max < 1.0 {
             return;
         }
