@@ -29,16 +29,31 @@ impl MazeBuilder {
     // maze builder
     pub(crate) fn builder(mut self) -> (Vec<Vec<Tile>>, (usize, usize)) {
         let mut rng = &mut StdRng::seed_from_u64(self.seed);
-        let (mut spawn_x, mut spawn_y) = self.starting_node(rng);
+        let (mut spawn_x, mut spawn_y) = self.random_point(rng);
         self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
         let n_circle = self.size as f32;
 
         for _ in (0..(self.size as f32 * 0.3) as usize) {
             self.random_circles(rng);
         }
+        self.teleport_spawner(rng);
 
         self.spawn_end(rng);
         (self.map, (spawn_x, spawn_y))
+    }
+
+    fn teleport_spawner(&mut self, rng: &mut StdRng) {
+        let max = rng.gen_range(0.0..(self.size as f32 * 0.01));
+        if max < 1.0 {
+            return;
+        }
+        for _ in 0..max as usize {
+            let (mut x, mut y) = self.random_point(rng);
+            while self.map[x][y].tile_type == TileType::Wall {
+                (x, y) = self.random_point(rng);
+            }
+            self.map[x][y].tile_type = TileType::Teleport(false);
+        }
     }
     // Path setter
     fn set_path(&mut self, x: usize, y: usize) {
@@ -53,7 +68,7 @@ impl MazeBuilder {
         }
     }
     // Random starting point chooser, based on the seed
-    fn starting_node(&self, rng: &mut StdRng) -> (usize, usize) {
+    fn random_point(&self, rng: &mut StdRng) -> (usize, usize) {
         let (mut x, mut y) = (0, 0);
         (x, y) = (
             rng.gen_range(1..self.size - 1),
@@ -131,7 +146,7 @@ impl MazeBuilder {
     }
 
     fn random_circles(&mut self, rng: &mut StdRng) {
-        let (spawn_x, spawn_y) = self.starting_node(rng);
+        let (spawn_x, spawn_y) = self.random_point(rng);
         let size = self.size as f32;
         let radius = rng.gen_range(1..size.sqrt() as usize);
         spawn_circle(
