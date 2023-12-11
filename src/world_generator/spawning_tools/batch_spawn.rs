@@ -84,7 +84,7 @@ impl TileMat {
 
         for i in 0..max_spawn_number {
             let batches_noise = f64_mat(
-                self.seed + rng.next_u64(),
+                self.seed + rng.next_u32() as u64,
                 rng.gen_range(1..=(radius as usize)),
                 false,
             );
