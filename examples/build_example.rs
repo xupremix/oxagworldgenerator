@@ -10,7 +10,7 @@ use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::world_generator::Generator;
 
 fn main() {
-    let size: usize = 256;
+    let size: usize = 32;
     let seed = 451; // generate_random_seed();
     let start = Instant::now();
 
@@ -36,7 +36,7 @@ fn main() {
                         DeepWater => print!("  "),
                         ShallowWater => print!(" "),
                         Sand => print!(" "),
-                        Grass => print!("  "),
+                        Grass => print!("GG"),
                         Hill => print!("  "),
                         Mountain => print!("  "),
                         Snow => print!("  "),

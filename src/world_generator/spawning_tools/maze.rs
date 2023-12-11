@@ -3,6 +3,9 @@ use rand::prelude::StdRng;
 use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::{Content, Tile, TileType};
+use robotics_lib::world::tile::TileType::Grass;
+use serde::de::Unexpected::Option;
+use crate::world_generator::spawning_tools::circle_spawn::spawn_circle;
 
 pub(crate) fn maze_builder_init(seed: u64, mut size: usize) -> MazeBuilder {
     MazeBuilder {
@@ -28,6 +31,12 @@ impl MazeBuilder {
         let mut rng = &mut StdRng::seed_from_u64(self.seed);
         let (mut spawn_x, mut spawn_y) = self.starting_node(rng);
         self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
+        let n_circle = self.size as f32;
+
+        for _ in 0..rng.gen_range(0..n_circle.sqrt() as usize - 2) {
+            self.random_circles(rng);
+        }
+
         self.spawn_end(rng);
         (self.map, (spawn_x, spawn_y))
     }
@@ -113,5 +122,12 @@ impl MazeBuilder {
             (x, y) = (rng.gen_range(1..self.size -1), rng.gen_range(1..self.size-1));
         }
         self.map[y][x].content = Content::JollyBlock(1);
+    }
+
+    fn random_circles(&mut self, rng: &mut StdRng) {
+        let (spawn_x, spawn_y) = self.starting_node(rng);
+        let size = self.size as f32;
+        let radius = rng.gen_range(1..size.sqrt() as usize);
+        spawn_circle(&mut self.map, rng, self.size, spawn_x, spawn_y,radius, &(None, Some(Grass)));
     }
 }
