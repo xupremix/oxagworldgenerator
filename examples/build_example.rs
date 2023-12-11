@@ -1,8 +1,8 @@
+use rand::Rng;
 use robotics_lib::world::tile::TileType::{
     DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow, Street, Wall,
 };
 use std::time::{Duration, Instant};
-use rand::Rng;
 
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;

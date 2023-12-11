@@ -1,5 +1,5 @@
 use rand::prelude::StdRng;
-use rand::SeedableRng;
+use rand::{Rng, SeedableRng};
 use std::collections::HashMap;
 
 use robotics_lib::world::tile::{Content, Tile, TileType};
@@ -43,7 +43,7 @@ impl TileMat {
     pub(crate) fn spawn_contents(
         mut self,
         content_options: &Vec<(Content, OxAgContentOptions)>,
-    ) -> Self {
+    ) -> (Self, (usize, usize)) {
         let mut rng = StdRng::seed_from_u64(self.seed);
         let percentage_map = get_tiletype_percentage(&self.map);
         if self.with_info {
@@ -74,6 +74,14 @@ impl TileMat {
                 println!("Skipping {:?}", content);
             }
         }
-        self
+        self.choose_spawn(&mut rng)
+    }
+
+    fn choose_spawn(self, rng: &mut StdRng) -> (Self, (usize, usize)) {
+        let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+        while !self.map[row][col].tile_type.properties().walk() {
+            (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+        }
+        (self, (row, col))
     }
 }

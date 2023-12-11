@@ -31,6 +31,7 @@ impl OxAgWorldGeneratorBuilder {
         let map_save: (
             Vec<Vec<Tile>>,
             (usize, usize),
+            EnvironmentalConditions,
             f32,
             Option<HashMap<Content, f32>>,
         ) = serde_json::from_str(&contents)?;
@@ -61,6 +62,7 @@ impl OxAgWorldGeneratorBuilder {
             with_info: false,
             content_options: vec![],
             maze: false,
+            score_map: None,
         })
     }
 }

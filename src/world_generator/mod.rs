@@ -66,9 +66,12 @@ pub struct OxAgWorldGenerator {
 
     pub(crate) maze: bool,
 
+    pub(crate) score_map: Option<HashMap<Content, f32>>,
+
     pub(crate) map_save: Option<(
         Vec<Vec<Tile>>,
         (usize, usize),
+        EnvironmentalConditions,
         f32,
         Option<HashMap<Content, f32>>,
     )>,
@@ -131,6 +134,10 @@ impl OxAgWorldGenerator {
         &self.environmental_conditions
     }
 
+    pub fn get_score_map(&self) -> &Option<HashMap<Content, f32>> {
+        &self.score_map
+    }
+
     /// Returns matrix of floats generated from the seed.
     ///
     /// This float values are meant to be mapped to tile types considering the tile type spawn levels.
@@ -160,14 +167,7 @@ impl Generator for OxAgWorldGenerator {
         Option<HashMap<Content, f32>>,
     ) {
         if self.map_save.is_some() {
-            let save = self.map_save.clone().unwrap();
-            return (
-                save.0,
-                save.1,
-                self.environmental_conditions.clone(),
-                save.2,
-                save.3,
-            );
+            return self.map_save.clone().unwrap();
         }
         if self.maze {
             let mut map = self.generate_base_maze().builder();
@@ -176,20 +176,19 @@ impl Generator for OxAgWorldGenerator {
                 map.1,
                 self.environmental_conditions.clone(),
                 self.score,
-                None,
+                self.score_map.clone(),
             )
         } else {
-            let map = self
+            let (map, spawn) = self
                 .generate_float_matrix()
                 .to_tile_mat(self.get_tile_type_options(), self.height_multiplier)
-                .spawn_contents(self.get_content_options())
-                .map;
+                .spawn_contents(self.get_content_options());
             (
-                map,
-                (0, 0),
+                map.map,
+                spawn,
                 self.environmental_conditions.clone(),
                 self.score,
-                None,
+                self.score_map.clone(),
             )
         }
     }

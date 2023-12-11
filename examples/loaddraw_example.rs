@@ -10,10 +10,9 @@ use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, window::Window};
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
-use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 
 fn main() {
     let start = Instant::now();

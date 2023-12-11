@@ -9,7 +9,7 @@ use fltk::prelude::WidgetExt;
 use fltk::{app, enums::Color, frame::Frame, window::Window};
 use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
-use robotics_lib::world::worldgenerator::Generator;
+use robotics_lib::world::world_generator::Generator;
 
 use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
 use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
@@ -26,6 +26,7 @@ fn main() {
         .set_tile_type_options_from_preset(OxAgTileTypePresets::Default)
         .set_content_options_from_preset(OxAgContentPresets::Default)
         .set_with_info(true)
+        .set_maze(true)
         .build();
 
     let tmp = generator.gen().0;
@@ -53,6 +54,7 @@ fn main() {
                 Snow => Color::from_hex_str("#FFFFFF"),
                 Lava => Color::from_hex_str("#fc4903"),
                 Street => Color::from_hex_str("#000000"),
+                Wall => Color::from_hex_str("#FFFFFF"),
                 _ => Color::from_hex_str("#000000"),
             };
             if tmp[x][y].content.to_default() == Fire {
