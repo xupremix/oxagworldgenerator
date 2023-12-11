@@ -118,7 +118,7 @@ impl F64MatData {
                             map[i][j].tile_type = Snow;
                         }
                         _ => {
-                            let new_value = *value;
+                            let new_value = value.clone();
                             let dist_to_dw = (new_value
                                 - (spawn_levels.deep_water_level.end()
                                     + spawn_levels.deep_water_level.start())
@@ -149,6 +149,7 @@ impl F64MatData {
                                     + spawn_levels.mountain_level.start())
                                     / 2.0)
                                 .abs();
+
                             let dist_to_sn = (new_value
                                 - (spawn_levels.snow_level.end()
                                     + spawn_levels.snow_level.start())
