@@ -42,7 +42,7 @@ fn main() {
                         Snow => print!("  "),
                         Wall => print!("██"),
                         Street => print!("  "),
-                        _ => print!("  "),
+                        Teleport => print!("TT"),
                     }
                 }
             });

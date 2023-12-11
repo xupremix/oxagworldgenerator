@@ -33,7 +33,7 @@ impl MazeBuilder {
         self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
         let n_circle = self.size as f32;
 
-        for _ in 0..rng.gen_range(0..n_circle.sqrt() as usize - 2) {
+        for _ in (0..(self.size as f32 * 0.3) as usize) {
             self.random_circles(rng);
         }
 
@@ -129,5 +129,6 @@ impl MazeBuilder {
         let size = self.size as f32;
         let radius = rng.gen_range(1..size.sqrt() as usize);
         spawn_circle(&mut self.map, rng, self.size, spawn_x, spawn_y,radius, &(None, Some(Grass)));
+        self.map[spawn_y][spawn_x].tile_type = TileType::Teleport(false);
     }
 }
