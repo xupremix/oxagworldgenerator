@@ -11,11 +11,11 @@ use robotics_lib::world::tile::Content::{Coin, Fire, Fish, Garbage, Rock, Tree};
 use robotics_lib::world::tile::TileType::*;
 use robotics_lib::world::world_generator::Generator;
 
-use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
-use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
-use lib_oxidizing_agents::world_generator::tile_type_options::OxAgTileTypeOptions;
-use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
-use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
+use oxagworldgenerator::world_generator::presets::content_presets::OxAgContentPresets;
+use oxagworldgenerator::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
+use oxagworldgenerator::world_generator::tile_type_options::OxAgTileTypeOptions;
+use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+use oxagworldgenerator::world_generator::OxAgWorldGenerator;
 
 fn main() {
     let size: usize = 512;
