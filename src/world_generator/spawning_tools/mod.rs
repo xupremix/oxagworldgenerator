@@ -12,7 +12,7 @@ pub(crate) mod batch_spawn;
 mod circle_spawn;
 mod lava_spawn;
 pub(crate) mod matrix_spawn;
-mod maze;
+pub(crate) mod maze;
 pub(crate) mod random_spawn;
 mod river_spawn;
 mod street_spawn;
@@ -24,6 +24,12 @@ pub(crate) struct F64MatData {
     seed: u64,
     size: usize,
     with_info: bool,
+}
+
+pub(crate) struct MazeBuilder {
+    seed: u64,
+    size: usize,
+    map: Vec<Vec<Tile>>,
 }
 
 pub(crate) struct TileMat {
