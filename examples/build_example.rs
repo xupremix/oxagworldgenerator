@@ -5,6 +5,8 @@ use robotics_lib::world::tile::TileType::{
 };
 use std::time::{Duration, Instant};
 
+use lib_oxidizing_agents::world_generator::presets::content_presets::OxAgContentPresets;
+use lib_oxidizing_agents::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
 use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::world_generator::Generator;
@@ -13,10 +15,20 @@ fn main() {
     let size: usize = 32;
     let seed = 451; // generate_random_seed();
     let start = Instant::now();
+    //
+    // let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
+    //     .set_size(size)
+    //     .set_maze(true)
+    //     .build()
+    //     .unwrap();
 
     let mut generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
+        .set_seed(seed)
         .set_size(size)
-        .set_maze(true)
+        .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
+        .set_content_options_from_preset(OxAgContentPresets::Default)
+        .set_with_info(true)
+        .set_maze(false)
         .build()
         .unwrap();
 
