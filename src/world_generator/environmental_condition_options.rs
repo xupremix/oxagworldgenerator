@@ -1,7 +1,6 @@
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::environmental_conditions::{EnvironmentalConditions, WeatherType};
-use serde::ser::SerializeStruct;
 use serde::Serializer;
 use strum::IntoEnumIterator;
 
