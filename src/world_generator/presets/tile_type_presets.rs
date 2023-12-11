@@ -112,11 +112,11 @@ pub(crate) const DEFAULT: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: 0.25..=0.5,
     mountain_level: 0.5..=0.75,
     snow_level: 0.75..=1.0,
-    river_n: 10..=16,
-    street_n: 10..=25,
-    street_len: 50..=130,
-    lava_n: 5..=8,
-    lava_radius: 4..=9,
+    river_n: 1..=4,
+    street_n: 1..=3,
+    street_len: 6..=15,
+    lava_n: 2..=2,
+    lava_radius: 2..=4,
 };
 
 pub(crate) const WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
@@ -127,11 +127,11 @@ pub(crate) const WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {
     hill_level: 0.4..=0.6,
     mountain_level: 0.6..=0.8,
     snow_level: 0.8..=1.0,
-    river_n: 0..=10,
-    street_n: 0..=10,
-    street_len: 16..=25,
-    lava_n: 0..=3,
-    lava_radius: 2..=5,
+    river_n: 1..=4,
+    street_n: 1..=3,
+    street_len: 6..=15,
+    lava_n: 1..=2,
+    lava_radius: 2..=4,
 };
 
 pub(crate) const LOW_WATER_WORLD: OxAgTileTypeOptions = OxAgTileTypeOptions {

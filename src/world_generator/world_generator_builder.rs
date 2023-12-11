@@ -36,13 +36,13 @@ use super::content_options::OxAgContentOptions;
 ///
 /// # Example
 /// ```rust
-/// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+/// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 ///
 /// let default_generator = OxAgWorldGeneratorBuilder::new().build();
 ///
 /// let custom_size_generator = OxAgWorldGeneratorBuilder::new()
 ///     .set_size(100)
-///     .build();
+///     .build().unwrap();
 ///
 /// ```
 pub struct OxAgWorldGeneratorBuilder {

@@ -25,12 +25,12 @@ pub mod world_generator_builder;
 ///
 /// # Example
 /// ```rust
-/// use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
-/// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+/// use oxagworldgenerator::world_generator::OxAgWorldGenerator;
+/// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 ///
 /// let generator: OxAgWorldGenerator = OxAgWorldGeneratorBuilder::new()
 ///     .set_size(100)
-///     .build();
+///     .build().unwrap();
 /// ```
 ///
 /// See [OxAgWorldGeneratorBuilder] documentation for cooler examples.
@@ -83,8 +83,8 @@ impl OxAgWorldGenerator {
     ///
     /// # Usage
     /// ```rust
-    /// use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
-    /// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+    /// use oxagworldgenerator::world_generator::OxAgWorldGenerator;
+    /// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
     ///
     /// let generator = OxAgWorldGenerator::builder();
     /// // This is the same thing

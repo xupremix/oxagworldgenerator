@@ -5,8 +5,8 @@ use robotics_lib::world::tile::TileType::{
 };
 use std::time::{Duration, Instant};
 
-use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
-use lib_oxidizing_agents::world_generator::OxAgWorldGenerator;
+use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+use oxagworldgenerator::world_generator::OxAgWorldGenerator;
 use robotics_lib::world::world_generator::Generator;
 
 fn main() {
