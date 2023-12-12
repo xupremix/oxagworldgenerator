@@ -4,7 +4,7 @@ use robotics_lib::world::world_generator::Generator;
 use std::time::{Duration, Instant};
 
 fn main() {
-    let size: usize = 1024;
+    let size: usize = 256;
     let seed = 420;
     let start = Instant::now();
 
@@ -14,7 +14,7 @@ fn main() {
         .build()
         .unwrap();
 
-    let tmp = generator.gen();
+    let _ = generator.gen();
     let duration: Duration = start.elapsed();
     println!("Duration: {:?}", duration);
 }
