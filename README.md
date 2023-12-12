@@ -1,6 +1,6 @@
 <img src="assets/logo.png" alt="logo" width="125" align="top" style="margin-right: 1rem"/>  
 
-# 🎧 OxAg world generator
+# 🏔️ OxAg world generator
 This is a world generator on steroids ^^
 
 [![Static Badge](https://img.shields.io/badge/OxAg-audio_tool-orange)](https://github.com/xupremix/oxagaudiotool)
