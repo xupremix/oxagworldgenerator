@@ -79,9 +79,11 @@ impl TileMat {
         };
 
         for _ in 0..max_spawn_number {
+            let center = radius;
+
             let batches_noise = f64_mat(
                 self.seed + rng.next_u32() as u64,
-                rng.gen_range(1..=(radius as usize)),
+                rng.gen_range(1..=(radius * 2.0) as usize),
                 false,
             );
 
@@ -90,13 +92,16 @@ impl TileMat {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
+            println!("{:?}", radius);
+
             batches_noise
                 .map
                 .iter()
                 .enumerate()
                 .for_each(|(tmp_row, rows)| {
                     rows.iter().enumerate().for_each(|(tmp_col, cell)| {
-                        if (-0.25..=0.25).contains(&cell.0) {
+                        let is_in_circle = (tmp_row as f64 - center).powi(2) + (tmp_col as f64 -center).powi(2) <= (radius).powi(2);
+                        if is_in_circle {
                             if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
                                 || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
                                 || ((row as i32 + tmp_row as i32 - radius as i32) as usize)
