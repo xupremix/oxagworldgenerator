@@ -1,10 +1,10 @@
 use std::cmp::max;
 
+use crate::world_generator::content_options::OxAgContentOptions;
+use crate::world_generator::spawning_tools::TileMat;
 use rand::prelude::StdRng;
 use rand::Rng;
 use robotics_lib::world::tile::Content;
-use crate::world_generator::content_options::OxAgContentOptions;
-use crate::world_generator::spawning_tools::TileMat;
 
 impl TileMat {
     pub(crate) fn spawn_randomly(

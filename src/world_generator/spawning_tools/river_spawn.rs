@@ -1,6 +1,6 @@
 use crate::world_generator::spawning_tools::F64MatData;
-use robotics_lib::world::tile::TileType::{DeepWater, Lava, ShallowWater};
 use robotics_lib::world::tile::Tile;
+use robotics_lib::world::tile::TileType::{DeepWater, Lava, ShallowWater};
 use std::collections::VecDeque;
 
 impl F64MatData {

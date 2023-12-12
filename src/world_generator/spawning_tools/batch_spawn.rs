@@ -1,8 +1,8 @@
-use std::cmp::max;
 use rand::prelude::StdRng;
+use rand::Rng;
 use rand::RngCore;
-use rand::{Rng};
 use robotics_lib::world::tile::Content;
+use std::cmp::max;
 
 use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
 use crate::world_generator::content_options::OxAgContentOptions;

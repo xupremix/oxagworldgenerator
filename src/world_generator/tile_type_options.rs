@@ -1,11 +1,11 @@
 use std::ops::RangeInclusive;
 
-use rand::prelude::StdRng;
-use rand::Rng;
-use rand::SeedableRng;
 use crate::utils::constants::*;
 use crate::utils::errors::OxAgError;
 use crate::utils::traits::{Container, FromSeed, Validator};
+use rand::prelude::StdRng;
+use rand::Rng;
+use rand::SeedableRng;
 
 #[derive(Debug, Clone)]
 /// Options that determine how the tile [Tile] are spawned
