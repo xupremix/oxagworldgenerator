@@ -5,7 +5,7 @@ use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::{Content, Tile, TileType};
 
-pub(crate) fn maze_builder_init(seed: u64, mut size: usize) -> MazeBuilder {
+pub(crate) fn maze_builder_init(seed: u64, size: usize) -> MazeBuilder {
     MazeBuilder {
         seed,
         size,
@@ -38,7 +38,7 @@ impl MazeBuilder {
     // maze builder
     pub(crate) fn builder(mut self) -> (Vec<Vec<Tile>>, (usize, usize)) {
         let rng = &mut StdRng::seed_from_u64(self.seed);
-        let (mut spawn_x, mut spawn_y) = self.random_point(rng);
+        let (spawn_x, spawn_y) = self.random_point(rng);
         self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
 
         let mut tile_type = random_tile(rng);
@@ -94,8 +94,7 @@ impl MazeBuilder {
     }
     // Random starting point chooser, based on the seed
     fn random_point(&self, rng: &mut StdRng) -> (usize, usize) {
-        let (mut x, mut y) = (0, 0);
-        (x, y) = (
+        let(x, y) = (
             rng.gen_range(1..self.size - 1),
             rng.gen_range(1..self.size - 1),
         );
@@ -111,14 +110,6 @@ impl MazeBuilder {
             }
         }
         num
-    }
-
-    fn already_set_path(&self, x: usize, y: usize) -> bool {
-        if self.map[y][x].tile_type == TileType::Street {
-            true
-        } else {
-            false
-        }
     }
 
     fn spawn_end(&mut self, rng: &mut StdRng) {

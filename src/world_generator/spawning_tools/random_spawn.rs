@@ -1,10 +1,8 @@
 use std::cmp::max;
 
 use rand::prelude::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::Rng;
 use robotics_lib::world::tile::Content;
-
-use crate::utils::progress_bar;
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::TileMat;
 

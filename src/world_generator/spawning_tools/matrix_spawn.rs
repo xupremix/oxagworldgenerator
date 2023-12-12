@@ -5,7 +5,7 @@ use robotics_lib::world::tile::Content::Water;
 use robotics_lib::world::tile::TileType::{
     DeepWater, Grass, Hill, Mountain, Sand, ShallowWater, Snow,
 };
-use robotics_lib::world::tile::{Content, Tile, TileType};
+use robotics_lib::world::tile::{Content, Tile};
 
 use crate::utils::constants::{
     DEFAULT_NOISE_FREQUENCY, DEFAULT_NOISE_LACUNARITY, DEFAULT_NOISE_OCTAVES,
@@ -204,7 +204,7 @@ impl F64MatData {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
             let n = rng.gen_range(spawn_levels.street_len.clone());
-            let dir = match (rng.gen_range(0..4)) {
+            let dir = match rng.gen_range(0..4) {
                 0 => (0, 1),
                 1 => (1, 0),
                 2 => (0, -1),

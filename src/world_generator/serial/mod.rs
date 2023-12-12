@@ -18,7 +18,7 @@ impl OxAgWorldGenerator {
 }
 
 impl OxAgWorldGeneratorBuilder {
-    pub fn load(mut self, path: &str) -> Result<OxAgWorldGenerator, Box<dyn std::error::Error>> {
+    pub fn load(self, path: &str) -> Result<OxAgWorldGenerator, Box<dyn std::error::Error>> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;

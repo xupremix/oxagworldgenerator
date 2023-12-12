@@ -22,7 +22,7 @@ impl F64MatData {
         self.map[row][col].1 = true;
         map[row][col].tile_type = Street;
 
-        let mut directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+        let directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];
         directions
             .to_vec()
             .retain(|&e| e != (-prev_dir.0, -prev_dir.1) && e != prev_dir);

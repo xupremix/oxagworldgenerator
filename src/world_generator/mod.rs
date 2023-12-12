@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use crate::utils::errors::OxAgError;
 use robotics_lib::world::environmental_conditions::EnvironmentalConditions;
 use robotics_lib::world::tile::{Content, Tile};
 use robotics_lib::world::world_generator::Generator;
@@ -150,7 +149,7 @@ impl OxAgWorldGenerator {
     ///
     /// This matrix will become a maze.
     fn generate_base_maze(&mut self) -> MazeBuilder {
-        if (self.size % 2 == 0) {
+        if self.size % 2 == 0 {
             self.size += 1;
         }
         maze_builder_init(self.seed, self.size)
@@ -171,7 +170,7 @@ impl Generator for OxAgWorldGenerator {
             return self.map_save.clone().unwrap();
         }
         if self.maze {
-            let mut map = self.generate_base_maze().builder();
+            let map = self.generate_base_maze().builder();
             (
                 map.0,
                 map.1,

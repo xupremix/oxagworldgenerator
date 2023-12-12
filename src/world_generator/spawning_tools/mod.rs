@@ -1,7 +1,5 @@
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
-use std::collections::HashMap;
-
 use robotics_lib::world::tile::{Content, Tile, TileType};
 use robotics_lib::world::world_generator::get_tiletype_percentage;
 use strum::IntoEnumIterator;

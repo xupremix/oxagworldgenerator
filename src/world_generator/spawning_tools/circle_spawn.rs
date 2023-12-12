@@ -1,5 +1,5 @@
 use rand::prelude::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::Rng;
 use robotics_lib::world::tile::TileType::{DeepWater, ShallowWater, Teleport};
 use robotics_lib::world::tile::{Content, Tile, TileType};
 

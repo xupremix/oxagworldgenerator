@@ -1,15 +1,13 @@
 use std::cmp::max;
-use std::ops::RangeInclusive;
-
 use rand::prelude::StdRng;
-use rand::{Rng, RngCore, SeedableRng};
-use robotics_lib::world::tile::{Content, TileType};
+use rand::RngCore;
+use rand::{Rng};
+use robotics_lib::world::tile::Content;
 
 use crate::utils::constants::DEFAULT_BATCH_DISTANCE;
-use crate::utils::progress_bar;
 use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::matrix_spawn::f64_mat;
-use crate::world_generator::spawning_tools::{F64MatData, TileMat};
+use crate::world_generator::spawning_tools::TileMat;
 
 impl TileMat {
     // pub(crate) fn spawn_batches(
@@ -67,7 +65,7 @@ impl TileMat {
         rng: &mut StdRng,
     ) {
         let max_rad = max(1, content_option.max_radius) as f64;
-        let mut radius = max_rad;
+        let radius = max_rad;
         let max_spawn_number = if content_option.with_max_spawn_number {
             content_option.max_spawn_number
         } else {
@@ -80,9 +78,7 @@ impl TileMat {
             rng.gen_range(content_option.min_spawn_number..=max)
         };
 
-        let mut placed_stuff = 0;
-
-        for i in 0..max_spawn_number {
+        for _ in 0..max_spawn_number {
             let batches_noise = f64_mat(
                 self.seed + rng.next_u32() as u64,
                 rng.gen_range(1..=(radius as usize)),
@@ -115,7 +111,7 @@ impl TileMat {
                                 if self.map[row][col].tile_type.properties().can_hold(content) {
                                     // println!("Placed Stuff: {}", placed_stuff);
                                     // placed_stuff +=1;
-                                    let value: usize = if (row > content.properties().max()) {
+                                    let value: usize = if row > content.properties().max() {
                                         content.properties().max()
                                     } else {
                                         rng.gen_range(row..=content.properties().max())
