@@ -10,17 +10,22 @@ use crate::utils::errors::OxAgError::{InvalidContentOption, InvalidContentOption
 use crate::utils::traits::Validator;
 
 /// Options that determine how the tile [Content] are spawned
-/// TODO: Examples
+/// TODO: Examples & check if doc is ok
 #[derive(Debug, Copy, Clone)]
 pub struct OxAgContentOptions {
     /// Whether this [Content] should be spawned in sets or groups
     pub in_batches: bool,
     /// Whether this [Content] should be present or not
     pub is_present: bool,
+    /// The minimum number of this [Content] present in the world
     pub min_spawn_number: usize,
+    /// The max radius used for the spawning in batches of this [Content]
     pub max_radius: usize,
+    /// Whether this [Content] has a maximum spawn number
     pub with_max_spawn_number: bool,
+    /// The max number of this [Content] present in the world
     pub max_spawn_number: usize,
+    /// The total percentage of this [Content] present in the world
     pub percentage: f64,
 }
 

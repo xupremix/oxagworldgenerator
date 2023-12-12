@@ -15,6 +15,11 @@ use crate::world_generator::tile_type_options::OxAgTileTypeOptions;
 /// │ hill_level           │ Hilly landscapes      │
 /// │ mountain_level       │ Mountainous regions   │
 /// │ snow_level           │ Snowy landscapes      │
+/// │ river_n              │ Number of river       │
+/// │ street_n             │ Number of street      │
+/// │ street_len           │ Length of street      │
+/// │ lava_n               │ Number of lava lake   │
+/// │ lava_radius          │ Radius of lava lake   │
 /// └──────────────────────┴───────────────────────┘
 /// </pre>
 ///
@@ -36,6 +41,11 @@ pub enum OxAgTileTypePresets {
     /// │ hill_level           │  0.25 ..=  0.5  │
     /// │ mountain_level       │  0.5  ..=  0.75 │
     /// │ snow_level           │  0.75 ..=  1.0  │
+    /// │ river_n              │  1    ..=  4    │
+    /// │ street_n             │  1    ..=  3    │
+    /// │ street_len           │  6    ..= 15    │
+    /// │ lava_n               │  2    ..=  2    │
+    /// │ lava_radius          │  2    ..=  4    │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
     /// [`PRESETS`](OxAgTileTypePresets)
@@ -53,6 +63,11 @@ pub enum OxAgTileTypePresets {
     /// │ hill_level           │  0.4  ..=  0.6  │
     /// │ mountain_level       │  0.6  ..=  0.8  │
     /// │ snow_level           │  0.8  ..=  1.0  │
+    /// │ river_n              │  1    ..=  4    │
+    /// │ street_n             │  1    ..=  3    │
+    /// │ street_len           │  6    ..= 15    │
+    /// │ lava_n               │  1    ..=  2    │
+    /// │ lava_radius          │  2    ..=  4    │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
     /// [`PRESETS`](OxAgTileTypePresets)
@@ -70,6 +85,11 @@ pub enum OxAgTileTypePresets {
     /// │ hill_level           │  0.1  ..=  0.4  │
     /// │ mountain_level       │  0.4  ..=  0.7  │
     /// │ snow_level           │  0.7  ..=  1.0  │
+    /// │ river_n              │  0    ..= 10    │
+    /// │ street_n             │  0    ..= 10    │
+    /// │ street_len           │ 16    ..= 25    │
+    /// │ lava_n               │  0    ..=  3    │
+    /// │ lava_radius          │  2    ..=  5    │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
     /// [`PRESETS`](OxAgTileTypePresets)
@@ -87,6 +107,11 @@ pub enum OxAgTileTypePresets {
     /// │ hill_level           │  0.1  ..=  0.4  │
     /// │ mountain_level       │  0.4  ..=  0.7  │
     /// │ snow_level           │  0.7  ..=  1.0  │
+    /// │ river_n              │  0    ..=  0    │
+    /// │ street_n             │  0    ..=  0    │
+    /// │ street_len           │ 16    ..= 25    │
+    /// │ lava_n               │  0    ..=  3    │
+    /// │ lava_radius          │  2    ..=  5    │
     /// └──────────────────────┴─────────────────┘
     /// </pre>
     /// [`PRESETS`](OxAgTileTypePresets)

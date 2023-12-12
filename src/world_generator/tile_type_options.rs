@@ -3,24 +3,37 @@ use std::ops::RangeInclusive;
 use rand::prelude::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
-
 use crate::utils::constants::*;
 use crate::utils::errors::OxAgError;
 use crate::utils::traits::{Container, FromSeed, Validator};
 
 #[derive(Debug, Clone)]
+/// Options that determine how the tile [Tile] are spawned
+/// TODO: Examples?
 pub struct OxAgTileTypeOptions {
+    /// The range inclusive area where you want the Deep Water [Tile] to spawn
     pub deep_water_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Shallow Water [Tile] to spawn
     pub shallow_water_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Sand [Tile] to spawn
     pub sand_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Grass [Tile] to spawn
     pub grass_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Hill [Tile] to spawn
     pub hill_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Mountain [Tile] to spawn
     pub mountain_level: RangeInclusive<f64>,
+    /// The range inclusive area where you want the Snow [Tile] to spawn
     pub snow_level: RangeInclusive<f64>,
+    /// The number of River you want to spawn
     pub river_n: RangeInclusive<usize>,
+    /// The number of Street [Tile] you want to spawn
     pub street_n: RangeInclusive<usize>,
+    /// The length of a Street [Tile]
     pub street_len: RangeInclusive<usize>,
+    /// The number of Lava lake that you want to spawn
     pub lava_n: RangeInclusive<usize>,
+    /// The radius of the Lava lake
     pub lava_radius: RangeInclusive<usize>,
 }
 

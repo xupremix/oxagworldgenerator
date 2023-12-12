@@ -172,12 +172,16 @@ impl OxAgWorldGeneratorBuilder {
 
     /// Sets the score of the [Builder](OxAgWorldGeneratorBuilder)
     ///
-    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)\
     pub fn set_score(mut self, score: f32) -> Self {
         self.score = Some(score);
         self
     }
 
+    /// Sets the score of the Map
+    ///
+    /// Return the Score Map
+    /// TODO: Actually writing what this does...
     pub fn set_score_map(mut self, score_map: Option<HashMap<Content, f32>>) -> Self {
         self.score_map = score_map;
         self

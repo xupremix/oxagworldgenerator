@@ -97,11 +97,11 @@ impl TileMat {
                 .for_each(|(tmp_row, rows)| {
                     rows.iter().enumerate().for_each(|(tmp_col, cell)| {
                         if (-0.25..=0.25).contains(&cell.0) {
-                            if !(((row as i32 - radius as i32 + tmp_row as i32) as usize) < 0
-                                || ((col as i32 - radius as i32 + tmp_col as i32) as usize) < 0
-                                || ((row as i32 - radius as i32 + tmp_row as i32) as usize)
+                            if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
+                                || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
+                                || ((row as i32 + tmp_row as i32 - radius as i32) as usize)
                                     > self.size
-                                || ((col as i32 - radius as i32 + tmp_col as i32) as usize)
+                                || ((col as i32 + tmp_col as i32 - radius as i32) as usize)
                                     > self.size)
                             {
                                 let (row, col) = (
