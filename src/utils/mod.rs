@@ -8,13 +8,13 @@ pub fn generate_random_seed() -> u64 {
     thread_rng().gen::<u64>()
 }
 
-pub (crate) fn multiplier_from_seed(seed: u64) -> f64 {
+pub(crate) fn multiplier_from_seed(seed: u64) -> f64 {
     let mut rng = StdRng::seed_from_u64(seed);
     rng.gen::<f64>()
 }
 
 /// Returns a randomly generated world size
-pub (crate) fn generate_random_world_size(seed: u64) -> usize {
+pub(crate) fn generate_random_world_size(seed: u64) -> usize {
     StdRng::seed_from_u64(seed).gen_range(0..u8::MAX) as usize
 }
 

@@ -94,7 +94,7 @@ impl MazeBuilder {
     }
     // Random starting point chooser, based on the seed
     fn random_point(&self, rng: &mut StdRng) -> (usize, usize) {
-        let(x, y) = (
+        let (x, y) = (
             rng.gen_range(1..self.size - 1),
             rng.gen_range(1..self.size - 1),
         );
