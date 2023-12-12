@@ -9,7 +9,7 @@ use robotics_lib::world::tile::{Tile, TileType};
 use robotics_lib::world::world_generator::Generator;
 
 const TILE_SIZE: f32 = 5.0;
-const WORLD_SIZE: usize = 256;
+const WORLD_SIZE: usize = 128;
 
 fn main() {
     env_logger::init();

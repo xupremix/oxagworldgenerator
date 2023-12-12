@@ -87,9 +87,10 @@ impl TileMat {
                 false,
             );
 
+            //
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
-                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
             println!("{:?}", radius);
@@ -115,8 +116,6 @@ impl TileMat {
                                     col + tmp_col - radius as usize,
                                 );
                                 if self.map[row][col].tile_type.properties().can_hold(content) {
-                                    // println!("Placed Stuff: {}", placed_stuff);
-                                    // placed_stuff +=1;
                                     if rng.gen_bool(0.7) {
                                         let value: usize = if row > content.properties().max() {
                                             content.properties().max()
