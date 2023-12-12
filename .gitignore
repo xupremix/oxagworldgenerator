@@ -1,7 +1,6 @@
 Cargo.lock
-/target/
+target/
 .idea/
 .cargo/
 .vscode/
-/bin/target/
 __pycache__/
