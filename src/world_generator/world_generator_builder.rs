@@ -26,6 +26,7 @@ use super::content_options::OxAgContentOptions;
 /// * `tile_type_spawn_levels` - levels that will determine the spawn of the different tile types.
 /// * `tile_content_spawn_options` - [HashMap] with the [Content] as the key and [OxAgContentOptions] as its value.
 /// * `environmental_conditions` - [EnvironmentalConditions] that will be used in the generated world.
+/// * `maze` - if the world is to be build as a maze
 ///
 /// All those properties are [Option], and by default they are set to [None].
 ///
@@ -187,6 +188,9 @@ impl OxAgWorldGeneratorBuilder {
         self
     }
 
+    /// Sets if the map should be a maze in the [Builder](OxAgWorldGeneratorBuilder)
+    ///
+    /// Returns the [Builder](OxAgWorldGeneratorBuilder)
     pub fn set_maze(mut self, maze: bool) -> Self {
         self.maze = Some(maze);
         self

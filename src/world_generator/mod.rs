@@ -100,12 +100,13 @@ impl OxAgWorldGenerator {
         self.size
     }
 
+    /// Return the score of the world
     pub fn get_score(&self) -> f32 {
         self.score
     }
-    pub fn get_maze(&self) -> bool {
-        self.maze
-    }
+    // pub fn get_maze(&self) -> bool {
+    //     self.maze
+    // }
 
     pub fn get_with_info(&self) -> bool {
         self.with_info
@@ -134,6 +135,7 @@ impl OxAgWorldGenerator {
         &self.environmental_conditions
     }
 
+    /// Returns the Map Score
     pub fn get_score_map(&self) -> &Option<HashMap<Content, f32>> {
         &self.score_map
     }

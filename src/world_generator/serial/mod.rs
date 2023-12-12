@@ -12,12 +12,33 @@ use std::io;
 use std::io::{Read, Write};
 
 impl OxAgWorldGenerator {
+    /// tell us if the world build by the [Builder](OxAgWorldGeneratorBuilder) has to be saved into a json file
+    ///
+    /// # Example
+    /// ```rust
+    /// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+    ///
+    /// let default_generator = OxAgWorldGeneratorBuilder::new().build();
+    ///
+    /// let mut custom_size_generator = OxAgWorldGeneratorBuilder::new().build().unwrap();
+    /// custom_size_generator.save("examples/save.json").unwrap();
+    /// ```
     pub fn save(&mut self, path: &str) -> io::Result<()> {
         File::create(path)?.write_all(serde_json::to_string(&self.gen()).unwrap().as_bytes())
     }
 }
 
 impl OxAgWorldGeneratorBuilder {
+    /// tell us if the world [Builder](OxAgWorldGeneratorBuilder) has to be loaded from a file
+    ///
+    /// # Example
+    /// ```rust
+    /// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+    ///
+    /// let default_generator = OxAgWorldGeneratorBuilder::new().build();
+    ///
+    /// let mut custom_size_generator = OxAgWorldGeneratorBuilder::new().load("examples/save.json").unwrap();
+    /// ```
     pub fn load(self, path: &str) -> Result<OxAgWorldGenerator, Box<dyn std::error::Error>> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
