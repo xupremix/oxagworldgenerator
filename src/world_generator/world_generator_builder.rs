@@ -111,7 +111,7 @@ impl OxAgWorldGeneratorBuilder {
     ///
     /// # Examples
     /// ```rust
-    /// use lib_oxidizing_agents::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
+    /// use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
     /// let generator = OxAgWorldGeneratorBuilder::new().build();
     /// ```
     pub fn build(&self) -> Result<OxAgWorldGenerator, OxAgError> {

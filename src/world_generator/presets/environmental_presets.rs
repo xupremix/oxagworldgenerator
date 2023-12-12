@@ -2,8 +2,20 @@ use robotics_lib::world::environmental_conditions::{EnvironmentalConditions, Wea
 
 use crate::utils::traits::Loadable;
 
+/// # Environmental Condition Presets
+/// List of available presets
+///
+/// # Entries
+/// [Sunny]()
+/// [Mixed]()
 pub enum OxAgEnvironmentalConditionPresets {
+    /// # Sunny environment preset
+    ///
+    /// Set the environment to only be sunny
     Sunny,
+    /// # Mixed environment preset
+    ///
+    ///
     Mixed,
 }
 

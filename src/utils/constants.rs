@@ -1,6 +1,12 @@
 use std::ops::RangeInclusive;
 
+/// Default dimension given to the map if not provided
+///
+/// Currently not in use --- Can be added
 pub const DEFAULT_WORLD_SIZE: usize = 256;
+/// Default in batches content probability
+///
+/// Can be changed by using [set_content_option] giving it a [Vec<(Content, OxAgContentOptions)>]
 pub const DEFAULT_TILE_CONTENT_IN_BATCH_PROBABILITY: f64 = 0.5;
 pub const DEFAULT_TILE_CONTENT_IS_PRESENT_PROBABILITY: f64 = 0.5;
 pub const DEFAULT_WEATHER_PROBABILITY: f64 = 0.7;
