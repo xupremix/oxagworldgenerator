@@ -30,14 +30,3 @@ You can find multiple examples under the `/examples` folder!
 
 ## Support & Feedback
 Feel free to [open an issue](https://github.com/xupremix/oxagworldgenerator/issues) if either you have suggestions, think that something is missing or something is broken!
-
-
-
-# TODOS:
-- [ ] add new presets  
-- [ ] fix documentation `cargo doc --open`
-- [ ] make the tests `cargo test`
-- [ ] improve logic by maybe using parallel iterators etc...
-- [ ] transmit the progress bar to an event handler - if specified
-- [ ] run clippy fix for the lib warning `cargo clippy --fix`
-- [ ] check for memory allocation (and if there are any improvements)
