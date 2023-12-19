@@ -89,7 +89,7 @@ impl TileMat {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
-            println!("{:?}", radius);
+            // println!("{:?}", radius);
 
             batches_noise
                 .map

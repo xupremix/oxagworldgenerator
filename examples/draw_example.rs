@@ -39,7 +39,7 @@ impl Default for MyApp {
             map: OxAgWorldGeneratorBuilder::new()
                 .set_size(WORLD_SIZE)
                 .set_content_options_from_preset(OxAgContentPresets::Default)
-                .set_tile_type_options_from_preset(OxAgTileTypePresets::Hill)
+                .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
                 .build()
                 .unwrap()
                 .gen()
