@@ -64,8 +64,10 @@ impl TileMat {
         percentage: f64,
         rng: &mut StdRng,
     ) {
+        // Get a random radius between 1 and the max
         let max_rad = max(1, content_option.max_radius) as f64;
         let radius = max_rad;
+        // Set a maximum spawn number for the batches
         let max_spawn_number = if content_option.with_max_spawn_number {
             content_option.max_spawn_number
         } else {
@@ -78,48 +80,61 @@ impl TileMat {
             rng.gen_range(content_option.min_spawn_number..=max)
         };
 
+        // Loop for spawn
         for _ in 0..max_spawn_number {
-            let size = rng.gen_range(0..=radius as usize) * 2;
-            let center = size as f64 / 2.0;
-            let batches_noise = f64_mat(self.seed + rng.next_u32() as u64, size, false);
+            // Get diameter random between (0 and radius) * 2
+            let diameter = (radius * 2.0) as usize;
+            // Get the center
+            let center = diameter / 2;
+            // Create a matrix of size diameter
+            let batches_noise = f64_mat(self.seed + rng.next_u32() as u64, diameter, false);
 
-            //
+            // i check to find a tile that can hold the content on the map, the center of the batch spawn
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
-            println!("{:?}", radius);
-
+            // Start to iter the batch noise map
             batches_noise
                 .map
                 .iter()
                 .enumerate()
                 .for_each(|(tmp_row, rows)| {
-                    rows.iter().enumerate().for_each(|(tmp_col, _cell)| {
-                        if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
-                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
-                            || ((row as i32 + tmp_row as i32 - radius as i32) as usize) > self.size
-                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) > self.size)
-                        {
-                            let is_in_circle = (tmp_row as f64 - center).powi(2)
-                                + (tmp_col as f64 - center).powi(2)
-                                <= (radius).powi(2);
+                    rows.iter().enumerate().for_each(|(tmp_col, cell)| {
+                        let is_circle = (tmp_row as isize - center as isize).pow(2)
+                            + (tmp_col as isize - center as isize).pow(2)
+                            <= radius.powf(2.0) as isize;
 
-                            if is_in_circle {
-                                let (row, col) = (
+                        if is_circle {
+                            if (row as f64 + tmp_row as f64 - radius) >= 0.0
+                                && (col as f64 + tmp_col as f64 - radius) >= 0.0
+                                && (row as f64 + tmp_row as f64 - radius) < self.size as f64
+                                && (col as f64 + tmp_col as f64 - radius) < self.size as f64
+                            {
+                                let (row_map, col_map) = (
                                     row + tmp_row - radius as usize,
                                     col + tmp_col - radius as usize,
                                 );
-                                if self.map[row][col].tile_type.properties().can_hold(content)
-                                    && rng.gen_bool(0.7)
-                                {
-                                    let value: usize = if row > content.properties().max() {
-                                        content.properties().max()
-                                    } else {
-                                        rng.gen_range(row..=content.properties().max())
-                                    };
-                                    self.map[row][col].content = content.to_value(value);
+
+                                let percent_noise = (cell.0 - batches_noise.min) / (batches_noise.max - batches_noise.min);
+                                let distance = ((tmp_row as f64 - center as f64).powf(2.0) + (tmp_col as f64 - center as f64).powf(2.0)).sqrt();
+                                let percent_distance = (distance / center as f64);
+                                let probability = (percent_distance + percent_noise) / 2.0;
+
+                                if rng.gen_bool(probability) {
+                                    let mut value = 0;
+                                    if content.properties().max() != 0 {
+                                        value = rng.gen_range(0..content.properties().max());
+
+                                        if self.map[row_map][col_map]
+                                            .tile_type
+                                            .properties()
+                                            .can_hold(content)
+                                        {
+                                            self.map[row_map][col_map].content = content.to_value(value)
+                                        }
+                                    }
                                 }
                             }
                         }
