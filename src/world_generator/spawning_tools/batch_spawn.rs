@@ -79,16 +79,21 @@ impl TileMat {
         };
 
         for _ in 0..max_spawn_number {
+            let size = rng.gen_range(0..=radius as usize) * 2;
+            let center = (size as f64 / 2.0);
             let batches_noise = f64_mat(
                 self.seed + rng.next_u32() as u64,
-                rng.gen_range(1..=(radius as usize)),
+                size,
                 false,
             );
 
+            //
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
-                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
+
+            println!("{:?}", radius);
 
             batches_noise
                 .map
@@ -96,27 +101,29 @@ impl TileMat {
                 .enumerate()
                 .for_each(|(tmp_row, rows)| {
                     rows.iter().enumerate().for_each(|(tmp_col, cell)| {
-                        if (-0.25..=0.25).contains(&cell.0) {
-                            if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
-                                || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
-                                || ((row as i32 + tmp_row as i32 - radius as i32) as usize)
-                                    > self.size
-                                || ((col as i32 + tmp_col as i32 - radius as i32) as usize)
-                                    > self.size)
-                            {
+                        if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
+                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
+                            || ((row as i32 + tmp_row as i32 - radius as i32) as usize) > self.size
+                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) > self.size)
+                        {
+                            let is_in_circle = (tmp_row as f64 - center).powi(2)
+                                + (tmp_col as f64 - center).powi(2)
+                                <= (radius).powi(2);
+
+                            if is_in_circle {
                                 let (row, col) = (
                                     row + tmp_row - radius as usize,
                                     col + tmp_col - radius as usize,
                                 );
                                 if self.map[row][col].tile_type.properties().can_hold(content) {
-                                    // println!("Placed Stuff: {}", placed_stuff);
-                                    // placed_stuff +=1;
-                                    let value: usize = if row > content.properties().max() {
-                                        content.properties().max()
-                                    } else {
-                                        rng.gen_range(row..=content.properties().max())
-                                    };
-                                    self.map[row][col].content = content.to_value(value);
+                                    if rng.gen_bool(0.7) {
+                                        let value: usize = if row > content.properties().max() {
+                                            content.properties().max()
+                                        } else {
+                                            rng.gen_range(row..=content.properties().max())
+                                        };
+                                        self.map[row][col].content = content.to_value(value);
+                                    }
                                 }
                             }
                         }
