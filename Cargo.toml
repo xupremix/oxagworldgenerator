@@ -19,4 +19,3 @@ serde = "1.0.193"
 eframe = "0.24.1"
 egui_extras = { version = "*", features = ["all_loaders"] }
 env_logger = "0.10.1"
-cc = "1.0.83"
