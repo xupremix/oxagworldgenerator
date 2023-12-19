@@ -95,6 +95,8 @@ impl TileMat {
                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
+            let mid_noise_value = batches_noise.max - batches_noise.min;
+
             // Start to iter the batch noise map
             batches_noise
                 .map
@@ -117,7 +119,7 @@ impl TileMat {
                                     col + tmp_col - radius as usize,
                                 );
 
-                                let percent_noise = (cell.0 - batches_noise.min) / (batches_noise.max - batches_noise.min);
+                                let percent_noise = (cell.0 - batches_noise.min) / mid_noise_value;
                                 let distance = ((tmp_row as f64 - center as f64).powf(2.0) + (tmp_col as f64 - center as f64).powf(2.0)).sqrt();
                                 let percent_distance = (distance / center as f64);
                                 let probability = (percent_distance + percent_noise) / 2.0;
