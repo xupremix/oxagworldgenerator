@@ -2,7 +2,7 @@ use eframe::egui;
 use eframe::egui::{Rect, Ui, Vec2};
 use eframe::emath::Pos2;
 use oxagworldgenerator::world_generator::presets::content_presets::OxAgContentPresets;
-use oxagworldgenerator::world_generator::presets::tile_type_presets::OxAgTileTypePresets;
+
 use oxagworldgenerator::world_generator::tile_type_options::OxAgTileTypeOptions;
 use oxagworldgenerator::world_generator::world_generator_builder::OxAgWorldGeneratorBuilder;
 use robotics_lib::world::tile::Content;
@@ -82,7 +82,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Rock.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -96,7 +96,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Tree.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -110,7 +110,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Garbage.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -124,7 +124,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Fire.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -138,7 +138,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Coin.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -152,7 +152,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Bin.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -166,7 +166,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Crate.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -180,7 +180,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Bank.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -195,7 +195,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Market.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -209,7 +209,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Fish.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -223,7 +223,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Building.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -237,7 +237,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Bush.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -251,7 +251,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/JollyBlock.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -265,7 +265,7 @@ fn handle_tile_content(ui: &Ui, content: &Content, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/content/Scarecrow.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -285,7 +285,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/DeepWater.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -299,7 +299,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/ShallowWater.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -313,7 +313,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Sand.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -327,7 +327,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Grass.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -341,7 +341,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Street.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -355,7 +355,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Hill.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -369,7 +369,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Mountain.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -383,7 +383,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Snow.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -397,7 +397,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Lava.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -411,7 +411,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Teleport.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(
@@ -425,7 +425,7 @@ fn handle_tile_type(ui: &Ui, tile_type: &TileType, row: usize, col: usize) {
             egui::Image::new(egui::include_image!("assets/tiles/Wall.png"))
                 .fit_to_exact_size(Vec2::new(TILE_SIZE, TILE_SIZE))
                 .paint_at(
-                    &ui,
+                    ui,
                     Rect::from_two_pos(
                         Pos2::new(row as f32 * TILE_SIZE, col as f32 * TILE_SIZE),
                         Pos2::new(

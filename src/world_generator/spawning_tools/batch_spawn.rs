@@ -80,17 +80,13 @@ impl TileMat {
 
         for _ in 0..max_spawn_number {
             let size = rng.gen_range(0..=radius as usize) * 2;
-            let center = (size as f64 / 2.0);
-            let batches_noise = f64_mat(
-                self.seed + rng.next_u32() as u64,
-                size,
-                false,
-            );
+            let center = size as f64 / 2.0;
+            let batches_noise = f64_mat(self.seed + rng.next_u32() as u64, size, false);
 
             //
             let (mut row, mut col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             while !self.map[row][col].tile_type.properties().can_hold(content) {
-                 (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
+                (row, col) = (rng.gen_range(0..self.size), rng.gen_range(0..self.size));
             }
 
             println!("{:?}", radius);
@@ -100,7 +96,7 @@ impl TileMat {
                 .iter()
                 .enumerate()
                 .for_each(|(tmp_row, rows)| {
-                    rows.iter().enumerate().for_each(|(tmp_col, cell)| {
+                    rows.iter().enumerate().for_each(|(tmp_col, _cell)| {
                         if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
                             || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
                             || ((row as i32 + tmp_row as i32 - radius as i32) as usize) > self.size
@@ -115,15 +111,15 @@ impl TileMat {
                                     row + tmp_row - radius as usize,
                                     col + tmp_col - radius as usize,
                                 );
-                                if self.map[row][col].tile_type.properties().can_hold(content) {
-                                    if rng.gen_bool(0.7) {
-                                        let value: usize = if row > content.properties().max() {
-                                            content.properties().max()
-                                        } else {
-                                            rng.gen_range(row..=content.properties().max())
-                                        };
-                                        self.map[row][col].content = content.to_value(value);
-                                    }
+                                if self.map[row][col].tile_type.properties().can_hold(content)
+                                    && rng.gen_bool(0.7)
+                                {
+                                    let value: usize = if row > content.properties().max() {
+                                        content.properties().max()
+                                    } else {
+                                        rng.gen_range(row..=content.properties().max())
+                                    };
+                                    self.map[row][col].content = content.to_value(value);
                                 }
                             }
                         }

@@ -7,10 +7,7 @@ impl F64MatData {
     pub(crate) fn river_spawn(&mut self, map: &mut Vec<Vec<Tile>>, row: usize, col: usize) -> bool {
         let mut directions = [(2.0, (-1, 0)), (2.0, (0, 1)), (2.0, (1, 0)), (2.0, (0, -1))];
 
-        if row as i32 - 1 >= 0
-            && !self.map[row - 1][col].1
-            && !(map[row - 1][col].tile_type == Lava)
-        {
+        if row as i32 > 0 && !self.map[row - 1][col].1 && !(map[row - 1][col].tile_type == Lava) {
             directions[0].0 = self.map[row - 1][col].0;
         }
         if col + 1 < self.size
@@ -25,10 +22,7 @@ impl F64MatData {
         {
             directions[2].0 = self.map[row + 1][col].0;
         }
-        if col as i32 - 1 >= 0
-            && !self.map[row][col - 1].1
-            && !(map[row][col - 1].tile_type == Lava)
-        {
+        if col as i32 > 0 && !self.map[row][col - 1].1 && !(map[row][col - 1].tile_type == Lava) {
             directions[3].0 = self.map[row][col - 1].0;
         }
 
@@ -47,7 +41,7 @@ impl F64MatData {
 
         let mut directions = VecDeque::from(directions);
 
-        while directions.len() > 0 {
+        while !directions.is_empty() {
             let (value, (row_offset, col_offset)) = directions.pop_front().unwrap();
             if value == 2.0 {
                 return false;
@@ -60,6 +54,6 @@ impl F64MatData {
                 return true;
             }
         }
-        return false;
+        false
     }
 }

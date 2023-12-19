@@ -144,8 +144,7 @@ impl MazeBuilder {
             let mut direction: Vec<(i32, i32)> = vec![(1, 0), (-1, 0), (0, 1), (0, -1)];
             direction.shuffle(&mut rng);
 
-            while direction.len() > 0 {
-                let direction_to_try = direction.pop().unwrap();
+            while let Some(direction_to_try) = direction.pop() {
                 // We calculate the new node's coordinates using the random direction
                 let node_x = x + (direction_to_try.0 * 2);
                 let node_y = y + (direction_to_try.1 * 2);

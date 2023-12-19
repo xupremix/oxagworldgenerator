@@ -7,7 +7,7 @@ fn main() {
     let mut generator = OxAgWorldGeneratorBuilder::new()
         .load("examples/save.json")
         .unwrap();
-    let tmp = generator.gen().0;
+    let _tmp = generator.gen().0;
     let duration: Duration = start.elapsed();
     println!("Duration: {:?}", duration);
 }
