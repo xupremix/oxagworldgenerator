@@ -97,10 +97,12 @@ impl TileMat {
                 .enumerate()
                 .for_each(|(tmp_row, rows)| {
                     rows.iter().enumerate().for_each(|(tmp_col, _cell)| {
-                        if !(((row as i32 + tmp_row as i32 - radius as i32) as usize) < 0
-                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) < 0
-                            || ((row as i32 + tmp_row as i32 - radius as i32) as usize) > self.size
-                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize) > self.size)
+                        if !((row as i32 + tmp_row as i32 - radius as i32) < 0
+                            || (col as i32 + tmp_col as i32 - radius as i32) < 0
+                            || ((row as i32 + tmp_row as i32 - radius as i32) as usize)
+                                >= self.size
+                            || ((col as i32 + tmp_col as i32 - radius as i32) as usize)
+                                >= self.size)
                         {
                             let is_in_circle = (tmp_row as f64 - center).powi(2)
                                 + (tmp_col as f64 - center).powi(2)
