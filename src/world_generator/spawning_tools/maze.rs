@@ -1,5 +1,6 @@
+use crate::world_generator::content_options::OxAgContentOptions;
 use crate::world_generator::spawning_tools::circle_spawn::spawn_circle;
-use crate::world_generator::spawning_tools::MazeBuilder;
+use crate::world_generator::spawning_tools::{MazeBuilder, TileMat};
 use rand::prelude::StdRng;
 use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
@@ -36,7 +37,10 @@ pub(crate) fn random_tile(rng: &mut StdRng) -> Vec<TileType> {
 
 impl MazeBuilder {
     // maze builder
-    pub(crate) fn builder(mut self) -> (Vec<Vec<Tile>>, (usize, usize)) {
+    pub(crate) fn builder(
+        mut self,
+        content_option: &Vec<(Content, OxAgContentOptions)>,
+    ) -> (Vec<Vec<Tile>>, (usize, usize)) {
         let rng = &mut StdRng::seed_from_u64(self.seed);
         let (spawn_x, spawn_y) = self.random_point(rng);
         self.maze_builder_loop(spawn_x as i32, spawn_y as i32, rng);
@@ -50,10 +54,20 @@ impl MazeBuilder {
             self.random_circles(rng, tile);
         }
         self.teleport_spawner(rng);
-
         self.spawn_end(rng);
-        (self.map, (spawn_x, spawn_y))
+
+        let tile_map = TileMat {
+            map: self.map,
+            with_info: false,
+            seed: self.seed,
+            size: self.size,
+        };
+
+        let result = tile_map.spawn_contents(content_option);
+        (result.0.map, result.1)
     }
+
+    fn spawn_content(&mut self, rng: &mut StdRng) {}
 
     fn teleport_spawner(&mut self, rng: &mut StdRng) {
         let max = rng.gen_range(0.0..(self.size as f32 * 0.1));

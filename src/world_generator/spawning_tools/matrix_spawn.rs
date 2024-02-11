@@ -210,6 +210,7 @@ impl F64MatData {
                 2 => (0, -1),
                 _ => (-1, 0),
             };
+
             self.street_spawn(&mut map, row, col, &mut rng, dir, n);
         }
         TileMat {

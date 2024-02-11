@@ -172,10 +172,12 @@ impl Generator for OxAgWorldGenerator {
             return self.map_save.clone().unwrap();
         }
         if self.maze {
-            let map = self.generate_base_maze().builder();
+            let (map, spawn) = self
+                .generate_base_maze()
+                .builder(self.get_content_options());
             (
-                map.0,
-                map.1,
+                map,
+                spawn,
                 self.environmental_conditions.clone(),
                 self.score,
                 self.score_map.clone(),

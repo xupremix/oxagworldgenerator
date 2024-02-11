@@ -61,6 +61,7 @@ impl Loadable<Vec<(Content, OxAgContentOptions)>> for OxAgContentPresets {
 }
 
 const NONE: fn() -> Vec<(Content, OxAgContentOptions)> = || {
+    use strum::IntoEnumIterator;
     Content::iter()
         .map(|c| (c.to_default(), Default::default()))
         .collect()
