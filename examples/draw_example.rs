@@ -35,16 +35,15 @@ struct MyApp {
 
 impl Default for MyApp {
     fn default() -> Self {
-        Self {
-            map: OxAgWorldGeneratorBuilder::new()
-                .set_size(WORLD_SIZE)
-                .set_content_options_from_preset(OxAgContentPresets::Default)
-                .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
-                .build()
-                .unwrap()
-                .gen()
-                .0,
-        }
+        let map = OxAgWorldGeneratorBuilder::new()
+            .set_size(WORLD_SIZE)
+            .set_content_options_from_preset(OxAgContentPresets::Default)
+            .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
+            .build()
+            .unwrap()
+            .gen()
+            .0;
+        Self { map }
     }
 }
 

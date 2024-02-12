@@ -2,8 +2,8 @@ use crate::utils::constants::SAME_DIR_PROBABILITY;
 use crate::world_generator::spawning_tools::F64MatData;
 use rand::rngs::StdRng;
 use rand::Rng;
-use robotics_lib::world::tile::Tile;
 use robotics_lib::world::tile::TileType::Street;
+use robotics_lib::world::tile::{Content, Tile};
 
 impl F64MatData {
     pub(crate) fn street_spawn(
@@ -21,6 +21,7 @@ impl F64MatData {
 
         self.map[row][col].1 = true;
         map[row][col].tile_type = Street;
+        map[row][col].content = Content::None;
 
         let directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];
         directions

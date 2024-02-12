@@ -44,7 +44,7 @@ pub(crate) fn spawn_circle(
         }
     }
 
-    // Fill the center of the circle
+    // Fill in the center of the circle
     for i in center_x - min_radius + 1..center_x + min_radius {
         for j in center_y - min_radius + 1..center_y + min_radius {
             if (i - center_x).pow(2) + (j - center_y).pow(2) <= min_radius.pow(2) {
@@ -78,6 +78,7 @@ fn add(
             let col = col as usize;
             if ![ShallowWater, DeepWater, Teleport(false)].contains(&map[row][col].tile_type) {
                 map[row][col].tile_type = *tile_type;
+                map[row][col].content = Content::None;
             }
         }
         _ => {}
