@@ -1,3 +1,4 @@
+use noise::{Fbm, Perlin};
 use rand::prelude::StdRng;
 use rand::{Rng, SeedableRng};
 use robotics_lib::world::tile::{Content, Tile, TileType};
@@ -28,6 +29,7 @@ pub(crate) struct MazeBuilder {
     seed: u64,
     size: usize,
     map: Vec<Vec<Tile>>,
+    perlin: Fbm<Perlin>,
 }
 
 pub(crate) struct TileMat {
