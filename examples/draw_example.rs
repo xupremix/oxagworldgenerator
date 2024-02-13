@@ -8,8 +8,8 @@ use robotics_lib::world::tile::Content;
 use robotics_lib::world::tile::{Tile, TileType};
 use robotics_lib::world::world_generator::Generator;
 
-const TILE_SIZE: f32 = 5.0;
-const WORLD_SIZE: usize = 128;
+const TILE_SIZE: f32 = 15.0;
+const WORLD_SIZE: usize = 70;
 
 fn main() {
     env_logger::init();
@@ -39,7 +39,7 @@ impl Default for MyApp {
             map: OxAgWorldGeneratorBuilder::new()
                 .set_size(WORLD_SIZE)
                 .set_content_options_from_preset(OxAgContentPresets::Default)
-                .set_tile_type_options_from_preset(OxAgTileTypePresets::WaterWorld)
+                .set_tile_type_options_from_preset(OxAgTileTypePresets::Default)
                 .set_maze(true)
                 .build()
                 .unwrap()

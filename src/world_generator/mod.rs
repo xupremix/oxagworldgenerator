@@ -174,7 +174,7 @@ impl Generator for OxAgWorldGenerator {
         if self.maze {
             let (map, spawn) = self
                 .generate_base_maze()
-                .builder(self.get_content_options());
+                .builder(self.get_content_options(), self.get_tile_type_options());
             (
                 map,
                 spawn,

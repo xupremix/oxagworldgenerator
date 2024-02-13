@@ -84,101 +84,94 @@ impl F64MatData {
                 } else {
                     -*value / self.min
                 };
-                if map[i][j].tile_type != ShallowWater {
-                    match *value {
-                        value
-                            if spawn_levels.deep_water_level.contains(&value)
-                                | spawn_levels.shallow_water_level.contains(&value) =>
-                        {
-                            let tile_type = if spawn_levels.deep_water_level.contains(&value) {
-                                DeepWater
-                            } else {
-                                ShallowWater
-                            };
-                            let content = Water(
-                                rng.gen_range(0.0..Water(0).properties().max() as f64) as usize,
-                            );
-                            let elevation = ((value + 1.0) * multiplier) as usize;
-                            map[i][j] = Tile {
-                                tile_type,
-                                content,
-                                elevation,
-                            }
+                match *value {
+                    value
+                        if spawn_levels.deep_water_level.contains(&value)
+                            | spawn_levels.shallow_water_level.contains(&value) =>
+                    {
+                        let tile_type = if spawn_levels.deep_water_level.contains(&value) {
+                            DeepWater
+                        } else {
+                            ShallowWater
+                        };
+                        let content =
+                            Water(rng.gen_range(0.0..Water(0).properties().max() as f64) as usize);
+                        let elevation = ((value + 1.0) * multiplier) as usize;
+                        map[i][j] = Tile {
+                            tile_type,
+                            content,
+                            elevation,
                         }
-                        value if spawn_levels.sand_level.contains(&value) => {
-                            map[i][j].tile_type = Sand;
-                        }
-                        value if spawn_levels.hill_level.contains(&value) => {
-                            map[i][j].tile_type = Hill;
-                        }
-                        value if spawn_levels.mountain_level.contains(&value) => {
-                            map[i][j].tile_type = Mountain;
-                        }
-                        value if spawn_levels.snow_level.contains(&value) => {
-                            map[i][j].tile_type = Snow;
-                        }
-                        _ => {
-                            let new_value = *value;
-                            let dist_to_dw = (new_value
-                                - (spawn_levels.deep_water_level.end()
-                                    + spawn_levels.deep_water_level.start())
-                                    / 2.0)
-                                .abs();
-                            let dist_to_sw = (new_value
-                                - (spawn_levels.shallow_water_level.end()
-                                    + spawn_levels.shallow_water_level.start())
-                                    / 2.0)
-                                .abs();
-                            let dist_to_sd = (new_value
-                                - (spawn_levels.sand_level.end()
-                                    + spawn_levels.sand_level.start())
-                                    / 2.0)
-                                .abs();
-                            let dist_to_gr = (new_value
-                                - (spawn_levels.grass_level.end()
-                                    + spawn_levels.grass_level.start())
-                                    / 2.0)
-                                .abs();
-                            let dist_to_hl = (new_value
-                                - (spawn_levels.hill_level.end()
-                                    + spawn_levels.hill_level.start())
-                                    / 2.0)
-                                .abs();
-                            let dist_to_mt = (new_value
-                                - (spawn_levels.mountain_level.end()
-                                    + spawn_levels.mountain_level.start())
-                                    / 2.0)
-                                .abs();
+                    }
+                    value if spawn_levels.sand_level.contains(&value) => {
+                        map[i][j].tile_type = Sand;
+                    }
+                    value if spawn_levels.hill_level.contains(&value) => {
+                        map[i][j].tile_type = Hill;
+                    }
+                    value if spawn_levels.mountain_level.contains(&value) => {
+                        map[i][j].tile_type = Mountain;
+                    }
+                    value if spawn_levels.snow_level.contains(&value) => {
+                        map[i][j].tile_type = Snow;
+                    }
+                    _ => {
+                        let new_value = *value;
+                        let dist_to_dw = (new_value
+                            - (spawn_levels.deep_water_level.end()
+                                + spawn_levels.deep_water_level.start())
+                                / 2.0)
+                            .abs();
+                        let dist_to_sw = (new_value
+                            - (spawn_levels.shallow_water_level.end()
+                                + spawn_levels.shallow_water_level.start())
+                                / 2.0)
+                            .abs();
+                        let dist_to_sd = (new_value
+                            - (spawn_levels.sand_level.end() + spawn_levels.sand_level.start())
+                                / 2.0)
+                            .abs();
+                        let dist_to_gr = (new_value
+                            - (spawn_levels.grass_level.end() + spawn_levels.grass_level.start())
+                                / 2.0)
+                            .abs();
+                        let dist_to_hl = (new_value
+                            - (spawn_levels.hill_level.end() + spawn_levels.hill_level.start())
+                                / 2.0)
+                            .abs();
+                        let dist_to_mt = (new_value
+                            - (spawn_levels.mountain_level.end()
+                                + spawn_levels.mountain_level.start())
+                                / 2.0)
+                            .abs();
 
-                            let dist_to_sn = (new_value
-                                - (spawn_levels.snow_level.end()
-                                    + spawn_levels.snow_level.start())
-                                    / 2.0)
-                                .abs();
-                            let min = dist_to_dw
-                                .min(dist_to_sw)
-                                .min(dist_to_sd)
-                                .min(dist_to_gr)
-                                .min(dist_to_hl)
-                                .min(dist_to_mt)
-                                .min(dist_to_sn);
-                            if min == dist_to_dw {
-                                map[i][j].tile_type = DeepWater;
-                            } else if min == dist_to_sw {
-                                map[i][j].tile_type = ShallowWater;
-                            } else if min == dist_to_sd {
-                                map[i][j].tile_type = Sand;
-                            } else if min == dist_to_gr {
-                                map[i][j].tile_type = Grass;
-                            } else if min == dist_to_hl {
-                                map[i][j].tile_type = Hill;
-                            } else if min == dist_to_mt {
-                                map[i][j].tile_type = Mountain;
-                            } else if min == dist_to_sn {
-                                map[i][j].tile_type = Snow;
-                            } else {
-                                map[i][j].tile_type = Grass;
-                            }
+                        let dist_to_sn = (new_value
+                            - (spawn_levels.snow_level.end() + spawn_levels.snow_level.start())
+                                / 2.0)
+                            .abs();
+                        let min = dist_to_dw
+                            .min(dist_to_sw)
+                            .min(dist_to_sd)
+                            .min(dist_to_gr)
+                            .min(dist_to_hl)
+                            .min(dist_to_mt)
+                            .min(dist_to_sn);
+                        if min == dist_to_dw {
+                            map[i][j].tile_type = DeepWater;
+                        } else if min == dist_to_sw {
+                            map[i][j].tile_type = ShallowWater;
+                        } else if min == dist_to_sd {
+                            map[i][j].tile_type = Sand;
+                        } else if min == dist_to_gr {
+                            map[i][j].tile_type = Grass;
+                        } else if min == dist_to_hl {
+                            map[i][j].tile_type = Hill;
+                        } else if min == dist_to_mt {
+                            map[i][j].tile_type = Mountain;
+                        } else if min == dist_to_sn {
+                            map[i][j].tile_type = Snow;
+                        } else {
+                            map[i][j].tile_type = Grass;
                         }
                     }
                 }
